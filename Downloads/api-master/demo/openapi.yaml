@@ -1,0 +1,791 @@
+openapi: 3.0.0
+servers:
+  - url: //https://9auu8cjhs1.execute-api.us-east-1.amazonaws.com/dev/status?txn_id=f0a018fa7a2b2d86fa7a
+    description: Default server
+  - url: //https://9auu8cjhs1.execute-api.us-east-1.amazonaws.com/dev/status?txn_id=f0a018fa7a2b2d86fa7a
+    description: Sandbox server
+info:
+  description: |
+
+
+    # Introduction
+    This is the QPay API documentation that is intended to help customer of QPay understand and implement our payments API.
+
+    # Advantages of paying using Quickpay
+    CoDi is payment system extremely unique in the world and that is leading the innovation across the world with regards to payment methods.
+    Unlike most payment systems in the world, the Mexican Central Bank (BANXICO) created a centralized system called SPEI, which allows banks
+    to send money to one another instantly without waiting days for it to settle. In top of this system lies CoDi, an additional
+    layer of abstraction that allows final users to send money through QR codes, Near Field Communication (NFC) or by sending a push
+    notification to the payer user.
+
+    # Our product
+    Our product intents to facilitate the access to CoDi to e-commerce businesses by creating an easy to use API to process
+    the payments between online merchants and their customers. Once the merchant is onboarded into the system, they will be
+    able to use our API which provides additional security features than the ones offered by BANXICO, it has simplyfied the
+    payment process to a few endpoints that allow the merchant send a payment and know the status of the transaction.
+
+    # Authentication
+    How Authentication works
+
+    We dont know yet
+
+    why
+
+
+
+
+    <SecurityDefinitions />
+
+  version: 1.0.0
+  title: Quick Pay API
+  termsOfService: 'http://swagger.io/terms/'
+  contact:
+    name: API Support
+    email: tech@dataheim.com
+    url: https://github.com/zulia
+  x-logo:
+    url: 'https://raw.githubusercontent.com/tech-dataheim/files/bef3c1b14864b6912f3e1fa25167d6e2442b7997/logoZuliapng.png'
+    altText: Petstore logo
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+externalDocs:
+  description: Find out how to create Github repo for your OpenAPI spec.
+  url: 'https://github.com/Rebilly/generator-openapi-repo'
+tags:
+  - name: payment
+    description: "This endpoints allows customers to send, receive and verify payments through a variety of methods : Push Notifition, QR Codes (in progress) and Near Field Communication (in progress)"
+  - name: status
+    description: Access to Petstore orders
+  - name: transaction_model
+    x-displayName: The transaction RDB model.
+    description: |
+  - name: Own Implementation
+    description: At this stage, to use the Codi checkout button each website will have their own implementation, backend and frontend development.
+      <SchemaDefinition schemaRef="#/components/schemas/Order" exampleRef="#/components/examples/Order" showReadOnly={true} showWriteOnly={true} />
+x-tagGroups:
+  - name: General
+    tags:
+      - payment
+  - name: Implementation
+    tags:
+      - Own Implementation
+  - name: Models
+    tags:
+      - transaction_model
+paths:
+  /payment:
+    parameters:
+      - name: Authentication
+        in: header
+        description: Include Authentication token in header
+        required: true
+        schema:
+          type: string
+          default: en-US
+      - name: phone_number
+        in: query
+        description: 10 digit phone number of person to receive the payment request
+        required: true
+        schema:
+          type: string
+          format: en-US
+      - name: reference_number
+        in: query
+        description: 8 digit invoice number
+        required: true
+        schema:
+          type: string
+          format: en-US
+      - name: concept
+        in: query
+        description: Concept of the purchase. Can be as granular as merchant decides up to 42 chars.
+        required: true
+        schema:
+          type: string
+          format: en-US
+      - name: amount
+        in: query
+        description: $MX to be charged to the user should he accept the payment.
+        required: true
+        schema:
+          type: string
+          format: en-US
+      - name: merchant_name
+        in: query
+        description: Name of the merchant (i.e. Razón Social with which it was registered before Mexican SAT)
+        required: true
+        schema:
+          type: string
+          format: en-US
+      - name: certificate_number
+        in: query
+        description: 20 digit Certificate provided when onboarded with Banxico
+        required: true
+        schema:
+          type: string
+          format: en-US
+      - name: account_number
+        in: query
+        description: Bank Account of the merchant
+        required: true
+        schema:
+          type: string
+          format: en-US
+    post:
+      tags:
+        - payment
+      summary: Push Notification
+      description: Create and send a new payment message through push notification
+      operationId: sendPayment
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+        '405':
+          description: Invalid input
+      security:
+        - qpay_auth:
+            - 'write:payments'
+      x-codeSamples:
+        - lang: 'Python'
+          source: "r = requests.get('Prod or Stage URL'
+          , auth=('user', 'pass'))"
+
+      requestBody:
+        $ref: '#/components/requestBodies/payments'
+  '/getStatus':
+    get:
+      tags:
+        - payment
+      summary: Get payment status
+      description: Returns the status of a requested payment (Sent, Received, Payed, Rejected, Postponed)
+      operationId: getPetById
+      parameters:
+        - name: Authorization
+          in: header
+          description: Authorization keys provided
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: en-US
+        - name: transaction_id
+          in: path
+          description: transaction id provided when requesting a payment of any kind
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: en-US
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid request format
+        '404':
+          description: Transaction id not ofund
+      security:
+        - api_key: []
+  /store/subscribe:
+    post:
+      tags:
+        - store
+      summary: Subscribe to the Store events
+      description: Add subscription for a store events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                callbackUrl:
+                  type: string
+                  format: uri
+                  description: This URL will be called by the server when the desired event will occur
+                  example: https://myserver.com/send/callback/here
+                eventName:
+                  type: string
+                  description: Event name for the subscription
+                  enum:
+                    - orderInProgress
+                    - orderShipped
+                    - orderDelivered
+                  example: orderInProgress
+              required:
+                - callbackUrl
+                - eventName
+      responses:
+        '201':
+          description: Subscription added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  subscriptionId:
+                    type: string
+                    example: AAA-123-BBB-456
+      callbacks:
+        orderInProgress:
+          '{$request.body#/callbackUrl}?event={$request.body#/eventName}':
+            servers:
+              - url: //callback-url.path-level/v1
+                description: Path level server 1
+              - url: //callback-url.path-level/v2
+                description: Path level server 2
+            post:
+              summary: Order in Progress (Summary)
+              description: A callback triggered every time an Order is updated status to "inProgress" (Description)
+              externalDocs:
+                description: Find out more
+                url: 'https://more-details.com/demo'
+              requestBody:
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        orderId:
+                          type: string
+                          example: '123'
+                        timestamp:
+                          type: string
+                          format: date-time
+                          example: '2018-10-19T16:46:45Z'
+                        status:
+                          type: string
+                          example: 'inProgress'
+                  application/xml:
+                    schema:
+                      type: object
+                      properties:
+                        orderId:
+                          type: string
+                          example: '123'
+                    example: |
+                      <?xml version="1.0" encoding="UTF-8"?>
+                      <root>
+                        <orderId>123</orderId>
+                        <status>inProgress</status>
+                        <timestamp>2018-10-19T16:46:45Z</timestamp>
+                      </root>
+              responses:
+                '200':
+                  description: Callback successfully processed and no retries will be performed
+                  content:
+                    application/json:
+                      schema:
+                        type: object
+                        properties:
+                          someProp:
+                            type: string
+                            example: '123'
+                '299':
+                  description: Response for cancelling subscription
+                '500':
+                  description: Callback processing failed and retries will be performed
+              x-codeSamples:
+                - lang: 'C#'
+                  source: |
+                    PetStore.v1.Pet pet = new PetStore.v1.Pet();
+                    pet.setApiKey("your api key");
+                    pet.petType = PetStore.v1.Pet.TYPE_DOG;
+                    pet.name = "Rex";
+                    // set other fields
+                    PetStoreResponse response = pet.create();
+                    if (response.statusCode == HttpStatusCode.Created)
+                    {
+                      // Successfully created
+                    }
+                    else
+                    {
+                      // Something wrong -- check response for errors
+                      Console.WriteLine(response.getRawResponse());
+                    }
+                - lang: PHP
+                  source: |
+                    $form = new \PetStore\Entities\Pet();
+                    $form->setPetType("Dog");
+                    $form->setName("Rex");
+                    // set other fields
+                    try {
+                        $pet = $client->pets()->create($form);
+                    } catch (UnprocessableEntityException $e) {
+                        var_dump($e->getErrors());
+                    }
+            put:
+              description: Order in Progress (Only Description)
+              servers:
+                - url: //callback-url.operation-level/v1
+                  description: Operation level server 1 (Operation override)
+                - url: //callback-url.operation-level/v2
+                  description: Operation level server 2 (Operation override)
+              requestBody:
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        orderId:
+                          type: string
+                          example: '123'
+                        timestamp:
+                          type: string
+                          format: date-time
+                          example: '2018-10-19T16:46:45Z'
+                        status:
+                          type: string
+                          example: 'inProgress'
+                  application/xml:
+                    schema:
+                      type: object
+                      properties:
+                        orderId:
+                          type: string
+                          example: '123'
+                    example: |
+                      <?xml version="1.0" encoding="UTF-8"?>
+                      <root>
+                        <orderId>123</orderId>
+                        <status>inProgress</status>
+                        <timestamp>2018-10-19T16:46:45Z</timestamp>
+                      </root>
+              responses:
+                '200':
+                  description: Callback successfully processed and no retries will be performed
+                  content:
+                    application/json:
+                      schema:
+                        type: object
+                        properties:
+                          someProp:
+                            type: string
+                            example: '123'
+        orderShipped:
+          '{$request.body#/callbackUrl}?event={$request.body#/eventName}':
+            post:
+              description: |
+                Very long description
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+                nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+                culpa qui officia deserunt mollit anim id est laborum.
+              requestBody:
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        orderId:
+                          type: string
+                          example: '123'
+                        timestamp:
+                          type: string
+                          format: date-time
+                          example: '2018-10-19T16:46:45Z'
+                        estimatedDeliveryDate:
+                          type: string
+                          format: date-time
+                          example: '2018-11-11T16:00:00Z'
+              responses:
+                '200':
+                  description: Callback successfully processed and no retries will be performed
+        orderDelivered:
+          'http://notificationServer.com?url={$request.body#/callbackUrl}&event={$request.body#/eventName}':
+            post:
+              deprecated: true
+              summary: Order delivered
+              description: A callback triggered every time an Order is delivered to the recipient
+              requestBody:
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        orderId:
+                          type: string
+                          example: '123'
+                        timestamp:
+                          type: string
+                          format: date-time
+                          example: '2018-10-19T16:46:45Z'
+              responses:
+                '200':
+                  description: Callback successfully processed and no retries will be performed
+  /user/createWithArray:
+    post:
+      tags:
+        - user
+      summary: Creates list of users with given input array
+      description: ''
+      operationId: createUsersWithArrayInput
+      responses:
+        default:
+          description: successful operation
+      requestBody:
+        $ref: '#/components/requestBodies/UserArray'
+  /user/createWithList:
+    post:
+      tags:
+        - user
+      summary: Creates list of users with given input array
+      description: ''
+      operationId: createUsersWithListInput
+      responses:
+        default:
+          description: successful operation
+      requestBody:
+        $ref: '#/components/requestBodies/UserArray'
+  /user/login:
+    get:
+      tags:
+        - user
+      summary: Logs user into the system
+      description: ''
+      operationId: loginUser
+      parameters:
+        - name: username
+          in: query
+          description: The user name for login
+          required: true
+          schema:
+            type: string
+        - name: password
+          in: query
+          description: The password for login in clear text
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          headers:
+            X-Rate-Limit:
+              description: calls per hour allowed by the user
+              schema:
+                type: integer
+                format: int32
+            X-Expires-After:
+              description: date in UTC when token expires
+              schema:
+                type: string
+                format: date-time
+          content:
+            application/json:
+              schema:
+                type: string
+              examples:
+                response:
+                  value: OK
+            application/xml:
+              schema:
+                type: string
+              examples:
+                response:
+                  value:  <Message> OK </Message>
+            text/plain:
+              examples:
+                response:
+                  value:  OK
+        '400':
+          description: Invalid username/password supplied
+  /user/logout:
+    get:
+      tags:
+        - user
+      summary: Logs out current logged in user session
+      description: ''
+      operationId: logoutUser
+      responses:
+        default:
+          description: successful operation
+components:
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+    Status:
+      description: Status responses
+      allOf:
+        - $ref: '#/components/schemas/pet'
+        - type: object
+          properties:
+            huntingSkill:
+              type: string
+              description: The measured skill for hunting
+              default: lazy
+              example: adventurous
+              enum:
+                - clueless
+                - lazy
+                - adventurous
+                - aggressive
+          required:
+            - huntingSkill
+    Category:
+      type: object
+      properties:
+        id:
+          description: Category ID
+          allOf:
+            - $ref: '#/components/schemas/Id'
+        name:
+          description: Category name
+          type: string
+          minLength: 1
+        sub:
+          description: Test Sub Category
+          type: object
+          properties:
+            prop1:
+              type: string
+              description: Dumb Property
+      xml:
+        name: Category
+    Dog:
+      description: A representation of a dog
+      allOf:
+        - $ref: '#/components/schemas/Pet'
+        - type: object
+          properties:
+            packSize:
+              type: integer
+              format: int32
+              description: The size of the pack the dog is from
+              default: 1
+              minimum: 1
+          required:
+            - packSize
+    HoneyBee:
+      description: A representation of a honey bee
+      allOf:
+        - $ref: '#/components/schemas/Pet'
+        - type: object
+          properties:
+            honeyPerDay:
+              type: number
+              description: Average amount of honey produced per day in ounces
+              example: 3.14
+              multipleOf: .01
+          required:
+            - honeyPerDay
+    Id:
+      type: integer
+      format: int64
+      readOnly: true
+    Order:
+      type: object
+      properties:
+        id:
+          description: Order ID
+          allOf:
+            - $ref: '#/components/schemas/Id'
+        petId:
+          description: Pet ID
+          allOf:
+            - $ref: '#/components/schemas/Id'
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+          default: 1
+        shipDate:
+          description: Estimated ship date
+          type: string
+          format: date-time
+        status:
+          type: string
+          description: Order Status
+          enum:
+            - placed
+            - approved
+            - delivered
+        complete:
+          description: Indicates whenever order was completed or not
+          type: boolean
+          default: false
+          readOnly: true
+        requestId:
+          description: Unique Request Id
+          type: string
+          writeOnly: true
+      xml:
+        name: Order
+    Pet:
+      type: object
+      required:
+        - name
+        - photoUrls
+      discriminator:
+        propertyName: petType
+        mapping:
+          cat: '#/components/schemas/Cat'
+          dog: '#/components/schemas/Dog'
+          bee: '#/components/schemas/HoneyBee'
+      properties:
+        id:
+          externalDocs:
+            description: "Find more info here"
+            url: "https://example.com"
+          description: Pet ID
+          allOf:
+            - $ref: '#/components/schemas/Id'
+        category:
+          description: Categories this pet belongs to
+          allOf:
+            - $ref: '#/components/schemas/Category'
+        name:
+          description: The name given to a pet
+          type: string
+          example: Guru
+        photoUrls:
+          description: The list of URL to a cute photos featuring pet
+          type: array
+          maxItems: 20
+          xml:
+            name: photoUrl
+            wrapped: true
+          items:
+            type: string
+            format: url
+        friend:
+          allOf:
+            - $ref: '#/components/schemas/Pet'
+        tags:
+          description: Tags attached to the pet
+          type: array
+          minItems: 1
+          xml:
+            name: tag
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/Tag'
+        status:
+          type: string
+          description: Pet status in the store
+          enum:
+            - available
+            - pending
+            - sold
+        petType:
+          description: Type of a pet
+          type: string
+      xml:
+        name: Pet
+    Tag:
+      type: object
+      properties:
+        id:
+          description: Tag ID
+          allOf:
+            - $ref: '#/components/schemas/Id'
+        name:
+          description: Tag name
+          type: string
+          minLength: 1
+      xml:
+        name: Tag
+    User:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        status:
+          description: status of the request
+          type: string
+          minLength: 10
+          example: settled
+      xml:
+        name: User
+  requestBodies:
+    Pet:
+      content:
+        application/json:
+          schema:
+            allOf:
+              - description: My Pet
+                title: Pettie
+              - $ref: '#/components/schemas/Pet'
+        application/xml:
+          schema:
+            type: 'object'
+            properties:
+              name:
+                type: string
+                description: hooray
+      description: Pet object that needs to be added to the store
+      required: true
+    UserArray:
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/User'
+      description: List of user object
+      required: true
+  securitySchemes:
+    qpay_auth:
+      description: |
+        Get access to data while protecting your account credentials.
+        OAuth2 is also a safer and more secure way to give you access.
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: 'https://9auu8cjhs1.execute-api.us-east-1.amazonaws.com/dev/status?txn_id=f0a018fa7a2b2d86fa7a'
+          scopes:
+            'write:pets': modify pets in your account
+            'read:pets': read your pets
+    api_key:
+      description: >
+        For this sample, you can use the api key `special-key` to test the
+        authorization filters.
+      type: apiKey
+      name: api_key
+      in: header
+  examples:
+    Order:
+      value:
+        quantity: 1
+        shipDate: '2018-10-19T16:46:45Z'
+        status: placed
+        complete: false
+x-webhooks:
+  newPet:
+    post:
+      summary: New pet
+      description: Information about a new pet in the systems
+      operationId: newPet
+      tags:
+        - pet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Pet"
+      responses:
+        "200":
+          description: Return a 200 status to indicate that the data was received successfully
