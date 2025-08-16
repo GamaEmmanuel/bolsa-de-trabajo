@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Public reads for jobs; writes restricted to server (admin SDK via API)
+    match /jobs/{jobId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Applications: candidates can read their own via API; direct client writes disabled
+    match /applications/{applicationId} {
+      allow read, write: if false;
+    }
+
+    // Users profiles (role, company bindings) - server managed
+    match /users/{uid} {
+      allow read, write: if false;
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
