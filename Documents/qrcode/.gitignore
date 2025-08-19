@@ -1,0 +1,4 @@
+
+# Ignore Firebase admin SDK credentials
+lady-qr-firebase-adminsdk-*.json
+*.service-account.json
