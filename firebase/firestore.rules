@@ -1,0 +1,75 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    // Each user can read/write their own user document
+    match /users/{userId} {
+      allow read, update, delete: if isOwner(userId);
+      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+    }
+
+    // Saved searches belong to a user (ownerId)
+    match /saved-searches/{id} {
+      allow read, update, delete: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.ownerId == request.auth.uid;
+    }
+
+    // Public jobs listing: only published jobs are readable by anyone; no client writes
+    match /jobs/{jobId} {
+      allow read: if resource.data.status == 'published';
+      allow write: if false;
+    }
+
+    // Job postings collection (for backward compatibility with existing code)
+    match /jobPostings/{jobId} {
+      allow read: if true; // All job postings are public to read
+      allow create: if isSignedIn();
+      allow update, delete: if isSignedIn() && resource.data.createdByUserId == request.auth.uid;
+    }
+
+    // Job applications: candidates can access their own applications, companies can access applications for their job postings
+    match /applications/{applicationId} {
+      allow read: if isSignedIn() && (
+        resource.data.candidateId == request.auth.uid ||
+        resource.data.companyId == request.auth.uid
+      );
+      allow create: if isSignedIn() && request.resource.data.candidateId == request.auth.uid;
+      allow update: if isSignedIn() && (
+        resource.data.candidateId == request.auth.uid ||
+        resource.data.companyId == request.auth.uid
+      );
+      allow delete: if isSignedIn() && resource.data.candidateId == request.auth.uid;
+    }
+
+    // Candidate profiles: candidates can manage their own profiles, companies can read all profiles for talent search
+    match /candidateProfiles/{profileId} {
+      allow read: if isSignedIn(); // Companies and candidates can read profiles for talent search
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    // User accounts: users can manage their own account settings
+    match /userAccounts/{userId} {
+      allow read, write: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    // No direct client access to companies (handled via server)
+    match /companies/{companyId} {
+      allow read, write: if false;
+    }
+
+    // Deny everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
