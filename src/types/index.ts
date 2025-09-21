@@ -76,6 +76,7 @@ export type PipelineStatus =
 	| 'offer'
 	| 'hired'
 	| 'rejected'
+	| 'not_moving_forward'
 
 export interface Application {
 	applicationId: UUID

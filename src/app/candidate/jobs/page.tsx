@@ -68,7 +68,7 @@ const JobsPage = () => {
 
 	// Filter and sort jobs
 	const filteredJobs = useMemo(() => {
-		let filtered = jobs.filter(job => {
+		const filtered = jobs.filter(job => {
 			// Keyword filter
 			if (filters.keyword) {
 				const keyword = filters.keyword.toLowerCase()
@@ -297,50 +297,47 @@ const JobsPage = () => {
 					) : (
 						<div className="space-y-4">
 							{filteredJobs.map(job => (
-								<div
+								<Link
 									key={job.jobId}
-									className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
+									href={`/jobs/${job.jobId}`}
+									className="block bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-300 transition-all duration-200 cursor-pointer"
 								>
 									<div className="flex justify-between items-start">
 										<div className="flex-1">
-											<Link
-												href={`/jobs/${job.jobId}`}
-												className="text-xl font-semibold text-gray-900 hover:text-blue-600"
-											>
+											<h3 className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors">
 												{job.jobTitle}
-											</Link>
+											</h3>
 											<p className="text-gray-600 font-medium mt-1">
 												{job.companyName || 'Company Name'}
 											</p>
 											<p className="text-gray-500 text-sm mt-1">
 												{job.location || 'Location not specified'}
 											</p>
-											{job.jobType && (
-												<span className="inline-block mt-2 px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
-													{job.jobType}
-												</span>
-											)}
-											{job.salaryMin && job.salaryMax && !job.isSalaryHidden && (
-												<p className="text-sm text-green-600 font-medium mt-2">
-													${job.salaryMin.toLocaleString()} - ${job.salaryMax.toLocaleString()} MXN
-												</p>
-											)}
+											<div className="flex items-center gap-2 mt-2">
+												{job.jobType && (
+													<span className="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+														{job.jobType}
+													</span>
+												)}
+												{job.salaryMin && job.salaryMax && !job.isSalaryHidden && (
+													<span className="text-sm text-green-600 font-medium">
+														${job.salaryMin.toLocaleString()} - ${job.salaryMax.toLocaleString()} MXN
+													</span>
+												)}
+											</div>
 										</div>
 										<div className="ml-4 flex flex-col items-end">
-											<Link
-												href={`/jobs/${job.jobId}`}
-												className="px-4 py-2 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700"
-											>
-												View & Apply
-											</Link>
 											{job.postedDate && (
-												<p className="text-xs text-gray-500 mt-2">
+												<p className="text-xs text-gray-500">
 													Posted {new Date(job.postedDate).toLocaleDateString()}
 												</p>
 											)}
+											<div className="mt-2 text-blue-600 text-sm font-medium">
+												View Details →
+											</div>
 										</div>
 									</div>
-								</div>
+								</Link>
 							))}
 						</div>
 					)}

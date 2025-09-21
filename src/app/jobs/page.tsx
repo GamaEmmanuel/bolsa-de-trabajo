@@ -119,13 +119,14 @@ const JobSearchPage = () => {
 					)}
 
 					{!loading && !error && results.map(job => (
-						<div
+						<a
 							key={job.jobId}
-							className="bg-card p-6 rounded-lg border border-border hover:border-primary transition-colors"
+							href={`/jobs/${job.jobId}`}
+							className="block bg-card p-6 rounded-lg border border-border hover:border-primary hover:shadow-md transition-all duration-200 cursor-pointer"
 						>
 							<div className="flex justify-between items-start">
-								<div>
-									<h2 className="text-xl font-bold text-foreground">{job.jobTitle}</h2>
+								<div className="flex-1">
+									<h2 className="text-xl font-bold text-foreground hover:text-primary transition-colors">{job.jobTitle}</h2>
 									<p className="text-muted-foreground font-semibold">{job.companyName || 'Company Name'}</p>
 									<p className="text-muted-foreground">{job.location || 'Location not specified'}</p>
 									{job.salaryMin && job.salaryMax && !job.isSalaryHidden && (
@@ -134,14 +135,11 @@ const JobSearchPage = () => {
 										</p>
 									)}
 								</div>
-								<a
-									href={`/jobs/${job.jobId}`}
-									className="px-4 py-2 text-sm text-primary-foreground bg-primary rounded-md hover:bg-primary/90"
-								>
-									View & Apply
-								</a>
+								<div className="ml-4 text-primary text-sm font-medium">
+									View Details →
+								</div>
 							</div>
-						</div>
+						</a>
 					))}
 				</div>
 			</div>

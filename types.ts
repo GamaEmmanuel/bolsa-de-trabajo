@@ -35,7 +35,7 @@ export interface Company {
 	createdAt: string
 }
 
-export type JobStatus = 'draft' | 'published' | 'expired' | 'filled'
+export type JobStatus = 'draft' | 'pending_approval' | 'published' | 'expired' | 'filled'
 export type JobTier = 'clasica' | 'destacada' | 'premium'
 
 export interface JobPosting {

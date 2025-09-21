@@ -8,7 +8,6 @@ const mockPendingJobs: JobPosting[] = [
 	{
 		jobId: 'job-101',
 		companyId: 'comp-12',
-		companyName: 'Startup Innovators',
 		createdByUserId: 'user-45',
 		jobTitle: 'Growth Hacker',
 		jobDescription: 'Seeking a creative growth hacker...',
@@ -18,7 +17,6 @@ const mockPendingJobs: JobPosting[] = [
 	{
 		jobId: 'job-102',
 		companyId: 'comp-15',
-		companyName: 'Data Corp',
 		createdByUserId: 'user-52',
 		jobTitle: 'Data Scientist (Remote)',
 		jobDescription: 'Join our data team...',

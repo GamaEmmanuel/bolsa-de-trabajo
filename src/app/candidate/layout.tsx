@@ -65,13 +65,6 @@ const CandidateLayout = ({ children }: { children: React.ReactNode }) => {
 
 						{/* User Menu */}
 						<div className="flex items-center space-x-4">
-							{/* Notifications */}
-							<button className="p-2 text-gray-400 hover:text-gray-600">
-								<svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5zM4.5 19.5L9 15l4.5 4.5L18 15l4.5 4.5" />
-								</svg>
-							</button>
-
 							{/* Profile Dropdown */}
 							<div className="relative">
 								<button className="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
