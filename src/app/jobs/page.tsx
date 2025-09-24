@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { JobPosting } from '../../types'
 import { db } from '../../lib/firebase'
 import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore'
+import Header from '../../components/Header'
 
 // Extend the JobPosting interface for additional fields
 declare module '../../types' {
@@ -61,6 +62,7 @@ const JobSearchPage = () => {
 
 	return (
 		<div className="min-h-screen bg-secondary">
+			<Header />
 			<div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
 				<div className="text-center">
 					<h1 className="text-4xl font-extrabold text-foreground sm:text-5xl">

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import Header from '../../components/Header'
 
 const ContactPage = () => {
 	const [formData, setFormData] = useState({
@@ -26,7 +27,9 @@ const ContactPage = () => {
 	}
 
 	return (
-		<div className="min-h-screen bg-gray-50 py-16">
+		<div className="min-h-screen bg-gray-50">
+			<Header />
+			<div className="pt-24 pb-16">
 			<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 				{/* Header */}
 				<div className="text-center mb-16">
@@ -202,6 +205,7 @@ const ContactPage = () => {
 						</div>
 					</div>
 				</div>
+			</div>
 			</div>
 		</div>
 	)

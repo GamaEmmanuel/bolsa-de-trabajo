@@ -2,6 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
+import Header from './Header'
 
 interface PricingTier {
 	name: string
@@ -85,7 +86,9 @@ const PricingPage = () => {
 	]
 
 	return (
-		<div className="min-h-screen bg-gray-50 py-16">
+		<div className="min-h-screen bg-gray-50">
+			<Header />
+			<div className="pt-24 pb-16">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				{/* Header */}
 				<div className="text-center mb-16">
@@ -233,6 +236,7 @@ const PricingPage = () => {
 						</div>
 					</div>
 				</div>
+			</div>
 			</div>
 		</div>
 	)
