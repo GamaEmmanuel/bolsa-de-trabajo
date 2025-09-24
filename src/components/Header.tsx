@@ -20,12 +20,18 @@ const Header = () => {
 						<Link href="/jobs" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
 							Jobs
 						</Link>
-						<Link href="/pricing" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+						<button
+							onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
+							className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
+						>
 							Pricing
-						</Link>
-						<Link href="/contact" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+						</button>
+						<button
+							onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+							className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
+						>
 							Contact
-						</Link>
+						</button>
 					</div>
 					<div className="flex items-center space-x-3">
 						<Link

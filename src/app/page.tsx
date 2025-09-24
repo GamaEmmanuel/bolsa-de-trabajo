@@ -241,9 +241,9 @@ const LandingPage = () => {
 				</div>
 			</section>
 
-			{/* Pricing Preview Section */}
-			<section className="py-20 bg-white">
-				<div className="max-w-6xl mx-auto px-6">
+			{/* Full Pricing Section */}
+			<section id="pricing" className="py-20 bg-white">
+				<div className="max-w-7xl mx-auto px-6">
 					<div className="text-center mb-16">
 						<h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
 							Simple, transparent pricing
@@ -253,9 +253,9 @@ const LandingPage = () => {
 						</p>
 					</div>
 
-					<div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-						{/* Free Plan */}
-						<div className="bg-white rounded-2xl p-8 border-2 border-gray-100 hover:border-blue-200 transition-all duration-300">
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+						{/* Job Seeker Plan */}
+						<div className="bg-white rounded-2xl p-8 border-2 border-gray-100 hover:border-green-200 transition-all duration-300">
 							<div className="text-center mb-8">
 								<h3 className="text-2xl font-bold text-gray-900">Job Seeker</h3>
 								<div className="mt-4">
@@ -264,9 +264,9 @@ const LandingPage = () => {
 								<p className="mt-2 text-gray-600">Perfect for individual job seekers</p>
 							</div>
 							<ul className="space-y-4 mb-8">
-								{['Unlimited job applications', 'Advanced search filters', 'Resume builder', 'Application tracking'].map((feature, index) => (
-									<li key={index} className="flex items-center">
-										<svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+								{['Unlimited job applications', 'Advanced search filters', 'Resume builder & templates', 'Application tracking (Kanban board)', 'Job alerts & notifications', 'Company insights', 'Mobile-friendly interface'].map((feature, index) => (
+									<li key={index} className="flex items-start">
+										<svg className="w-5 h-5 text-green-500 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
 											<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
 										</svg>
 										<span className="text-gray-700">{feature}</span>
@@ -297,9 +297,9 @@ const LandingPage = () => {
 								<p className="mt-2 text-gray-600">Perfect for growing companies</p>
 							</div>
 							<ul className="space-y-4 mb-8">
-								{['Up to 5 job postings', 'Basic ATS', 'Resume screening', 'Email notifications', 'Analytics dashboard'].map((feature, index) => (
-									<li key={index} className="flex items-center">
-										<svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+								{['Up to 5 active job postings', 'Basic ATS (Applicant Tracking System)', 'Resume screening & filtering', 'Email notifications', 'Basic analytics dashboard', 'Company profile management', 'Standard support'].map((feature, index) => (
+									<li key={index} className="flex items-start">
+										<svg className="w-5 h-5 text-green-500 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
 											<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
 										</svg>
 										<span className="text-gray-700">{feature}</span>
@@ -325,9 +325,9 @@ const LandingPage = () => {
 								<p className="mt-2 text-gray-600">For established companies</p>
 							</div>
 							<ul className="space-y-4 mb-8">
-								{['Up to 25 job postings', 'Advanced ATS', 'AI matching', 'Interview scheduling', 'Advanced analytics'].map((feature, index) => (
-									<li key={index} className="flex items-center">
-										<svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+								{['Up to 25 active job postings', 'Advanced ATS with custom workflows', 'AI-powered candidate matching', 'Interview scheduling tools', 'Advanced analytics & reporting', 'Team collaboration features', 'Priority support', 'Custom branding options'].map((feature, index) => (
+									<li key={index} className="flex items-start">
+										<svg className="w-5 h-5 text-green-500 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
 											<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
 										</svg>
 										<span className="text-gray-700">{feature}</span>
@@ -341,40 +341,272 @@ const LandingPage = () => {
 								Start Free Trial
 							</Link>
 						</div>
+
+						{/* Enterprise Plan */}
+						<div className="bg-white rounded-2xl p-8 border-2 border-gray-100 hover:border-orange-200 transition-all duration-300">
+							<div className="text-center mb-8">
+								<h3 className="text-2xl font-bold text-gray-900">Enterprise</h3>
+								<div className="mt-4">
+									<span className="text-4xl font-bold text-gray-900">Custom</span>
+								</div>
+								<p className="mt-2 text-gray-600">Tailored solutions for large organizations</p>
+							</div>
+							<ul className="space-y-4 mb-8">
+								{['Unlimited job postings', 'Full-featured ATS with API access', 'Advanced AI & machine learning', 'Custom integrations', 'Dedicated account manager', 'White-label solutions', '24/7 premium support', 'Custom training & onboarding'].map((feature, index) => (
+									<li key={index} className="flex items-start">
+										<svg className="w-5 h-5 text-green-500 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+											<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+										</svg>
+										<span className="text-gray-700">{feature}</span>
+									</li>
+								))}
+							</ul>
+							<button
+								onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+								className="block w-full text-center py-3 px-6 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition-colors"
+							>
+								Contact Sales
+							</button>
+						</div>
 					</div>
 
-					<div className="text-center mt-12">
-						<Link
-							href="/pricing"
-							className="text-blue-600 hover:text-blue-700 font-semibold"
-						>
-							View all pricing plans →
-						</Link>
+					{/* FAQ Section */}
+					<div className="mt-20">
+						<h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+							Frequently Asked Questions
+						</h2>
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+							<div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+								<h3 className="text-lg font-semibold text-gray-900 mb-2">
+									Can I change plans anytime?
+								</h3>
+								<p className="text-gray-600">
+									Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately.
+								</p>
+							</div>
+							<div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+								<h3 className="text-lg font-semibold text-gray-900 mb-2">
+									Is there a free trial?
+								</h3>
+								<p className="text-gray-600">
+									All paid plans come with a 14-day free trial. No credit card required to start.
+								</p>
+							</div>
+							<div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+								<h3 className="text-lg font-semibold text-gray-900 mb-2">
+									What payment methods do you accept?
+								</h3>
+								<p className="text-gray-600">
+									We accept all major credit cards, PayPal, and bank transfers for Enterprise plans.
+								</p>
+							</div>
+							<div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+								<h3 className="text-lg font-semibold text-gray-900 mb-2">
+									Do you offer refunds?
+								</h3>
+								<p className="text-gray-600">
+									Yes, we offer a 30-day money-back guarantee for all paid plans.
+								</p>
+							</div>
+						</div>
 					</div>
 				</div>
 			</section>
 
-			{/* CTA Section */}
+			{/* Contact Section */}
+			<section id="contact" className="py-20 bg-gray-50">
+				<div className="max-w-4xl mx-auto px-6">
+					<div className="text-center mb-16">
+						<h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+							Ready to get started?
+						</h2>
+						<p className="text-xl text-gray-600">
+							Have questions about our Enterprise plan or need a custom solution? We're here to help.
+						</p>
+					</div>
+
+					<div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+						{/* Contact Form */}
+						<div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-200">
+							<h3 className="text-2xl font-bold text-gray-900 mb-6">Contact Our Sales Team</h3>
+							<form className="space-y-6">
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+									<div>
+										<label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
+											First Name
+										</label>
+										<input
+											type="text"
+											id="firstName"
+											name="firstName"
+											className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+											placeholder="John"
+										/>
+									</div>
+									<div>
+										<label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
+											Last Name
+										</label>
+										<input
+											type="text"
+											id="lastName"
+											name="lastName"
+											className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+											placeholder="Doe"
+										/>
+									</div>
+								</div>
+								<div>
+									<label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+										Work Email
+									</label>
+									<input
+										type="email"
+										id="email"
+										name="email"
+										className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+										placeholder="john@company.com"
+									/>
+								</div>
+								<div>
+									<label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-2">
+										Company Name
+									</label>
+									<input
+										type="text"
+										id="company"
+										name="company"
+										className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+										placeholder="Your Company"
+									/>
+								</div>
+								<div>
+									<label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+										Phone Number
+									</label>
+									<input
+										type="tel"
+										id="phone"
+										name="phone"
+										className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+										placeholder="+1 (555) 123-4567"
+									/>
+								</div>
+								<div>
+									<label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+										How can we help you?
+									</label>
+									<textarea
+										id="message"
+										name="message"
+										rows={4}
+										className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+										placeholder="Tell us about your hiring needs and we'll get back to you within 24 hours."
+									></textarea>
+								</div>
+								<button
+									type="submit"
+									className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+								>
+									Send Message
+								</button>
+							</form>
+						</div>
+
+						{/* Contact Information */}
+						<div className="space-y-8">
+							<div>
+								<h3 className="text-2xl font-bold text-gray-900 mb-6">Get in Touch</h3>
+								<p className="text-gray-600 mb-8">
+									Our sales team is ready to help you find the perfect solution for your hiring needs. 
+									We typically respond within 24 hours.
+								</p>
+							</div>
+
+							<div className="space-y-6">
+								<div className="flex items-start">
+									<div className="flex-shrink-0">
+										<svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+										</svg>
+									</div>
+									<div className="ml-4">
+										<h4 className="text-lg font-semibold text-gray-900">Email</h4>
+										<p className="text-gray-600">sales@talentflow.com</p>
+									</div>
+								</div>
+
+								<div className="flex items-start">
+									<div className="flex-shrink-0">
+										<svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+										</svg>
+									</div>
+									<div className="ml-4">
+										<h4 className="text-lg font-semibold text-gray-900">Phone</h4>
+										<p className="text-gray-600">+1 (555) 123-4567</p>
+									</div>
+								</div>
+
+								<div className="flex items-start">
+									<div className="flex-shrink-0">
+										<svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+										</svg>
+									</div>
+									<div className="ml-4">
+										<h4 className="text-lg font-semibold text-gray-900">Business Hours</h4>
+										<p className="text-gray-600">Mon-Fri, 9 AM - 6 PM PST</p>
+									</div>
+								</div>
+							</div>
+
+							<div className="bg-blue-50 p-6 rounded-lg">
+								<h4 className="text-lg font-semibold text-blue-900 mb-2">Quick Start</h4>
+								<p className="text-blue-800 mb-4">
+									Ready to get started right away? Try our free plan or start a 14-day free trial.
+								</p>
+								<div className="flex flex-col sm:flex-row gap-3">
+									<Link
+										href="/signup?type=candidate"
+										className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors text-center"
+									>
+										Start as Job Seeker
+									</Link>
+									<Link
+										href="/signup?type=company"
+										className="px-4 py-2 bg-white text-blue-600 border border-blue-600 rounded-lg font-medium hover:bg-blue-50 transition-colors text-center"
+									>
+										Start as Company
+									</Link>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			{/* Final CTA Section */}
 			<section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
 				<div className="max-w-4xl mx-auto px-6 text-center">
 					<h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-						Ready to transform your hiring?
+						Ready to transform your hiring process?
 					</h2>
-					<p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
-						Join thousands of companies already using TalentFlow to build amazing teams.
+					<p className="text-xl text-blue-100 mb-8">
+						Join thousands of companies already using TalentFlow to find and hire the best talent.
 					</p>
 					<div className="flex flex-col sm:flex-row gap-4 justify-center">
 						<Link
-							href="/signup"
-							className="px-8 py-4 bg-white text-blue-600 text-lg font-semibold rounded-lg hover:bg-gray-50 transition-all duration-200 shadow-lg"
+							href="/signup?type=company"
+							className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors"
 						>
 							Start Free Trial
 						</Link>
 						<Link
-							href="/pricing"
-							className="px-8 py-4 bg-transparent text-white text-lg font-semibold rounded-lg border-2 border-white hover:bg-white hover:text-blue-600 transition-all duration-200"
+							href="/signup?type=candidate"
+							className="px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-600 transition-colors"
 						>
-							View Pricing
+							Find Jobs
 						</Link>
 					</div>
 				</div>
