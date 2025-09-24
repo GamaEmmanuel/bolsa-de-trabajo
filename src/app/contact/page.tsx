@@ -171,7 +171,7 @@ const ContactPage = () => {
 							<div>
 								<h3 className="text-2xl font-bold text-gray-900 mb-6">Get in Touch</h3>
 								<p className="text-gray-600 mb-8">
-									Our sales team is ready to help you find the perfect solution for your hiring needs. 
+									Our sales team is ready to help you find the perfect solution for your hiring needs.
 									We typically respond within 24 hours.
 								</p>
 							</div>

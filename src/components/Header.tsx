@@ -20,9 +20,6 @@ const Header = () => {
 						<Link href="/jobs" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
 							Jobs
 						</Link>
-						<Link href="/pricing" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
-							Pricing
-						</Link>
 						<Link href="/contact" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
 							Contact
 						</Link>
