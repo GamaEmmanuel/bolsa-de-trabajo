@@ -241,6 +241,119 @@ const LandingPage = () => {
 				</div>
 			</section>
 
+			{/* Pricing Preview Section */}
+			<section className="py-20 bg-white">
+				<div className="max-w-6xl mx-auto px-6">
+					<div className="text-center mb-16">
+						<h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+							Simple, transparent pricing
+						</h2>
+						<p className="text-xl text-gray-600 max-w-3xl mx-auto">
+							Start free and scale as you grow. No hidden fees, no surprises.
+						</p>
+					</div>
+
+					<div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+						{/* Free Plan */}
+						<div className="bg-white rounded-2xl p-8 border-2 border-gray-100 hover:border-blue-200 transition-all duration-300">
+							<div className="text-center mb-8">
+								<h3 className="text-2xl font-bold text-gray-900">Job Seeker</h3>
+								<div className="mt-4">
+									<span className="text-4xl font-bold text-gray-900">Free</span>
+								</div>
+								<p className="mt-2 text-gray-600">Perfect for individual job seekers</p>
+							</div>
+							<ul className="space-y-4 mb-8">
+								{['Unlimited job applications', 'Advanced search filters', 'Resume builder', 'Application tracking'].map((feature, index) => (
+									<li key={index} className="flex items-center">
+										<svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+											<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+										</svg>
+										<span className="text-gray-700">{feature}</span>
+									</li>
+								))}
+							</ul>
+							<Link
+								href="/signup?type=candidate"
+								className="block w-full text-center py-3 px-6 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors"
+							>
+								Get Started Free
+							</Link>
+						</div>
+
+						{/* Startup Plan */}
+						<div className="bg-white rounded-2xl p-8 border-2 border-blue-500 relative transform scale-105 shadow-lg">
+							<div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+								<span className="bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+									Most Popular
+								</span>
+							</div>
+							<div className="text-center mb-8">
+								<h3 className="text-2xl font-bold text-gray-900">Startup</h3>
+								<div className="mt-4">
+									<span className="text-4xl font-bold text-gray-900">$99</span>
+									<span className="text-gray-500">/month</span>
+								</div>
+								<p className="mt-2 text-gray-600">Perfect for growing companies</p>
+							</div>
+							<ul className="space-y-4 mb-8">
+								{['Up to 5 job postings', 'Basic ATS', 'Resume screening', 'Email notifications', 'Analytics dashboard'].map((feature, index) => (
+									<li key={index} className="flex items-center">
+										<svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+											<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+										</svg>
+										<span className="text-gray-700">{feature}</span>
+									</li>
+								))}
+							</ul>
+							<Link
+								href="/signup?type=company"
+								className="block w-full text-center py-3 px-6 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+							>
+								Start Free Trial
+							</Link>
+						</div>
+
+						{/* Professional Plan */}
+						<div className="bg-white rounded-2xl p-8 border-2 border-gray-100 hover:border-purple-200 transition-all duration-300">
+							<div className="text-center mb-8">
+								<h3 className="text-2xl font-bold text-gray-900">Professional</h3>
+								<div className="mt-4">
+									<span className="text-4xl font-bold text-gray-900">$299</span>
+									<span className="text-gray-500">/month</span>
+								</div>
+								<p className="mt-2 text-gray-600">For established companies</p>
+							</div>
+							<ul className="space-y-4 mb-8">
+								{['Up to 25 job postings', 'Advanced ATS', 'AI matching', 'Interview scheduling', 'Advanced analytics'].map((feature, index) => (
+									<li key={index} className="flex items-center">
+										<svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+											<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+										</svg>
+										<span className="text-gray-700">{feature}</span>
+									</li>
+								))}
+							</ul>
+							<Link
+								href="/signup?type=company"
+								className="block w-full text-center py-3 px-6 bg-gray-900 text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+							>
+								Start Free Trial
+							</Link>
+						</div>
+					</div>
+
+					<div className="text-center mt-12">
+						<Link
+							href="/pricing"
+							className="text-blue-600 hover:text-blue-700 font-semibold"
+						>
+							View all pricing plans →
+						</Link>
+					</div>
+				</div>
+			</section>
+
 			{/* CTA Section */}
 			<section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
 				<div className="max-w-4xl mx-auto px-6 text-center">
@@ -258,10 +371,10 @@ const LandingPage = () => {
 							Start Free Trial
 						</Link>
 						<Link
-							href="/demo"
+							href="/pricing"
 							className="px-8 py-4 bg-transparent text-white text-lg font-semibold rounded-lg border-2 border-white hover:bg-white hover:text-blue-600 transition-all duration-200"
 						>
-							Schedule Demo
+							View Pricing
 						</Link>
 					</div>
 				</div>
