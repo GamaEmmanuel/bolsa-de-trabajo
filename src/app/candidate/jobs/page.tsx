@@ -53,6 +53,8 @@ const JobsPage = () => {
 				querySnapshot.forEach(doc => {
 					jobsData.push({ jobId: doc.id, ...doc.data() } as JobPosting)
 				})
+				console.log('Fetched jobs:', jobsData.length, 'jobs found')
+				console.log('Jobs data:', jobsData)
 				setJobs(jobsData)
 				setLoading(false)
 			},

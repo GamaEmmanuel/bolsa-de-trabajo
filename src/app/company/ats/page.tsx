@@ -65,7 +65,9 @@ const ApplicantCard = ({ app }: { app: Application }) => {
 				isDragging ? 'cursor-grabbing' : 'hover:shadow-md'
 			} transition-shadow`}
 		>
-			<p className="font-semibold text-foreground">{app.candidateName}</p>
+			<p className="font-semibold text-foreground">
+				{app.candidateName || `Candidate ${app.candidateId.slice(0, 8)}`}
+			</p>
 			<p className="text-sm text-muted-foreground">
 				Applied on {app.applicationDate}
 			</p>
@@ -136,7 +138,9 @@ const AtsPage = () => {
 
 		return applicants.filter(app =>
 			app.jobId === selectedJobId &&
-			app.candidateName?.toLowerCase().includes(searchTerm.toLowerCase())
+			(app.candidateName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+			 app.candidateId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+			 searchTerm === '')
 		)
 	}, [applicants, searchTerm, selectedJobId])
 
@@ -159,13 +163,22 @@ const AtsPage = () => {
 			const unsubscribeJobs = onSnapshot(jobsQuery,
 				(querySnapshot) => {
 					const jobsData: JobPosting[] = []
+					console.log('Fetched job postings for user:', currentUser.uid)
 					querySnapshot.forEach(doc => {
-						jobsData.push({ jobId: doc.id, ...doc.data() } as JobPosting)
+						const jobData = { jobId: doc.id, ...doc.data() } as JobPosting
+						console.log('Job posting found:', {
+							jobId: jobData.jobId,
+							jobTitle: jobData.jobTitle,
+							companyId: jobData.companyId,
+							createdByUserId: jobData.createdByUserId
+						})
+						jobsData.push(jobData)
 					})
 					setJobPostings(jobsData)
 
 					// Fetch applications for these job postings
 					const jobIds = jobsData.map(job => job.jobId)
+					console.log('Job IDs to fetch applications for:', jobIds)
 					fetchApplicationsForJobs(jobIds)
 				},
 				(error) => {
@@ -189,20 +202,35 @@ const AtsPage = () => {
 					return
 				}
 
-				// Create a query for applications where jobId is in the list of job IDs
-				// and companyId matches the current user (for security rules compliance)
+				// Create a query for applications where companyId matches the current user
+				// We'll filter by jobId in the client-side code to avoid Firestore 'in' query limitations
 				const applicationsQuery = query(
 					collection(db, 'applications'),
-					where('companyId', '==', currentUser.uid),
-					where('jobId', 'in', jobIds.slice(0, 10)) // Firestore 'in' queries are limited to 10 items
+					where('companyId', '==', currentUser.uid)
 				)
 
 				unsubscribeApplications = onSnapshot(applicationsQuery,
 					(querySnapshot) => {
 						const applicationsData: Application[] = []
+						console.log('Fetched applications for company:', currentUser.uid)
+						console.log('Available job IDs:', jobIds)
 						querySnapshot.forEach(doc => {
-							applicationsData.push({ applicationId: doc.id, ...doc.data() } as Application)
+							const appData = { applicationId: doc.id, ...doc.data() } as Application
+							console.log('Application found:', {
+								applicationId: appData.applicationId,
+								jobId: appData.jobId,
+								companyId: appData.companyId,
+								candidateId: appData.candidateId
+							})
+							// Filter applications that belong to the current user's job postings
+							if (jobIds.includes(appData.jobId)) {
+								applicationsData.push(appData)
+								console.log('Application added to results:', appData.jobId)
+							} else {
+								console.log('Application filtered out - jobId not in user jobs:', appData.jobId)
+							}
 						})
+						console.log('Final applications count:', applicationsData.length)
 						setApplicants(applicationsData)
 						setLoading(false)
 					},

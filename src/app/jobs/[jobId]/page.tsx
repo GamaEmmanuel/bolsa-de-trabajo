@@ -94,11 +94,33 @@ const JobDetailPage = () => {
 
 		setApplying(true)
 		try {
+			// Get candidate name from their profile
+			let candidateName = 'Unknown Candidate'
+			try {
+				const candidateProfileQuery = query(
+					collection(db, 'candidateProfiles'),
+					where('userId', '==', user.uid)
+				)
+				const candidateSnapshot = await getDocs(candidateProfileQuery)
+				if (!candidateSnapshot.empty) {
+					const candidateData = candidateSnapshot.docs[0].data()
+					if (candidateData.firstName && candidateData.lastName) {
+						candidateName = `${candidateData.firstName} ${candidateData.lastName}`
+					} else if (candidateData.fullName) {
+						candidateName = candidateData.fullName
+					}
+				}
+			} catch (profileError) {
+				console.warn('Could not fetch candidate profile:', profileError)
+				// Continue with default name
+			}
+
 			// Create application in Firestore
 			const applicationRef = await addDoc(collection(db, 'applications'), {
 				candidateId: user.uid,
-				jobId: job.jobId,
+				jobId: jobId, // Use the jobId from URL params
 				companyId: job.companyId,
+				candidateName: candidateName,
 				applicationDate: new Date().toISOString(),
 				pipelineStatus: 'applied',
 				updatedAt: new Date().toISOString(),

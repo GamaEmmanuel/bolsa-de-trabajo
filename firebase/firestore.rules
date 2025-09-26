@@ -50,6 +50,34 @@ service cloud.firestore {
       allow delete: if isSignedIn() && resource.data.candidateId == request.auth.uid;
     }
 
+    // Job offers: companies can manage offers for their applications, candidates can read their own offers
+    match /offers/{offerId} {
+      allow read: if isSignedIn() && (
+        resource.data.candidateId == request.auth.uid ||
+        resource.data.companyId == request.auth.uid
+      );
+      allow create: if isSignedIn() && request.resource.data.companyId == request.auth.uid;
+      allow update: if isSignedIn() && (
+        resource.data.candidateId == request.auth.uid ||
+        resource.data.companyId == request.auth.uid
+      );
+      allow delete: if isSignedIn() && resource.data.companyId == request.auth.uid;
+    }
+
+    // Interviews: companies can manage interviews for their applications, candidates can read their own interviews
+    match /interviews/{interviewId} {
+      allow read: if isSignedIn() && (
+        resource.data.candidateId == request.auth.uid ||
+        resource.data.companyId == request.auth.uid
+      );
+      allow create: if isSignedIn() && request.resource.data.companyId == request.auth.uid;
+      allow update: if isSignedIn() && (
+        resource.data.candidateId == request.auth.uid ||
+        resource.data.companyId == request.auth.uid
+      );
+      allow delete: if isSignedIn() && resource.data.companyId == request.auth.uid;
+    }
+
     // Candidate profiles: candidates can manage their own profiles, companies can read all profiles for talent search
     match /candidateProfiles/{profileId} {
       allow read: if isSignedIn(); // Companies and candidates can read profiles for talent search

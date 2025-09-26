@@ -85,6 +85,8 @@ export interface Application {
 	applicationDate: string
 	pipelineStatus: PipelineStatus
 	updatedAt?: string
+	candidateName?: string
+	companyId?: UUID
 }
 
 export interface Purchase {

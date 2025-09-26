@@ -87,6 +87,11 @@ const CompanyLayout = ({ children }: { children: React.ReactNode }) => {
 			href: '/company/credits',
 			label: 'Pricing',
 			isActive: pathname === '/company/credits' || pathname === '/company/checkout'
+		},
+		{
+			href: '/company/settings',
+			label: 'Settings',
+			isActive: pathname === '/company/settings'
 		}
 	]
 
@@ -108,12 +113,12 @@ const CompanyLayout = ({ children }: { children: React.ReactNode }) => {
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="flex justify-between items-center py-4">
 						{/* Logo/Brand */}
-						<div className="flex items-center">
+						<Link href="/company/dashboard" className="flex items-center">
 							<div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg mr-3 flex items-center justify-center">
 								<span className="text-white font-bold text-sm">T</span>
 							</div>
 							<span className="text-xl font-bold text-foreground">TalentFlow</span>
-						</div>
+						</Link>
 
 						{/* Navigation */}
 						<nav className="hidden md:flex items-center space-x-8">

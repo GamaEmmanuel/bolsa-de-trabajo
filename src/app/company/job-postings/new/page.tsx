@@ -31,7 +31,7 @@ const NewJobPostingPage = () => {
 				jobTitle,
 				jobDescription,
 				tier: selectedTier,
-				status: 'pending_approval' as JobStatus,
+				status: 'published' as JobStatus,
 				createdByUserId: auth.currentUser.uid,
 				companyId: companyId,
 				postedDate: new Date().toISOString().split('T')[0], // YYYY-MM-DD

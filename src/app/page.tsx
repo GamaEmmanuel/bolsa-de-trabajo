@@ -11,34 +11,30 @@ const LandingPage = () => {
 				<div className="max-w-6xl mx-auto px-6">
 					<div className="flex justify-between items-center py-4">
 						<div className="flex items-center">
-							<div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg mr-3 flex items-center justify-center">
-								<span className="text-white font-bold text-sm">T</span>
+							<div className="w-10 h-10 bg-orange-500 rounded-full mr-3 flex items-center justify-center">
+								<svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+									<path d="M13 2L3 14h6v8l10-12h-6V2z"/>
+								</svg>
 							</div>
+							<div className="flex flex-col">
 							<span className="text-xl font-bold text-gray-900">TalentFlow</span>
+								<span className="text-xs text-orange-500 font-semibold uppercase tracking-wide">HIRE, FASTER</span>
+							</div>
 						</div>
 						<div className="hidden md:flex items-center space-x-8">
-							<Link href="/platform" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
-								Platform
-							</Link>
-							<Link href="/pricing" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
-								Pricing
-							</Link>
-							<Link href="/resources" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
-								Resources
-							</Link>
 						</div>
 						<div className="flex items-center space-x-3">
 							<Link
 								href="/signin"
 								className="text-gray-700 hover:text-gray-900 font-medium px-4 py-2 transition-colors"
 							>
-								Sign In
+								Iniciar Sesión
 							</Link>
 							<Link
 								href="/signup"
-								className="px-5 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+								className="px-5 py-2.5 bg-orange-600 text-white font-medium rounded-lg hover:bg-orange-700 transition-colors"
 							>
-								Get Started
+								Comenzar
 							</Link>
 						</div>
 					</div>
@@ -50,24 +46,24 @@ const LandingPage = () => {
 				<div className="max-w-6xl mx-auto px-6 text-center">
 					<div className="max-w-4xl mx-auto">
 						<h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight mb-6">
-							Modern HR platform for
-							<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600"> smarter hiring</span>
+							Plataforma moderna de RRHH para
+							<span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600"> contrataciones más inteligentes</span>
 						</h1>
 						<p className="text-xl text-gray-600 leading-relaxed mb-10 max-w-2xl mx-auto">
-							Streamline your entire hiring process with AI-powered tools. From job posting to onboarding, make better hiring decisions faster.
+							Optimiza todo tu proceso de contratación con herramientas impulsadas por IA. Desde la publicación de empleos hasta la incorporación, toma mejores decisiones de contratación más rápido.
 						</p>
 						<div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
 							<Link
 								href="/signup"
-								className="px-8 py-4 bg-blue-600 text-white text-lg font-semibold rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+								className="px-8 py-4 bg-orange-600 text-white text-lg font-semibold rounded-lg hover:bg-orange-700 transition-all duration-200 shadow-lg hover:shadow-xl"
 							>
-								Start Free Trial
+								Iniciar Prueba Gratuita
 							</Link>
 							<Link
 								href="/demo"
 								className="px-8 py-4 bg-white text-gray-900 text-lg font-semibold rounded-lg border-2 border-gray-200 hover:border-gray-300 transition-all duration-200"
 							>
-								Watch Demo
+								Ver Demo
 							</Link>
 						</div>
 					</div>
@@ -75,31 +71,31 @@ const LandingPage = () => {
 					{/* Features Preview */}
 					<div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto mt-20">
 						<div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-							<div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
-								<svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+								<svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
 								</svg>
 							</div>
-							<h3 className="text-xl font-semibold text-gray-900 mb-3">AI-Powered Matching</h3>
-							<p className="text-gray-600">Automatically match candidates to roles using advanced AI algorithms and skills analysis.</p>
+							<h3 className="text-xl font-semibold text-gray-900 mb-3">Emparejamiento con IA</h3>
+							<p className="text-gray-600">Empareja automáticamente candidatos con roles usando algoritmos avanzados de IA y análisis de habilidades.</p>
 						</div>
 						<div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-							<div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
-								<svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+								<svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
 								</svg>
 							</div>
-							<h3 className="text-xl font-semibold text-gray-900 mb-3">Streamlined Workflow</h3>
-							<p className="text-gray-600">Manage your entire hiring pipeline from one dashboard with automated workflows.</p>
+							<h3 className="text-xl font-semibold text-gray-900 mb-3">Flujo de Trabajo Optimizado</h3>
+							<p className="text-gray-600">Gestiona todo tu pipeline de contratación desde un panel con flujos de trabajo automatizados.</p>
 						</div>
 						<div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-							<div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
-								<svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+								<svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
 								</svg>
 							</div>
-							<h3 className="text-xl font-semibold text-gray-900 mb-3">Team Collaboration</h3>
-							<p className="text-gray-600">Enable seamless collaboration between hiring managers, recruiters, and team members.</p>
+							<h3 className="text-xl font-semibold text-gray-900 mb-3">Colaboración en Equipo</h3>
+							<p className="text-gray-600">Habilita la colaboración perfecta entre gerentes de contratación, reclutadores y miembros del equipo.</p>
 						</div>
 					</div>
 				</div>
@@ -110,54 +106,54 @@ const LandingPage = () => {
 				<div className="max-w-6xl mx-auto px-6">
 					<div className="text-center mb-16">
 						<h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-							Why choose TalentFlow?
+							¿Por qué elegir TalentFlow?
 						</h2>
 						<p className="text-xl text-gray-600 max-w-3xl mx-auto">
-							Built for modern teams who want to hire smarter, not harder
+							Construido para equipos modernos que quieren contratar de manera más inteligente, no más difícil
 						</p>
 					</div>
 
 					<div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-20">
 						<div>
 							<h3 className="text-3xl font-bold text-gray-900 mb-6">
-								Reduce time-to-hire by 60%
+								Reduce el tiempo de contratación en un 60%
 							</h3>
 							<p className="text-lg text-gray-600 mb-8 leading-relaxed">
-								Our AI-powered platform automates repetitive tasks, screens candidates intelligently, and helps you identify top talent faster than traditional methods.
+								Nuestra plataforma impulsada por IA automatiza tareas repetitivas, evalúa candidatos de manera inteligente y te ayuda a identificar el mejor talento más rápido que los métodos tradicionales.
 							</p>
 							<div className="space-y-4">
 								<div className="flex items-center">
-									<div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
-									<span className="text-gray-700">Automated candidate screening</span>
+									<div className="w-2 h-2 bg-orange-600 rounded-full mr-3"></div>
+									<span className="text-gray-700">Evaluación automatizada de candidatos</span>
 								</div>
 								<div className="flex items-center">
-									<div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
-									<span className="text-gray-700">Smart interview scheduling</span>
+									<div className="w-2 h-2 bg-orange-600 rounded-full mr-3"></div>
+									<span className="text-gray-700">Programación inteligente de entrevistas</span>
 								</div>
 								<div className="flex items-center">
-									<div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
-									<span className="text-gray-700">Real-time collaboration tools</span>
+									<div className="w-2 h-2 bg-orange-600 rounded-full mr-3"></div>
+									<span className="text-gray-700">Herramientas de colaboración en tiempo real</span>
 								</div>
 							</div>
 						</div>
-						<div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-8 border border-gray-100">
+						<div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-8 border border-gray-100">
 							<div className="bg-white rounded-xl p-6 shadow-sm">
 								<div className="flex items-center justify-between mb-4">
-									<span className="text-sm font-medium text-gray-500">HIRING PIPELINE</span>
-									<span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">Live</span>
+									<span className="text-sm font-medium text-gray-500">PIPELINE DE CONTRATACIÓN</span>
+									<span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">En Vivo</span>
 								</div>
 								<div className="space-y-3">
 									<div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-										<span className="font-medium text-gray-900">Applications</span>
+										<span className="font-medium text-gray-900">Aplicaciones</span>
 										<span className="text-2xl font-bold text-gray-900">127</span>
 									</div>
-									<div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-										<span className="font-medium text-blue-900">Screening</span>
-										<span className="text-2xl font-bold text-blue-600">34</span>
+									<div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
+										<span className="font-medium text-orange-900">Evaluación</span>
+										<span className="text-2xl font-bold text-orange-600">34</span>
 									</div>
-									<div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-										<span className="font-medium text-purple-900">Interviews</span>
-										<span className="text-2xl font-bold text-purple-600">12</span>
+									<div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
+										<span className="font-medium text-orange-900">Entrevistas</span>
+										<span className="text-2xl font-bold text-orange-600">12</span>
 									</div>
 								</div>
 							</div>
@@ -165,20 +161,20 @@ const LandingPage = () => {
 					</div>
 
 					<div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-						<div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-2xl p-8 border border-gray-100 lg:order-2">
+						<div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-8 border border-gray-100 lg:order-2">
 							<div className="bg-white rounded-xl p-6 shadow-sm">
 								<div className="flex items-center mb-4">
-									<div className="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-400 rounded-full mr-3"></div>
+									<div className="w-8 h-8 bg-gradient-to-r from-orange-400 to-red-400 rounded-full mr-3"></div>
 									<div>
 										<div className="font-semibold text-gray-900">Sarah Chen</div>
-										<div className="text-sm text-gray-600">Senior Developer</div>
+										<div className="text-sm text-gray-600">Desarrolladora Senior</div>
 									</div>
 									<div className="ml-auto">
-										<span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">95% Match</span>
+										<span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">95% Coincidencia</span>
 									</div>
 								</div>
 								<div className="text-sm text-gray-600 mb-3">
-									5+ years React, Node.js • Previous: Google, Airbnb
+									5+ años React, Node.js • Anterior: Google, Airbnb
 								</div>
 								<div className="flex space-x-2">
 									<span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">React</span>
@@ -189,23 +185,23 @@ const LandingPage = () => {
 						</div>
 						<div className="lg:order-1">
 							<h3 className="text-3xl font-bold text-gray-900 mb-6">
-								Find the perfect match every time
+								Encuentra la coincidencia perfecta cada vez
 							</h3>
 							<p className="text-lg text-gray-600 mb-8 leading-relaxed">
-								Advanced AI algorithms analyze skills, experience, and cultural fit to surface candidates who aren&apos;t just qualified—they&apos;re perfect for your team.
+								Los algoritmos avanzados de IA analizan habilidades, experiencia y ajuste cultural para encontrar candidatos que no solo están calificados, sino que son perfectos para tu equipo.
 							</p>
 							<div className="space-y-4">
 								<div className="flex items-center">
-									<div className="w-2 h-2 bg-green-600 rounded-full mr-3"></div>
-									<span className="text-gray-700">Skills-based matching</span>
+									<div className="w-2 h-2 bg-orange-600 rounded-full mr-3"></div>
+									<span className="text-gray-700">Emparejamiento basado en habilidades</span>
 								</div>
 								<div className="flex items-center">
-									<div className="w-2 h-2 bg-green-600 rounded-full mr-3"></div>
-									<span className="text-gray-700">Cultural fit assessment</span>
+									<div className="w-2 h-2 bg-orange-600 rounded-full mr-3"></div>
+									<span className="text-gray-700">Evaluación de ajuste cultural</span>
 								</div>
 								<div className="flex items-center">
-									<div className="w-2 h-2 bg-green-600 rounded-full mr-3"></div>
-									<span className="text-gray-700">Predictive success scoring</span>
+									<div className="w-2 h-2 bg-orange-600 rounded-full mr-3"></div>
+									<span className="text-gray-700">Puntuación predictiva de éxito</span>
 								</div>
 							</div>
 						</div>
@@ -216,7 +212,7 @@ const LandingPage = () => {
 			{/* Social Proof */}
 			<section className="py-16 bg-gray-50">
 				<div className="max-w-6xl mx-auto px-6 text-center">
-					<h2 className="text-2xl font-bold text-gray-900 mb-12">Trusted by 500+ companies worldwide</h2>
+					<h2 className="text-2xl font-bold text-gray-900 mb-12">Confiado por más de 500 empresas en todo el mundo</h2>
 					<div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center opacity-60">
 						{['TechCorp', 'StartupXYZ', 'GlobalInc', 'InnovateCo'].map((company, index) => (
 							<div key={index} className="text-xl font-bold text-gray-400">
@@ -233,10 +229,10 @@ const LandingPage = () => {
 							))}
 						</div>
 						<blockquote className="text-lg text-gray-700 mb-4">
-							&ldquo;TalentFlow reduced our hiring time from 6 weeks to 2 weeks. The AI matching is incredibly accurate and the team collaboration features are game-changing.&rdquo;
+							&ldquo;TalentFlow redujo nuestro tiempo de contratación de 6 semanas a 2 semanas. El emparejamiento con IA es increíblemente preciso y las funciones de colaboración en equipo son revolucionarias.&rdquo;
 						</blockquote>
 						<div className="font-semibold text-gray-900">Maria Rodriguez</div>
-						<div className="text-gray-600">Head of Talent, TechCorp</div>
+						<div className="text-gray-600">Jefa de Talento, TechCorp</div>
 					</div>
 				</div>
 			</section>
@@ -246,10 +242,10 @@ const LandingPage = () => {
 				<div className="max-w-6xl mx-auto px-6">
 					<div className="text-center mb-16">
 						<h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-							Simple, transparent pricing
+							Precios simples y transparentes
 						</h2>
 						<p className="text-xl text-gray-600 max-w-3xl mx-auto">
-							Start free and scale as you grow. No hidden fees, no surprises.
+							Comienza gratis y escala mientras creces. Sin tarifas ocultas, sin sorpresas.
 						</p>
 					</div>
 
@@ -257,14 +253,14 @@ const LandingPage = () => {
 						{/* Free Plan */}
 						<div className="bg-white rounded-2xl p-8 border-2 border-gray-100 hover:border-blue-200 transition-all duration-300">
 							<div className="text-center mb-8">
-								<h3 className="text-2xl font-bold text-gray-900">Job Seeker</h3>
+								<h3 className="text-2xl font-bold text-gray-900">Buscador de Empleo</h3>
 								<div className="mt-4">
-									<span className="text-4xl font-bold text-gray-900">Free</span>
+									<span className="text-4xl font-bold text-gray-900">Gratis</span>
 								</div>
-								<p className="mt-2 text-gray-600">Perfect for individual job seekers</p>
+								<p className="mt-2 text-gray-600">Perfecto para buscadores de empleo individuales</p>
 							</div>
 							<ul className="space-y-4 mb-8">
-								{['Unlimited job applications', 'Advanced search filters', 'Resume builder', 'Application tracking'].map((feature, index) => (
+								{['Aplicaciones ilimitadas de empleo', 'Filtros de búsqueda avanzados', 'Constructor de currículum', 'Seguimiento de aplicaciones'].map((feature, index) => (
 									<li key={index} className="flex items-center">
 										<svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
 											<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -275,17 +271,17 @@ const LandingPage = () => {
 							</ul>
 							<Link
 								href="/signup?type=candidate"
-								className="block w-full text-center py-3 px-6 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors"
+								className="block w-full text-center py-3 px-6 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition-colors"
 							>
-								Get Started Free
+								Comenzar Gratis
 							</Link>
 						</div>
 
 						{/* Startup Plan */}
-						<div className="bg-white rounded-2xl p-8 border-2 border-blue-500 relative transform scale-105 shadow-lg">
+						<div className="bg-white rounded-2xl p-8 border-2 border-orange-500 relative transform scale-105 shadow-lg">
 							<div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-								<span className="bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-medium">
-									Most Popular
+								<span className="bg-orange-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+									Más Popular
 								</span>
 							</div>
 							<div className="text-center mb-8">
@@ -294,10 +290,10 @@ const LandingPage = () => {
 									<span className="text-4xl font-bold text-gray-900">$99</span>
 									<span className="text-gray-500">/month</span>
 								</div>
-								<p className="mt-2 text-gray-600">Perfect for growing companies</p>
+								<p className="mt-2 text-gray-600">Perfecto para empresas en crecimiento</p>
 							</div>
 							<ul className="space-y-4 mb-8">
-								{['Up to 5 job postings', 'Basic ATS', 'Resume screening', 'Email notifications', 'Analytics dashboard'].map((feature, index) => (
+								{['Hasta 5 publicaciones de empleo', 'ATS básico', 'Evaluación de currículum', 'Notificaciones por email', 'Panel de análisis'].map((feature, index) => (
 									<li key={index} className="flex items-center">
 										<svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
 											<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -308,24 +304,24 @@ const LandingPage = () => {
 							</ul>
 							<Link
 								href="/signup?type=company"
-								className="block w-full text-center py-3 px-6 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+								className="block w-full text-center py-3 px-6 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition-colors"
 							>
-								Start Free Trial
+								Iniciar Prueba Gratuita
 							</Link>
 						</div>
 
 						{/* Professional Plan */}
-						<div className="bg-white rounded-2xl p-8 border-2 border-gray-100 hover:border-purple-200 transition-all duration-300">
+						<div className="bg-white rounded-2xl p-8 border-2 border-gray-100 hover:border-orange-200 transition-all duration-300">
 							<div className="text-center mb-8">
 								<h3 className="text-2xl font-bold text-gray-900">Professional</h3>
 								<div className="mt-4">
 									<span className="text-4xl font-bold text-gray-900">$299</span>
 									<span className="text-gray-500">/month</span>
 								</div>
-								<p className="mt-2 text-gray-600">For established companies</p>
+								<p className="mt-2 text-gray-600">Para empresas establecidas</p>
 							</div>
 							<ul className="space-y-4 mb-8">
-								{['Up to 25 job postings', 'Advanced ATS', 'AI matching', 'Interview scheduling', 'Advanced analytics'].map((feature, index) => (
+								{['Hasta 25 publicaciones de empleo', 'ATS avanzado', 'Emparejamiento con IA', 'Programación de entrevistas', 'Análisis avanzados'].map((feature, index) => (
 									<li key={index} className="flex items-center">
 										<svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
 											<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -338,44 +334,44 @@ const LandingPage = () => {
 								href="/signup?type=company"
 								className="block w-full text-center py-3 px-6 bg-gray-900 text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors"
 							>
-								Start Free Trial
+								Iniciar Prueba Gratuita
 							</Link>
 						</div>
 					</div>
 
 					<div className="text-center mt-12">
-						<Link
-							href="/pricing"
-							className="text-blue-600 hover:text-blue-700 font-semibold"
-						>
-							View all pricing plans →
-						</Link>
+							<Link
+								href="/pricing"
+								className="text-orange-600 hover:text-orange-700 font-semibold"
+							>
+								Ver todos los planes de precios →
+							</Link>
 					</div>
 				</div>
 			</section>
 
 
 			{/* Final CTA Section */}
-			<section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+			<section className="py-20 bg-gradient-to-r from-orange-600 to-red-600">
 				<div className="max-w-4xl mx-auto px-6 text-center">
 					<h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-						Ready to transform your hiring process?
+						¿Listo para transformar tu proceso de contratación?
 					</h2>
-					<p className="text-xl text-blue-100 mb-8">
-						Join thousands of companies already using TalentFlow to find and hire the best talent.
+					<p className="text-xl text-orange-100 mb-8">
+						Únete a miles de empresas que ya usan TalentFlow para encontrar y contratar el mejor talento.
 					</p>
 					<div className="flex flex-col sm:flex-row gap-4 justify-center">
 						<Link
 							href="/signup?type=company"
-							className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors"
+							className="px-8 py-4 bg-white text-orange-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors"
 						>
-							Start Free Trial
+							Iniciar Prueba Gratuita
 						</Link>
 						<Link
 							href="/signup?type=candidate"
-							className="px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-600 transition-colors"
+							className="px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-orange-600 transition-colors"
 						>
-							Find Jobs
+							Buscar Empleos
 						</Link>
 					</div>
 				</div>
@@ -387,13 +383,18 @@ const LandingPage = () => {
 					<div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
 						<div className="md:col-span-1">
 							<div className="flex items-center mb-4">
-								<div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg mr-3 flex items-center justify-center">
-									<span className="text-white font-bold text-sm">T</span>
+								<div className="w-10 h-10 bg-orange-500 rounded-full mr-3 flex items-center justify-center">
+									<svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+										<path d="M13 2L3 14h6v8l10-12h-6V2z"/>
+									</svg>
 								</div>
-								<span className="text-xl font-bold">TalentFlow</span>
+								<div className="flex flex-col">
+									<span className="text-xl font-bold text-white">TalentFlow</span>
+									<span className="text-xs text-orange-400 font-semibold uppercase tracking-wide">HIRE, FASTER</span>
+								</div>
 							</div>
 							<p className="text-gray-400 mb-4">
-								Modern HR platform for smarter hiring decisions.
+								Plataforma moderna de RRHH para decisiones de contratación más inteligentes.
 							</p>
 							<div className="flex space-x-4">
 								<Link href="#" className="text-gray-400 hover:text-white transition-colors">
@@ -409,42 +410,42 @@ const LandingPage = () => {
 							</div>
 						</div>
 						<div>
-							<h4 className="font-semibold text-white mb-4">Product</h4>
+							<h4 className="font-semibold text-white mb-4">Producto</h4>
 							<ul className="space-y-2 text-gray-400 text-sm">
-								<li><Link href="/platform" className="hover:text-white transition-colors">Platform</Link></li>
-								<li><Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
-								<li><Link href="/integrations" className="hover:text-white transition-colors">Integrations</Link></li>
-								<li><Link href="/security" className="hover:text-white transition-colors">Security</Link></li>
+								<li><Link href="/platform" className="hover:text-white transition-colors">Plataforma</Link></li>
+								<li><Link href="/pricing" className="hover:text-white transition-colors">Precios</Link></li>
+								<li><Link href="/integrations" className="hover:text-white transition-colors">Integraciones</Link></li>
+								<li><Link href="/security" className="hover:text-white transition-colors">Seguridad</Link></li>
 							</ul>
 						</div>
 						<div>
-							<h4 className="font-semibold text-white mb-4">Company</h4>
+							<h4 className="font-semibold text-white mb-4">Empresa</h4>
 							<ul className="space-y-2 text-gray-400 text-sm">
-								<li><Link href="/about" className="hover:text-white transition-colors">About</Link></li>
-								<li><Link href="/careers" className="hover:text-white transition-colors">Careers</Link></li>
+								<li><Link href="/about" className="hover:text-white transition-colors">Acerca de</Link></li>
+								<li><Link href="/careers" className="hover:text-white transition-colors">Carreras</Link></li>
 								<li><Link href="/blog" className="hover:text-white transition-colors">Blog</Link></li>
-								<li><Link href="/contact" className="hover:text-white transition-colors">Contact</Link></li>
+								<li><Link href="/contact" className="hover:text-white transition-colors">Contacto</Link></li>
 							</ul>
 						</div>
 						<div>
-							<h4 className="font-semibold text-white mb-4">Support</h4>
+							<h4 className="font-semibold text-white mb-4">Soporte</h4>
 							<ul className="space-y-2 text-gray-400 text-sm">
-								<li><Link href="/help" className="hover:text-white transition-colors">Help Center</Link></li>
-								<li><Link href="/docs" className="hover:text-white transition-colors">Documentation</Link></li>
-								<li><Link href="/status" className="hover:text-white transition-colors">Status</Link></li>
-								<li><Link href="/support" className="hover:text-white transition-colors">Contact Support</Link></li>
+								<li><Link href="/help" className="hover:text-white transition-colors">Centro de Ayuda</Link></li>
+								<li><Link href="/docs" className="hover:text-white transition-colors">Documentación</Link></li>
+								<li><Link href="/status" className="hover:text-white transition-colors">Estado</Link></li>
+								<li><Link href="/support" className="hover:text-white transition-colors">Contactar Soporte</Link></li>
 							</ul>
 						</div>
 					</div>
 					<div className="border-t border-gray-800 pt-8">
 						<div className="flex flex-col md:flex-row justify-between items-center">
 							<p className="text-gray-400 text-sm mb-4 md:mb-0">
-								© 2024 TalentFlow. All rights reserved.
+								© 2024 TalentFlow. Todos los derechos reservados.
 							</p>
 							<div className="flex space-x-6 text-sm text-gray-400">
-								<Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
-								<Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
-								<Link href="/cookies" className="hover:text-white transition-colors">Cookie Policy</Link>
+								<Link href="/privacy" className="hover:text-white transition-colors">Política de Privacidad</Link>
+								<Link href="/terms" className="hover:text-white transition-colors">Términos de Servicio</Link>
+								<Link href="/cookies" className="hover:text-white transition-colors">Política de Cookies</Link>
 							</div>
 						</div>
 					</div>
