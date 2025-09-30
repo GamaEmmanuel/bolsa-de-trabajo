@@ -14,6 +14,9 @@ import {
 	PieChart,
 	Pie,
 	Cell,
+	LineChart,
+	Line,
+	CartesianGrid,
 } from 'recharts'
 
 const COLORS = ['#f97316', '#ef4444'] // Orange theme colors
@@ -49,6 +52,45 @@ const CompanyDashboard = () => {
 	const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null)
 	const [isLoading, setIsLoading] = useState(true)
 	const [error, setError] = useState<string | null>(null)
+	const [selectedDemographic, setSelectedDemographic] = useState<string>('gender')
+
+	// Mock demographic data - in a real app, this would come from candidate profiles
+	const demographicData = {
+		gender: [
+			{ name: 'Male', value: 48, count: 24 },
+			{ name: 'Female', value: 52, count: 26 }
+		],
+		age: [
+			{ name: '18-22', value: 8, count: 4 },
+			{ name: '23-27', value: 24, count: 12 },
+			{ name: '28-32', value: 32, count: 16 },
+			{ name: '33-37', value: 20, count: 10 },
+			{ name: '38-42', value: 12, count: 6 },
+			{ name: '43+', value: 4, count: 2 }
+		],
+		education: [
+			{ name: 'High School', value: 12, count: 6 },
+			{ name: 'Bachelor\'s', value: 56, count: 28 },
+			{ name: 'Master\'s', value: 28, count: 14 },
+			{ name: 'PhD', value: 4, count: 2 }
+		],
+		experience: [
+			{ name: '0-2 years', value: 20, count: 10 },
+			{ name: '3-5 years', value: 36, count: 18 },
+			{ name: '6-10 years', value: 32, count: 16 },
+			{ name: '10+ years', value: 12, count: 6 }
+		],
+		location: [
+			{ name: 'Mexico City', value: 40, count: 20 },
+			{ name: 'Guadalajara', value: 24, count: 12 },
+			{ name: 'Monterrey', value: 20, count: 10 },
+			{ name: 'Remote', value: 16, count: 8 }
+		]
+	}
+
+	const getCurrentData = () => {
+		return demographicData[selectedDemographic as keyof typeof demographicData] || []
+	}
 
 	useEffect(() => {
 		const fetchAnalytics = async () => {
@@ -186,70 +228,98 @@ const CompanyDashboard = () => {
 					</ResponsiveContainer>
 				</div>
 
-				{/* Time to Hire */}
+				{/* Total Applications Over Time */}
 				<div className="bg-card p-6 rounded-lg border border-border">
 					<h2 className="text-xl font-semibold mb-4 text-foreground">
-						Average Time to Hire (Days)
+						Total Applications Over Time
 					</h2>
 					<ResponsiveContainer width="100%" height={300}>
-						<BarChart data={analyticsData.timeToHireData}>
+						<LineChart data={analyticsData.applicantsTimeSeriesData}>
+							<CartesianGrid strokeDasharray="3 3" />
 							<XAxis dataKey="name" />
 							<YAxis />
 							<Tooltip />
-							<Bar dataKey="days" fill="#f97316" />
-						</BarChart>
+							<Line
+								type="monotone"
+								dataKey="applicants"
+								stroke="#f97316"
+								strokeWidth={3}
+								dot={{ fill: '#f97316', strokeWidth: 2, r: 4 }}
+								activeDot={{ r: 6, stroke: '#f97316', strokeWidth: 2 }}
+							/>
+						</LineChart>
 					</ResponsiveContainer>
 				</div>
 
-				{/* Offer Acceptance Rate */}
+				{/* AI Interviews */}
 				<div className="bg-card p-6 rounded-lg border border-border">
 					<h2 className="text-xl font-semibold mb-4 text-foreground">
-						Offer Acceptance Rate
+						AI Interviews
 					</h2>
-					<ResponsiveContainer width="100%" height={300}>
-						<PieChart>
-							<Pie
-								data={analyticsData.acceptanceRateData}
-								cx="50%"
-								cy="50%"
-								labelLine={false}
-								label={renderCustomizedLabel}
-								outerRadius={100}
-								fill="#f97316"
-								dataKey="value"
-							>
-								{analyticsData.acceptanceRateData.map((entry, index) => (
-									<Cell
-										key={`cell-${index}`}
-										fill={COLORS[index % COLORS.length]}
-									/>
-								))}
-							</Pie>
-							<Tooltip />
-						</PieChart>
-					</ResponsiveContainer>
+					<div className="flex items-center justify-center h-[300px]">
+						<div className="text-center">
+							<div className="w-16 h-16 mx-auto mb-4 bg-orange-100 rounded-full flex items-center justify-center">
+								<svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+								</svg>
+							</div>
+							<h3 className="text-lg font-medium text-foreground mb-2">AI Interviews</h3>
+							<p className="text-muted-foreground text-sm">
+								AI-powered interview analytics coming soon
+							</p>
+						</div>
+					</div>
 				</div>
 
-				{/* Quick Actions */}
+				{/* Applicant Demographics */}
 				<div className="bg-card p-6 rounded-lg border border-border">
-					<h2 className="text-xl font-semibold mb-4 text-foreground">Quick Actions</h2>
-					<div className="space-y-3">
-						<button className="w-full text-left p-3 rounded-lg bg-orange-50 hover:bg-orange-100 transition-colors">
-							<div className="font-medium text-foreground">Create New Job Posting</div>
-							<div className="text-sm text-muted-foreground">Post a new position to attract candidates</div>
-						</button>
-						<button className="w-full text-left p-3 rounded-lg bg-orange-50 hover:bg-orange-100 transition-colors">
-							<div className="font-medium text-foreground">Review Applications</div>
-							<div className="text-sm text-muted-foreground">Check new candidate applications</div>
-						</button>
-						<button className="w-full text-left p-3 rounded-lg bg-orange-50 hover:bg-orange-100 transition-colors">
-							<div className="font-medium text-foreground">Schedule Interviews</div>
-							<div className="text-sm text-muted-foreground">Coordinate upcoming interviews</div>
-						</button>
-						<a href="/company/settings" className="block w-full text-left p-3 rounded-lg bg-orange-50 hover:bg-orange-100 transition-colors">
-							<div className="font-medium text-foreground">Company Settings</div>
-							<div className="text-sm text-muted-foreground">Manage your company information and preferences</div>
-						</a>
+					<div className="flex justify-between items-center mb-4">
+						<h2 className="text-xl font-semibold text-foreground">Applicant Demographics</h2>
+						<select
+							value={selectedDemographic}
+							onChange={(e) => setSelectedDemographic(e.target.value)}
+							className="px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-orange-500"
+						>
+							<option value="gender">Gender</option>
+							<option value="age">Age</option>
+							<option value="education">Education</option>
+							<option value="experience">Experience</option>
+							<option value="location">Location</option>
+						</select>
+					</div>
+					<ResponsiveContainer width="100%" height={300}>
+						{selectedDemographic === 'gender' ? (
+							<PieChart>
+								<Pie
+									data={getCurrentData()}
+									cx="50%"
+									cy="50%"
+									labelLine={false}
+									label={renderCustomizedLabel}
+									outerRadius={100}
+									fill="#f97316"
+									dataKey="value"
+								>
+									{getCurrentData().map((entry, index) => (
+										<Cell
+											key={`cell-${index}`}
+											fill={COLORS[index % COLORS.length]}
+										/>
+									))}
+								</Pie>
+								<Tooltip formatter={(value, name, props) => [`${value}%`, name]} />
+							</PieChart>
+						) : (
+							<BarChart data={getCurrentData()}>
+								<XAxis dataKey="name" />
+								<YAxis />
+								<Tooltip formatter={(value, name, props) => [`${value}%`, name]} />
+								<Bar dataKey="value" fill="#f97316" />
+							</BarChart>
+						)}
+					</ResponsiveContainer>
+					<div className="mt-4 text-center text-sm text-muted-foreground">
+						Total applicants: {getCurrentData().reduce((sum, item) => sum + item.count, 0)}
 					</div>
 				</div>
 			</div>

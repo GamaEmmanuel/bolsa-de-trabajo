@@ -46,6 +46,7 @@ export interface InterviewData {
 export interface AnalyticsData {
   funnelData: Array<{ name: string; value: number }>
   timeToHireData: Array<{ name: string; days: number }>
+  applicantsTimeSeriesData: Array<{ name: string; applicants: number }>
   acceptanceRateData: Array<{ name: string; value: number }>
   totalApplications: number
   activeJobs: number
@@ -137,6 +138,70 @@ export async function getRecruitmentAnalytics(companyId: string): Promise<Analyt
       return { name: month, days: Math.round(avgDays) }
     })
 
+    // Calculate applicants time series data (last 6 months)
+    console.log('Total applications found:', applications.length)
+    console.log('Six months ago date:', sixMonthsAgo)
+
+    const monthlyApplicants = applications
+      .filter(app => {
+        const appDate = new Date(app.applicationDate)
+        console.log('Application date:', app.applicationDate, 'Parsed:', appDate, 'Is after six months ago:', appDate >= sixMonthsAgo)
+        return appDate >= sixMonthsAgo
+      })
+      .reduce((acc, app) => {
+        const month = new Date(app.applicationDate).toLocaleDateString('en-US', { month: 'short' })
+        if (!acc[month]) {
+          acc[month] = 0
+        }
+        acc[month]++
+        return acc
+      }, {} as Record<string, number>)
+
+    console.log('Monthly applicants:', monthlyApplicants)
+
+    // Generate all months in the last 6 months to ensure we have complete data
+    const allMonths = []
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date()
+      date.setMonth(date.getMonth() - i)
+      allMonths.push(date.toLocaleDateString('en-US', { month: 'short' }))
+    }
+
+    const applicantsTimeSeriesData = allMonths.map(month => ({
+      name: month,
+      applicants: monthlyApplicants[month] || 0
+    }))
+
+    console.log('Final applicants time series data:', applicantsTimeSeriesData)
+
+    // If no data in the last 6 months, show all applications regardless of date
+    if (applicantsTimeSeriesData.every(item => item.applicants === 0) && applications.length > 0) {
+      console.log('No applications in last 6 months, showing all applications')
+      const allMonthlyApplicants = applications.reduce((acc, app) => {
+        const month = new Date(app.applicationDate).toLocaleDateString('en-US', { month: 'short' })
+        if (!acc[month]) {
+          acc[month] = 0
+        }
+        acc[month]++
+        return acc
+      }, {} as Record<string, number>)
+
+      // Get all months that have applications
+      const monthsWithApplications = Object.keys(allMonthlyApplicants).sort()
+
+      // If we have applications, use them instead
+      if (monthsWithApplications.length > 0) {
+        const allMonthsData = monthsWithApplications.map(month => ({
+          name: month,
+          applicants: allMonthlyApplicants[month]
+        }))
+
+        console.log('Using all applications data:', allMonthsData)
+        // Replace the time series data with all applications
+        applicantsTimeSeriesData.splice(0, applicantsTimeSeriesData.length, ...allMonthsData)
+      }
+    }
+
     // Calculate acceptance rate
     const acceptedOffers = offers.filter(offer => offer.status === 'accepted').length
     const rejectedOffers = offers.filter(offer => offer.status === 'rejected').length
@@ -166,6 +231,7 @@ export async function getRecruitmentAnalytics(companyId: string): Promise<Analyt
     return {
       funnelData,
       timeToHireData,
+      applicantsTimeSeriesData,
       acceptanceRateData,
       totalApplications,
       activeJobs,
@@ -184,6 +250,7 @@ export async function getRecruitmentAnalytics(companyId: string): Promise<Analyt
         { name: 'Hired', value: 0 }
       ],
       timeToHireData: [],
+      applicantsTimeSeriesData: [],
       acceptanceRateData: [
         { name: 'Accepted', value: 0 },
         { name: 'Rejected', value: 0 }

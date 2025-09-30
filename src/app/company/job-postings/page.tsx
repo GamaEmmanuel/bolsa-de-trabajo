@@ -120,114 +120,63 @@ const JobPostingsPage = () => {
 							</div>
 						</div>
 
-						{/* Jobs Table */}
-						<div className="overflow-x-auto">
-						<table className="min-w-full divide-y divide-gray-200">
-							<thead className="bg-gray-50">
-								<tr>
-									<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-										Job Title
-									</th>
-									<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-										Status
-									</th>
-										<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-											Tier
-										</th>
-									<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-										Posted Date
-									</th>
-									<th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-										Actions
-									</th>
-								</tr>
-							</thead>
-							<tbody className="bg-white divide-y divide-gray-200">
-								{jobs.length > 0 ? (
-									jobs.map(job => (
-											<tr key={job.jobId} className="hover:bg-gray-50">
-												<td className="px-6 py-4 whitespace-nowrap">
-													<div className="text-sm font-medium text-gray-900">
-												{job.jobTitle}
-													</div>
-													<div className="text-sm text-gray-500 truncate max-w-xs">
-														{job.jobDescription?.substring(0, 100)}...
-													</div>
-											</td>
-												<td className="px-6 py-4 whitespace-nowrap">
-												<span
-													className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-														job.status === 'published'
-															? 'bg-green-100 text-green-800'
+						{/* Job Cards */}
+						<div className="space-y-4">
+							{jobs.length > 0 ? (
+								jobs.map(job => (
+									<Link
+										key={job.jobId}
+										href={`/jobs/${job.jobId}`}
+										className="block bg-white p-6 rounded-lg border border-gray-200 hover:border-primary hover:shadow-md transition-all duration-200 cursor-pointer"
+									>
+										<div className="flex justify-between items-start">
+											<div className="flex-1">
+												<div className="flex items-center justify-between mb-2">
+													<h3 className="text-lg font-semibold text-gray-900">{job.jobTitle}</h3>
+													<span
+														className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+															job.status === 'published'
+																? 'bg-green-100 text-green-800'
 																: job.status === 'pending_approval'
 																? 'bg-yellow-100 text-yellow-800'
 																: 'bg-gray-100 text-gray-800'
-													}`}
-												>
+														}`}
+													>
 														{job.status?.replace('_', ' ')}
-												</span>
-											</td>
-											<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-													<span className="capitalize">{job.tier || 'Classic'}</span>
-												</td>
-												<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-													{job.postedDate || 'Not posted'}
-											</td>
-											<td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-													<div className="flex justify-end space-x-2">
-														<Link
-															href={`/jobs/${job.jobId}`}
-															className="text-blue-600 hover:text-blue-900"
-														>
-															View
-														</Link>
-														<Link
-															href={`/company/job-postings/${job.jobId}/edit`}
-															className="text-indigo-600 hover:text-indigo-900"
-														>
-															Edit
-														</Link>
-														<button
-															onClick={() => {
-																// TODO: Implement delete functionality
-																if (confirm('Are you sure you want to delete this job posting?')) {
-																	alert('Delete functionality coming soon!')
-																}
-															}}
-															className="text-red-600 hover:text-red-900"
-														>
-															Delete
-														</button>
-													</div>
-											</td>
-										</tr>
-									))
-								) : (
-									<tr>
-										<td
-												colSpan={5}
-												className="text-center py-8 text-gray-500"
-											>
-												<div className="text-center">
-													<svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-														<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2V6" />
-													</svg>
-													<h3 className="mt-2 text-sm font-medium text-gray-900">No job postings</h3>
-													<p className="mt-1 text-sm text-gray-500">Get started by creating your first job posting.</p>
-													<div className="mt-6">
-														<Link
-															href="/company/job-postings/new"
-															className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90"
-														>
-															+ Create New Job
-														</Link>
-													</div>
+													</span>
 												</div>
-										</td>
-									</tr>
-								)}
-							</tbody>
-						</table>
+												<p className="text-sm text-gray-600 mb-2 line-clamp-2">
+													{job.jobDescription?.substring(0, 150)}...
+												</p>
+												<div className="flex items-center space-x-4 text-sm text-gray-500">
+													<span className="capitalize">{job.tier || 'Classic'} Tier</span>
+													<span>•</span>
+													<span>{job.postedDate || 'Not posted'}</span>
+												</div>
+											</div>
+											<div className="ml-4 text-primary text-sm font-medium">
+												View Details →
+											</div>
+										</div>
+									</Link>
+								))
+							) : (
+								<div className="text-center py-12">
+									<svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2V6" />
+									</svg>
+									<h3 className="mt-2 text-sm font-medium text-gray-900">No job postings</h3>
+									<p className="mt-1 text-sm text-gray-500">Get started by creating your first job posting.</p>
+									<div className="mt-6">
+										<Link
+											href="/company/job-postings/new"
+											className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90"
+										>
+											+ Create New Job
+										</Link>
+									</div>
+								</div>
+							)}
 						</div>
 					</>
 					)}
