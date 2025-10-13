@@ -21,10 +21,10 @@ const CandidateLayout = ({ children }: { children: React.ReactNode }) => {
 	}
 
 	const navigation = [
-		{ name: 'Jobs', href: '/candidate/jobs', icon: '🔍' },
-		{ name: 'Applications', href: '/candidate/my-applications', icon: '📋' },
-		{ name: 'Resume', href: '/candidate/resume', icon: '📄' },
-		{ name: 'Account', href: '/candidate/account', icon: '👤' },
+		{ name: 'Empleos', href: '/candidate/jobs', icon: '🔍' },
+		{ name: 'Aplicaciones', href: '/candidate/my-applications', icon: '📋' },
+		{ name: 'Currículum', href: '/candidate/resume', icon: '📄' },
+		{ name: 'Cuenta', href: '/candidate/account', icon: '👤' },
 	]
 
 	const isActive = (href: string) => pathname === href

@@ -2,6 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
+import PricingSection from '../components/PricingSection'
 
 const LandingPage = () => {
 	return (
@@ -18,7 +19,7 @@ const LandingPage = () => {
 							</div>
 							<div className="flex flex-col">
 							<span className="text-xl font-bold text-gray-900">TalentFlow</span>
-								<span className="text-xs text-orange-500 font-semibold uppercase tracking-wide">HIRE, FASTER</span>
+								<span className="text-xs text-orange-500 font-semibold uppercase tracking-wide">CONTRATA, MÁS RÁPIDO</span>
 							</div>
 						</div>
 						<div className="hidden md:flex items-center space-x-8">
@@ -63,7 +64,7 @@ const LandingPage = () => {
 								href="/demo"
 								className="px-8 py-4 bg-white text-gray-900 text-lg font-semibold rounded-lg border-2 border-gray-200 hover:border-gray-300 transition-all duration-200"
 							>
-								Ver Demo
+								Ver Demostración
 							</Link>
 						</div>
 					</div>
@@ -170,11 +171,11 @@ const LandingPage = () => {
 										<div className="text-sm text-gray-600">Desarrolladora Senior</div>
 									</div>
 									<div className="ml-auto">
-										<span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">95% Coincidencia</span>
+										<span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">95% Compatibilidad</span>
 									</div>
 								</div>
 								<div className="text-sm text-gray-600 mb-3">
-									5+ años React, Node.js • Anterior: Google, Airbnb
+									5+ años React, Node.js • Anteriormente: Google, Airbnb
 								</div>
 								<div className="flex space-x-2">
 									<span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">React</span>
@@ -238,117 +239,10 @@ const LandingPage = () => {
 			</section>
 
 			{/* Pricing Preview Section */}
-			<section className="py-20 bg-white">
-				<div className="max-w-6xl mx-auto px-6">
-					<div className="text-center mb-16">
-						<h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-							Precios simples y transparentes
-						</h2>
-						<p className="text-xl text-gray-600 max-w-3xl mx-auto">
-							Comienza gratis y escala mientras creces. Sin tarifas ocultas, sin sorpresas.
-						</p>
-					</div>
-
-					<div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-						{/* Free Plan */}
-						<div className="bg-white rounded-2xl p-8 border-2 border-gray-100 hover:border-blue-200 transition-all duration-300">
-							<div className="text-center mb-8">
-								<h3 className="text-2xl font-bold text-gray-900">Buscador de Empleo</h3>
-								<div className="mt-4">
-									<span className="text-4xl font-bold text-gray-900">Gratis</span>
-								</div>
-								<p className="mt-2 text-gray-600">Perfecto para buscadores de empleo individuales</p>
-							</div>
-							<ul className="space-y-4 mb-8">
-								{['Aplicaciones ilimitadas de empleo', 'Filtros de búsqueda avanzados', 'Constructor de currículum', 'Seguimiento de aplicaciones'].map((feature, index) => (
-									<li key={index} className="flex items-center">
-										<svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-											<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-										</svg>
-										<span className="text-gray-700">{feature}</span>
-									</li>
-								))}
-							</ul>
-							<Link
-								href="/signup?type=candidate"
-								className="block w-full text-center py-3 px-6 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition-colors"
-							>
-								Comenzar Gratis
-							</Link>
-						</div>
-
-						{/* Startup Plan */}
-						<div className="bg-white rounded-2xl p-8 border-2 border-orange-500 relative transform scale-105 shadow-lg">
-							<div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-								<span className="bg-orange-500 text-white px-4 py-1 rounded-full text-sm font-medium">
-									Más Popular
-								</span>
-							</div>
-							<div className="text-center mb-8">
-								<h3 className="text-2xl font-bold text-gray-900">Startup</h3>
-								<div className="mt-4">
-									<span className="text-4xl font-bold text-gray-900">$99</span>
-									<span className="text-gray-500">/month</span>
-								</div>
-								<p className="mt-2 text-gray-600">Perfecto para empresas en crecimiento</p>
-							</div>
-							<ul className="space-y-4 mb-8">
-								{['Hasta 5 publicaciones de empleo', 'ATS básico', 'Evaluación de currículum', 'Notificaciones por email', 'Panel de análisis'].map((feature, index) => (
-									<li key={index} className="flex items-center">
-										<svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-											<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-										</svg>
-										<span className="text-gray-700">{feature}</span>
-									</li>
-								))}
-							</ul>
-							<Link
-								href="/signup?type=company"
-								className="block w-full text-center py-3 px-6 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition-colors"
-							>
-								Iniciar Prueba Gratuita
-							</Link>
-						</div>
-
-						{/* Professional Plan */}
-						<div className="bg-white rounded-2xl p-8 border-2 border-gray-100 hover:border-orange-200 transition-all duration-300">
-							<div className="text-center mb-8">
-								<h3 className="text-2xl font-bold text-gray-900">Professional</h3>
-								<div className="mt-4">
-									<span className="text-4xl font-bold text-gray-900">$299</span>
-									<span className="text-gray-500">/month</span>
-								</div>
-								<p className="mt-2 text-gray-600">Para empresas establecidas</p>
-							</div>
-							<ul className="space-y-4 mb-8">
-								{['Hasta 25 publicaciones de empleo', 'ATS avanzado', 'Emparejamiento con IA', 'Programación de entrevistas', 'Análisis avanzados'].map((feature, index) => (
-									<li key={index} className="flex items-center">
-										<svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-											<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-										</svg>
-										<span className="text-gray-700">{feature}</span>
-									</li>
-								))}
-							</ul>
-							<Link
-								href="/signup?type=company"
-								className="block w-full text-center py-3 px-6 bg-gray-900 text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors"
-							>
-								Iniciar Prueba Gratuita
-							</Link>
-						</div>
-					</div>
-
-					<div className="text-center mt-12">
-							<Link
-								href="/pricing"
-								className="text-orange-600 hover:text-orange-700 font-semibold"
-							>
-								Ver todos los planes de precios →
-							</Link>
-					</div>
-				</div>
-			</section>
+			<PricingSection
+				showViewAllPlans={true}
+				viewAllPlansLink="/pricing"
+			/>
 
 
 			{/* Final CTA Section */}
@@ -390,7 +284,7 @@ const LandingPage = () => {
 								</div>
 								<div className="flex flex-col">
 									<span className="text-xl font-bold text-white">TalentFlow</span>
-									<span className="text-xs text-orange-400 font-semibold uppercase tracking-wide">HIRE, FASTER</span>
+									<span className="text-xs text-orange-400 font-semibold uppercase tracking-wide">CONTRATA, MÁS RÁPIDO</span>
 								</div>
 							</div>
 							<p className="text-gray-400 mb-4">

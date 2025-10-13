@@ -57,8 +57,8 @@ const CompanyDashboard = () => {
 	// Mock demographic data - in a real app, this would come from candidate profiles
 	const demographicData = {
 		gender: [
-			{ name: 'Male', value: 48, count: 24 },
-			{ name: 'Female', value: 52, count: 26 }
+			{ name: 'Masculino', value: 48, count: 24 },
+			{ name: 'Femenino', value: 52, count: 26 }
 		],
 		age: [
 			{ name: '18-22', value: 8, count: 4 },
@@ -69,22 +69,22 @@ const CompanyDashboard = () => {
 			{ name: '43+', value: 4, count: 2 }
 		],
 		education: [
-			{ name: 'High School', value: 12, count: 6 },
-			{ name: 'Bachelor\'s', value: 56, count: 28 },
-			{ name: 'Master\'s', value: 28, count: 14 },
-			{ name: 'PhD', value: 4, count: 2 }
+			{ name: 'Preparatoria', value: 12, count: 6 },
+			{ name: 'Licenciatura', value: 56, count: 28 },
+			{ name: 'Maestría', value: 28, count: 14 },
+			{ name: 'Doctorado', value: 4, count: 2 }
 		],
 		experience: [
-			{ name: '0-2 years', value: 20, count: 10 },
-			{ name: '3-5 years', value: 36, count: 18 },
-			{ name: '6-10 years', value: 32, count: 16 },
-			{ name: '10+ years', value: 12, count: 6 }
+			{ name: '0-2 años', value: 20, count: 10 },
+			{ name: '3-5 años', value: 36, count: 18 },
+			{ name: '6-10 años', value: 32, count: 16 },
+			{ name: '10+ años', value: 12, count: 6 }
 		],
 		location: [
-			{ name: 'Mexico City', value: 40, count: 20 },
+			{ name: 'Ciudad de México', value: 40, count: 20 },
 			{ name: 'Guadalajara', value: 24, count: 12 },
 			{ name: 'Monterrey', value: 20, count: 10 },
-			{ name: 'Remote', value: 16, count: 8 }
+			{ name: 'Remoto', value: 16, count: 8 }
 		]
 	}
 
@@ -104,7 +104,7 @@ const CompanyDashboard = () => {
 				setAnalyticsData(data)
 			} catch (err) {
 				console.error('Error fetching analytics:', err)
-				setError('Failed to load analytics data')
+				setError('Error al cargar los datos de análisis')
 			} finally {
 				setIsLoading(false)
 			}
@@ -121,7 +121,7 @@ const CompanyDashboard = () => {
 				<div className="flex items-center justify-center h-64">
 					<div className="text-center">
 						<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
-						<p className="mt-2 text-gray-600">Loading dashboard...</p>
+						<p className="mt-2 text-gray-600">Cargando panel...</p>
 					</div>
 				</div>
 			</div>
@@ -142,7 +142,7 @@ const CompanyDashboard = () => {
 		return (
 			<div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
 				<div className="text-center">
-					<p className="text-gray-600">No analytics data available</p>
+					<p className="text-gray-600">No hay datos de análisis disponibles</p>
 				</div>
 			</div>
 		)
@@ -151,16 +151,16 @@ const CompanyDashboard = () => {
 	return (
 		<div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
 			<div className="mb-8">
-				<h1 className="text-3xl font-bold text-foreground mb-2">Recruitment Analytics</h1>
-				<p className="text-muted-foreground">Track your hiring performance and key metrics</p>
+				<h1 className="text-3xl font-bold text-foreground mb-2">Análisis de Reclutamiento</h1>
+				<p className="text-muted-foreground">Rastrea el rendimiento de contratación y métricas clave</p>
 			</div>
 
 			{/* Key Metrics Cards */}
 			<div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-				<div className="bg-card p-6 rounded-lg border border-border">
+				<div className="bg-card p-6 rounded-xl shadow-sm">
 					<div className="flex items-center justify-between">
 						<div>
-							<p className="text-sm font-medium text-muted-foreground">Total Applications</p>
+							<p className="text-sm font-medium text-muted-foreground">Total de Aplicaciones</p>
 							<p className="text-2xl font-bold text-foreground">{analyticsData.totalApplications}</p>
 						</div>
 						<div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
@@ -170,10 +170,10 @@ const CompanyDashboard = () => {
 						</div>
 					</div>
 				</div>
-				<div className="bg-card p-6 rounded-lg border border-border">
+				<div className="bg-card p-6 rounded-xl shadow-sm">
 					<div className="flex items-center justify-between">
 						<div>
-							<p className="text-sm font-medium text-muted-foreground">Active Jobs</p>
+							<p className="text-sm font-medium text-muted-foreground">Empleos Activos</p>
 							<p className="text-2xl font-bold text-foreground">{analyticsData.activeJobs}</p>
 						</div>
 						<div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
@@ -183,10 +183,10 @@ const CompanyDashboard = () => {
 						</div>
 					</div>
 				</div>
-				<div className="bg-card p-6 rounded-lg border border-border">
+				<div className="bg-card p-6 rounded-xl shadow-sm">
 					<div className="flex items-center justify-between">
 						<div>
-							<p className="text-sm font-medium text-muted-foreground">Total Hires</p>
+							<p className="text-sm font-medium text-muted-foreground">Total de Contrataciones</p>
 							<p className="text-2xl font-bold text-foreground">{analyticsData.totalHires}</p>
 						</div>
 						<div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
@@ -196,11 +196,11 @@ const CompanyDashboard = () => {
 						</div>
 					</div>
 				</div>
-				<div className="bg-card p-6 rounded-lg border border-border">
+				<div className="bg-card p-6 rounded-xl shadow-sm">
 					<div className="flex items-center justify-between">
 						<div>
-							<p className="text-sm font-medium text-muted-foreground">Avg. Time to Hire</p>
-							<p className="text-2xl font-bold text-foreground">{analyticsData.averageTimeToHire} days</p>
+							<p className="text-sm font-medium text-muted-foreground">Tiempo Promedio de Contratación</p>
+							<p className="text-2xl font-bold text-foreground">{analyticsData.averageTimeToHire} días</p>
 						</div>
 						<div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
 							<svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -214,9 +214,9 @@ const CompanyDashboard = () => {
 			{/* Charts */}
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 				{/* Recruitment Funnel */}
-				<div className="bg-card p-6 rounded-lg border border-border">
+				<div className="bg-card p-6 rounded-xl shadow-sm">
 					<h2 className="text-xl font-semibold mb-4 text-foreground">
-						Recruitment Funnel
+						Embudo de Reclutamiento
 					</h2>
 					<ResponsiveContainer width="100%" height={300}>
 						<BarChart data={analyticsData.funnelData}>
@@ -229,9 +229,9 @@ const CompanyDashboard = () => {
 				</div>
 
 				{/* Total Applications Over Time */}
-				<div className="bg-card p-6 rounded-lg border border-border">
+				<div className="bg-card p-6 rounded-xl shadow-sm">
 					<h2 className="text-xl font-semibold mb-4 text-foreground">
-						Total Applications Over Time
+						Total de Aplicaciones en el Tiempo
 					</h2>
 					<ResponsiveContainer width="100%" height={300}>
 						<LineChart data={analyticsData.applicantsTimeSeriesData}>
@@ -252,9 +252,9 @@ const CompanyDashboard = () => {
 				</div>
 
 				{/* AI Interviews */}
-				<div className="bg-card p-6 rounded-lg border border-border">
+				<div className="bg-card p-6 rounded-xl shadow-sm">
 					<h2 className="text-xl font-semibold mb-4 text-foreground">
-						AI Interviews
+						Entrevistas con IA
 					</h2>
 					<div className="flex items-center justify-center h-[300px]">
 						<div className="text-center">
@@ -263,28 +263,28 @@ const CompanyDashboard = () => {
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
 								</svg>
 							</div>
-							<h3 className="text-lg font-medium text-foreground mb-2">AI Interviews</h3>
+							<h3 className="text-lg font-medium text-foreground mb-2">Entrevistas con IA</h3>
 							<p className="text-muted-foreground text-sm">
-								AI-powered interview analytics coming soon
+								Análisis de entrevistas impulsado por IA próximamente
 							</p>
 						</div>
 					</div>
 				</div>
 
 				{/* Applicant Demographics */}
-				<div className="bg-card p-6 rounded-lg border border-border">
+				<div className="bg-card p-6 rounded-xl shadow-sm">
 					<div className="flex justify-between items-center mb-4">
-						<h2 className="text-xl font-semibold text-foreground">Applicant Demographics</h2>
+						<h2 className="text-xl font-semibold text-foreground">Demografía de Candidatos</h2>
 						<select
 							value={selectedDemographic}
 							onChange={(e) => setSelectedDemographic(e.target.value)}
 							className="px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-orange-500"
 						>
-							<option value="gender">Gender</option>
-							<option value="age">Age</option>
-							<option value="education">Education</option>
-							<option value="experience">Experience</option>
-							<option value="location">Location</option>
+							<option value="gender">Género</option>
+							<option value="age">Edad</option>
+							<option value="education">Educación</option>
+							<option value="experience">Experiencia</option>
+							<option value="location">Ubicación</option>
 						</select>
 					</div>
 					<ResponsiveContainer width="100%" height={300}>
@@ -319,7 +319,7 @@ const CompanyDashboard = () => {
 						)}
 					</ResponsiveContainer>
 					<div className="mt-4 text-center text-sm text-muted-foreground">
-						Total applicants: {getCurrentData().reduce((sum, item) => sum + item.count, 0)}
+						Total de candidatos: {getCurrentData().reduce((sum, item) => sum + item.count, 0)}
 					</div>
 				</div>
 			</div>

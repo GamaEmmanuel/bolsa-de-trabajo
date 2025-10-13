@@ -18,10 +18,10 @@ const Header = () => {
 					</div>
 					<div className="hidden md:flex items-center space-x-8">
 						<Link href="/jobs" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
-							Jobs
+							Empleos
 						</Link>
 						<Link href="/contact" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
-							Contact
+							Contacto
 						</Link>
 					</div>
 					<div className="flex items-center space-x-3">
@@ -29,13 +29,13 @@ const Header = () => {
 							href="/signin"
 							className="text-gray-700 hover:text-gray-900 font-medium px-4 py-2 transition-colors"
 						>
-							Sign In
+							Iniciar Sesión
 						</Link>
 						<Link
 							href="/signup"
 							className="px-5 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
 						>
-							Get Started
+							Comenzar
 						</Link>
 					</div>
 				</div>

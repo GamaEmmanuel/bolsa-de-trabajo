@@ -65,32 +65,32 @@ const CompanyLayout = ({ children }: { children: React.ReactNode }) => {
 	const navigationItems = [
 		{
 			href: '/company/dashboard',
-			label: 'Home',
+			label: 'Inicio',
 			isActive: pathname === '/company/dashboard'
 		},
 		{
 			href: '/company/job-postings',
-			label: 'Job Postings',
+			label: 'Publicaciones de Empleo',
 			isActive: pathname.startsWith('/company/job-postings')
 		},
 		{
 			href: '/company/ats',
-			label: 'Candidates',
+			label: 'Candidatos',
 			isActive: pathname === '/company/ats'
 		},
 		{
 			href: '/company/talent-search',
-			label: 'Talent Search',
+			label: 'Búsqueda de Talento',
 			isActive: pathname === '/company/talent-search'
 		},
 		{
 			href: '/company/credits',
-			label: 'Pricing',
+			label: 'Suscripción',
 			isActive: pathname === '/company/credits' || pathname === '/company/checkout'
 		},
 		{
 			href: '/company/settings',
-			label: 'Settings',
+			label: 'Configuración',
 			isActive: pathname === '/company/settings'
 		}
 	]

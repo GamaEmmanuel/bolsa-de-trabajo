@@ -69,7 +69,7 @@ const TalentSearchPage = () => {
 				},
 				(error) => {
 					console.error('Error fetching candidate profiles:', error)
-					setError('Failed to load candidate profiles')
+					setError('Error al cargar los perfiles de candidatos')
 					setLoading(false)
 				}
 			)
@@ -80,37 +80,59 @@ const TalentSearchPage = () => {
 		return () => unsubscribeAuth()
 	}, [])
 
-	const handleSearch = (e: React.FormEvent) => {
-		e.preventDefault()
-		console.log('Searching for talent with filters:', filters)
-
+	const performSearch = () => {
 		// Filter candidates based on search criteria
 		let filteredResults = allCandidates
 
-		// Filter by skills
+		// Filter by skills (AND logic - must have ALL skills)
 		if (filters.skills.trim()) {
 			const searchSkills = filters.skills.toLowerCase().split(',').map(s => s.trim())
-			filteredResults = filteredResults.filter(candidate =>
-				searchSkills.some(searchSkill =>
-					candidate.skills.some(skill =>
-						skill.toLowerCase().includes(searchSkill)
+			filteredResults = filteredResults.filter(candidate => {
+				// Ensure skills is an array
+				const candidateSkills = Array.isArray(candidate.skills) ? candidate.skills : []
+
+				// Must match ALL search skills (AND logic)
+				return searchSkills.every(searchSkill =>
+					// Check in skills array
+					candidateSkills.some(skill =>
+						skill && skill.toLowerCase().includes(searchSkill)
 					) ||
-					candidate.headline?.toLowerCase().includes(searchSkill) ||
-					candidate.summary?.toLowerCase().includes(searchSkill)
+					// Check in headline
+					(candidate.headline && candidate.headline.toLowerCase().includes(searchSkill)) ||
+					// Check in summary
+					(candidate.summary && candidate.summary.toLowerCase().includes(searchSkill)) ||
+					// Check in full name
+					(candidate.fullName && candidate.fullName.toLowerCase().includes(searchSkill))
 				)
-			)
+			})
 		}
 
 		// Filter by location
 		if (filters.location.trim()) {
 			const searchLocation = filters.location.toLowerCase()
 			filteredResults = filteredResults.filter(candidate =>
-				candidate.location?.toLowerCase().includes(searchLocation)
+				candidate.location && candidate.location.toLowerCase().includes(searchLocation)
 			)
 		}
 
+		console.log('Filtered results:', filteredResults.length, 'out of', allCandidates.length)
 		setResults(filteredResults)
 	}
+
+	const handleSearch = (e: React.FormEvent) => {
+		e.preventDefault()
+		performSearch()
+	}
+
+	const handleClearSearch = () => {
+		setFilters({ skills: '', location: '' })
+		setResults(allCandidates)
+	}
+
+	// Auto-search when filters change
+	useEffect(() => {
+		performSearch()
+	}, [filters.skills, filters.location, allCandidates])
 
 	// Show loading state
 	if (loading) {
@@ -118,7 +140,7 @@ const TalentSearchPage = () => {
 			<div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
 				<div className="text-center py-12">
 					<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-					<p className="mt-2 text-muted-foreground">Loading candidate profiles...</p>
+					<p className="mt-2 text-muted-foreground">Cargando perfiles de candidatos...</p>
 				</div>
 			</div>
 		)
@@ -140,7 +162,7 @@ const TalentSearchPage = () => {
 		return (
 			<div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
 				<div className="text-center py-12">
-					<p className="text-muted-foreground">Please sign in to search for talent.</p>
+					<p className="text-muted-foreground">Por favor, inicia sesión para buscar talento.</p>
 				</div>
 			</div>
 		)
@@ -149,43 +171,52 @@ const TalentSearchPage = () => {
 	return (
 		<div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
 			<div className="mb-8">
-				<h1 className="text-3xl font-bold text-foreground mb-2">Talent Search</h1>
+				<h1 className="text-3xl font-bold text-foreground mb-2">Búsqueda de Talento</h1>
 				<p className="text-muted-foreground">
-					Search our database of {allCandidates.length} candidate profiles to find the perfect match
+					Busca en nuestra base de datos de {allCandidates.length} perfiles de candidatos para encontrar la coincidencia perfecta
 				</p>
 			</div>
 
 			{/* Search and Filter Form */}
-			<div className="bg-card p-6 rounded-lg border border-border mb-8">
+			<div className="bg-orange-50 p-6 rounded-xl shadow-sm mb-8">
 				<form onSubmit={handleSearch} className="flex gap-4">
-					<input
-						type="text"
-						placeholder="Skills (e.g., React, Python)"
-						className="flex-grow px-4 py-2 border rounded-md"
-						value={filters.skills}
-						onChange={e => setFilters({ ...filters, skills: e.target.value })}
-					/>
-					<input
-						type="text"
-						placeholder="Location (e.g., Mexico City, Remote)"
-						className="px-4 py-2 border rounded-md"
-						value={filters.location}
-						onChange={e => setFilters({ ...filters, location: e.target.value })}
-					/>
-					<button
-						type="submit"
-						className="px-6 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
-					>
-						Search
+						<input
+							type="text"
+							placeholder="Habilidades (ej., React, Python)"
+							className="flex-grow px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200"
+							value={filters.skills}
+							onChange={e => setFilters({ ...filters, skills: e.target.value })}
+						/>
+						<input
+							type="text"
+							placeholder="Ubicación (ej., Ciudad de México, Remoto)"
+							className="px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200"
+							value={filters.location}
+							onChange={e => setFilters({ ...filters, location: e.target.value })}
+						/>
+						<button
+							type="submit"
+							className="px-6 py-2 text-white bg-primary rounded-lg hover:bg-primary/90 transition-all duration-200"
+						>
+						Buscar
 					</button>
+					{(filters.skills || filters.location) && (
+						<button
+							type="button"
+							onClick={handleClearSearch}
+							className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
+						>
+							Limpiar
+						</button>
+					)}
 				</form>
 			</div>
 
 			{/* Search Results */}
 			<div className="mb-4">
 				<p className="text-muted-foreground">
-					Showing {results.length} candidate{results.length !== 1 ? 's' : ''}
-					{(filters.skills || filters.location) && ` matching your search criteria`}
+					Mostrando {results.length} candidato{results.length !== 1 ? 's' : ''}
+					{(filters.skills || filters.location) && ` que coinciden con tus criterios de búsqueda`}
 				</p>
 			</div>
 
@@ -193,8 +224,8 @@ const TalentSearchPage = () => {
 				<div className="text-center py-12">
 					<p className="text-muted-foreground">
 						{allCandidates.length === 0
-							? "No candidate profiles found in the database."
-							: "No candidates match your search criteria. Try adjusting your filters."
+							? "No se encontraron perfiles de candidatos en la base de datos."
+							: "Ningún candidato coincide con tus criterios de búsqueda. Intenta ajustar tus filtros."
 						}
 					</p>
 				</div>
@@ -203,7 +234,7 @@ const TalentSearchPage = () => {
 					{results.map(candidate => (
 						<div
 							key={candidate.profileId}
-							className="bg-card p-6 rounded-lg border border-border flex justify-between items-start"
+							className="bg-card p-6 rounded-xl shadow-sm flex justify-between items-start hover:shadow-md transition-all duration-200"
 						>
 							<div className="flex-grow">
 								<h2 className="text-xl font-bold text-foreground">{candidate.fullName}</h2>
@@ -222,13 +253,13 @@ const TalentSearchPage = () => {
 									))}
 									{candidate.skills.length > 6 && (
 										<span className="px-2 py-1 text-xs text-muted-foreground">
-											+{candidate.skills.length - 6} more
+											+{candidate.skills.length - 6} más
 										</span>
 									)}
 								</div>
 							</div>
-							<button className="ml-4 px-4 py-2 text-primary-foreground bg-primary rounded-md hover:bg-primary/90 transition-colors whitespace-nowrap">
-								Unlock Contact Info
+							<button className="ml-4 px-4 py-2 text-primary-foreground bg-primary rounded-lg hover:bg-primary/90 transition-all duration-200 whitespace-nowrap">
+								Desbloquear Información de Contacto
 							</button>
 						</div>
 					))}

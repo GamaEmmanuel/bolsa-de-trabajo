@@ -13,7 +13,7 @@ const recommendedJobs: JobPosting[] = [
 		jobId: 'rec-1',
 		companyId: 'comp-1',
 		createdByUserId: 'user-rec',
-		jobTitle: 'Frontend Developer (React)',
+		jobTitle: 'Desarrollador Frontend (React)',
 		jobDescription: '',
 		status: 'published',
 		companyName: 'Tech Solutions Inc.',
@@ -23,11 +23,11 @@ const recommendedJobs: JobPosting[] = [
 		jobId: 'rec-2',
 		companyId: 'comp-2',
 		createdByUserId: 'user-rec',
-		jobTitle: 'Senior JavaScript Engineer',
+		jobTitle: 'Ingeniero Senior de JavaScript',
 		jobDescription: '',
 		status: 'published',
 		companyName: 'Innovate Co.',
-		location: 'Remote',
+		location: 'Remoto',
 	},
 ]
 
@@ -55,8 +55,8 @@ const CandidateDashboard = () => {
 		<div className="space-y-6">
 			{/* Header */}
 			<div>
-				<h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-				<p className="text-gray-600 mt-1">Welcome back! Here&apos;s what&apos;s happening with your job search.</p>
+				<h1 className="text-3xl font-bold text-gray-900">Panel de Control</h1>
+				<p className="text-gray-600 mt-1">¡Bienvenido de vuelta! Aquí está lo que está pasando con tu búsqueda de empleo.</p>
 			</div>
 			{/* Quick Actions */}
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -69,8 +69,8 @@ const CandidateDashboard = () => {
 							<span className="text-2xl">🔍</span>
 						</div>
 						<div className="ml-4">
-							<h3 className="text-lg font-semibold text-gray-900">Find Jobs</h3>
-							<p className="text-sm text-gray-500">Browse available positions</p>
+							<h3 className="text-lg font-semibold text-gray-900">Buscar Empleos</h3>
+							<p className="text-sm text-gray-500">Explora posiciones disponibles</p>
 						</div>
 					</div>
 				</Link>
@@ -84,8 +84,8 @@ const CandidateDashboard = () => {
 							<span className="text-2xl">📋</span>
 						</div>
 						<div className="ml-4">
-							<h3 className="text-lg font-semibold text-gray-900">My Applications</h3>
-							<p className="text-sm text-gray-500">Track your applications</p>
+							<h3 className="text-lg font-semibold text-gray-900">Mis Aplicaciones</h3>
+							<p className="text-sm text-gray-500">Rastrea tus aplicaciones</p>
 						</div>
 					</div>
 				</Link>
@@ -99,8 +99,8 @@ const CandidateDashboard = () => {
 							<span className="text-2xl">📄</span>
 						</div>
 						<div className="ml-4">
-							<h3 className="text-lg font-semibold text-gray-900">My Resume</h3>
-							<p className="text-sm text-gray-500">Update your profile</p>
+							<h3 className="text-lg font-semibold text-gray-900">Mi Currículum</h3>
+							<p className="text-sm text-gray-500">Actualiza tu perfil</p>
 						</div>
 					</div>
 				</Link>
@@ -114,8 +114,8 @@ const CandidateDashboard = () => {
 							<span className="text-2xl">👤</span>
 						</div>
 						<div className="ml-4">
-							<h3 className="text-lg font-semibold text-gray-900">Account</h3>
-							<p className="text-sm text-gray-500">Manage settings</p>
+							<h3 className="text-lg font-semibold text-gray-900">Cuenta</h3>
+							<p className="text-sm text-gray-500">Gestiona configuraciones</p>
 						</div>
 					</div>
 				</Link>
@@ -125,7 +125,7 @@ const CandidateDashboard = () => {
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 				{/* Recommended Jobs */}
 				<div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-					<h2 className="text-lg font-semibold text-gray-900 mb-4">Recommended Jobs</h2>
+					<h2 className="text-lg font-semibold text-gray-900 mb-4">Empleos Recomendados</h2>
 					<div className="space-y-4">
 						{recommendedJobs.map(job => (
 							<div key={job.jobId} className="border-b border-gray-200 pb-3 last:border-b-0">
@@ -146,22 +146,22 @@ const CandidateDashboard = () => {
 							href="/candidate/jobs"
 							className="text-sm text-blue-600 hover:text-blue-800"
 						>
-							View all jobs →
+							Ver todos los empleos →
 						</Link>
 					</div>
 				</div>
 
 				{/* Quick Tips */}
 				<div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-					<h2 className="text-lg font-semibold text-gray-900 mb-4">Job Search Tips</h2>
+					<h2 className="text-lg font-semibold text-gray-900 mb-4">Consejos de Búsqueda de Empleo</h2>
 					<div className="space-y-4">
 						<div className="flex items-start">
 							<div className="p-2 bg-blue-100 rounded-lg mr-3">
 								<span className="text-sm">💡</span>
 							</div>
 							<div>
-								<h3 className="text-sm font-medium text-gray-900">Complete Your Profile</h3>
-								<p className="text-sm text-gray-500">A complete profile increases your chances of being noticed by employers.</p>
+								<h3 className="text-sm font-medium text-gray-900">Completa tu Perfil</h3>
+								<p className="text-sm text-gray-500">Un perfil completo aumenta tus posibilidades de ser notado por los empleadores.</p>
 							</div>
 						</div>
 						<div className="flex items-start">
@@ -169,8 +169,8 @@ const CandidateDashboard = () => {
 								<span className="text-sm">🎯</span>
 							</div>
 							<div>
-								<h3 className="text-sm font-medium text-gray-900">Apply Strategically</h3>
-								<p className="text-sm text-gray-500">Focus on jobs that match your skills and experience.</p>
+								<h3 className="text-sm font-medium text-gray-900">Aplica Estratégicamente</h3>
+								<p className="text-sm text-gray-500">Enfócate en empleos que coincidan con tus habilidades y experiencia.</p>
 							</div>
 						</div>
 						<div className="flex items-start">
@@ -178,8 +178,8 @@ const CandidateDashboard = () => {
 								<span className="text-sm">📈</span>
 							</div>
 							<div>
-								<h3 className="text-sm font-medium text-gray-900">Track Your Progress</h3>
-								<p className="text-sm text-gray-500">Use the applications page to monitor your job search progress.</p>
+								<h3 className="text-sm font-medium text-gray-900">Rastrea tu Progreso</h3>
+								<p className="text-sm text-gray-500">Usa la página de aplicaciones para monitorear tu progreso en la búsqueda de empleo.</p>
 							</div>
 						</div>
 					</div>

@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { auth, db, storage } from '../../../lib/firebase'
 import { doc, updateDoc, getDoc } from 'firebase/firestore'
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage'
+import { CompanySize, Industry } from '../../../../types'
+import { COMPANY_SIZE_OPTIONS, INDUSTRY_OPTIONS, BENEFITS_OPTIONS, COMPANY_CULTURE_OPTIONS } from '../../../lib/constants'
 
 interface CompanyData {
 	companyName: string
@@ -21,6 +23,9 @@ interface CompanyData {
 	state?: string
 	zipCode?: string
 	country?: string
+	companySize?: CompanySize
+	benefits?: string[]
+	companyCulture?: string[]
 }
 
 const CompanySettingsPage = () => {
@@ -38,7 +43,10 @@ const CompanySettingsPage = () => {
 		city: '',
 		state: '',
 		zipCode: '',
-		country: 'Mexico'
+		country: 'Mexico',
+		companySize: '11-50',
+		benefits: [],
+		companyCulture: []
 	})
 	const [loading, setLoading] = useState(true)
 	const [saving, setSaving] = useState(false)
@@ -75,7 +83,7 @@ const CompanySettingsPage = () => {
 				}
 			} catch (error) {
 				console.error('Error loading company data:', error)
-				setError('Failed to load company data')
+				setError('Error al cargar los datos de la empresa')
 			} finally {
 				setLoading(false)
 			}
@@ -88,6 +96,15 @@ const CompanySettingsPage = () => {
 		setCompanyData(prev => ({
 			...prev,
 			[field]: value
+		}))
+	}
+
+	const handleArrayChange = (field: 'benefits' | 'companyCulture', value: string, checked: boolean) => {
+		setCompanyData(prev => ({
+			...prev,
+			[field]: checked
+				? [...(prev[field] || []), value]
+				: (prev[field] || []).filter(item => item !== value)
 		}))
 	}
 
@@ -107,7 +124,7 @@ const CompanySettingsPage = () => {
 
 	const handleSave = async () => {
 		if (!auth.currentUser) {
-			setError('You must be signed in to save settings')
+			setError('Debes iniciar sesión para guardar la configuración')
 			return
 		}
 
@@ -135,7 +152,7 @@ const CompanySettingsPage = () => {
 					logoUrl = await getDownloadURL(snapshot.ref)
 				} catch (uploadError) {
 					console.error('Error uploading logo:', uploadError)
-					setError('Failed to upload logo. Please try again.')
+					setError('Error al subir el logo. Por favor, inténtalo de nuevo.')
 					setSaving(false)
 					return
 				}
@@ -160,7 +177,7 @@ const CompanySettingsPage = () => {
 
 		} catch (error) {
 			console.error('Error saving company data:', error)
-			setError('Failed to save settings. Please try again.')
+			setError('Error al guardar la configuración. Por favor, inténtalo de nuevo.')
 		} finally {
 			setSaving(false)
 		}
@@ -172,7 +189,7 @@ const CompanySettingsPage = () => {
 				<div className="flex items-center justify-center h-64">
 					<div className="text-center">
 						<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
-						<p className="mt-2 text-gray-600">Loading company settings...</p>
+						<p className="mt-2 text-gray-600">Cargando configuración de la empresa...</p>
 					</div>
 				</div>
 			</div>
@@ -182,8 +199,8 @@ const CompanySettingsPage = () => {
 	return (
 		<div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
 			<div className="mb-8">
-				<h1 className="text-3xl font-bold text-foreground mb-2">Company Settings</h1>
-				<p className="text-muted-foreground">Manage your company information and preferences</p>
+				<h1 className="text-3xl font-bold text-foreground mb-2">Configuración de la Empresa</h1>
+				<p className="text-muted-foreground">Gestiona la información y preferencias de tu empresa</p>
 			</div>
 
 			{/* Success Message */}
@@ -197,7 +214,7 @@ const CompanySettingsPage = () => {
 						</div>
 						<div className="ml-3">
 							<p className="text-sm font-medium text-green-800">
-								Company settings saved successfully!
+								¡Configuración de la empresa guardada exitosamente!
 							</p>
 						</div>
 					</div>
@@ -226,20 +243,20 @@ const CompanySettingsPage = () => {
 
 						{/* Company Logo Section */}
 						<div className="border-b border-border pb-8">
-							<h2 className="text-xl font-semibold text-foreground mb-4">Company Logo</h2>
+							<h2 className="text-xl font-semibold text-foreground mb-4">Logo de la Empresa</h2>
 							<div className="flex items-center space-x-6">
 								{logoPreview && (
 									<div className="flex-shrink-0">
 										<img
 											src={logoPreview}
-											alt="Company logo"
+											alt="Logo de la empresa"
 											className="h-20 w-20 rounded-lg object-cover border border-border"
 										/>
 									</div>
 								)}
 								<div className="flex-1">
 									<label className="block text-sm font-medium text-foreground mb-2">
-										Upload Logo
+										Subir Logo
 									</label>
 									<input
 										type="file"
@@ -248,7 +265,7 @@ const CompanySettingsPage = () => {
 										className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
 									/>
 									<p className="mt-1 text-sm text-muted-foreground">
-										PNG, JPG, GIF up to 10MB. Recommended size: 200x200px
+										PNG, JPG, GIF hasta 10MB. Tamaño recomendado: 200x200px
 									</p>
 								</div>
 							</div>
@@ -256,11 +273,11 @@ const CompanySettingsPage = () => {
 
 						{/* Basic Information */}
 						<div className="border-b border-border pb-8">
-							<h2 className="text-xl font-semibold text-foreground mb-4">Basic Information</h2>
+							<h2 className="text-xl font-semibold text-foreground mb-4">Información Básica</h2>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<div>
 									<label className="block text-sm font-medium text-foreground mb-2">
-										Company Name *
+										Nombre de la Empresa *
 									</label>
 									<input
 										type="text"
@@ -272,19 +289,19 @@ const CompanySettingsPage = () => {
 								</div>
 								<div>
 									<label className="block text-sm font-medium text-foreground mb-2">
-										Industry
+										Industria
 									</label>
 									<input
 										type="text"
 										value={companyData.industry}
 										onChange={(e) => handleInputChange('industry', e.target.value)}
-										placeholder="e.g., Technology, Healthcare, Finance"
+										placeholder="ej., Tecnología, Salud, Finanzas"
 										className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
 									/>
 								</div>
 								<div>
 									<label className="block text-sm font-medium text-foreground mb-2">
-										Website URL
+										URL del Sitio Web
 									</label>
 									<input
 										type="url"
@@ -296,7 +313,7 @@ const CompanySettingsPage = () => {
 								</div>
 								<div>
 									<label className="block text-sm font-medium text-foreground mb-2">
-										Email
+										Correo Electrónico
 									</label>
 									<input
 										type="email"
@@ -308,7 +325,7 @@ const CompanySettingsPage = () => {
 								</div>
 								<div>
 									<label className="block text-sm font-medium text-foreground mb-2">
-										Phone
+										Teléfono
 									</label>
 									<input
 										type="tel"
@@ -320,14 +337,14 @@ const CompanySettingsPage = () => {
 								</div>
 							</div>
 							<div className="mt-6">
-								<label className="block text-sm font-medium text-foreground mb-2">
-									Company Description
-								</label>
+									<label className="block text-sm font-medium text-foreground mb-2">
+										Descripción de la Empresa
+									</label>
 								<textarea
 									value={companyData.description}
 									onChange={(e) => handleInputChange('description', e.target.value)}
 									rows={4}
-									placeholder="Tell us about your company..."
+									placeholder="Cuéntanos sobre tu empresa..."
 									className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
 								/>
 							</div>
@@ -335,11 +352,11 @@ const CompanySettingsPage = () => {
 
 						{/* Legal Information */}
 						<div className="border-b border-border pb-8">
-							<h2 className="text-xl font-semibold text-foreground mb-4">Legal Information</h2>
+							<h2 className="text-xl font-semibold text-foreground mb-4">Información Legal</h2>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<div>
 									<label className="block text-sm font-medium text-foreground mb-2">
-										Razón Social (Legal Name)
+										Razón Social (Nombre Legal)
 									</label>
 									<input
 										type="text"
@@ -350,7 +367,7 @@ const CompanySettingsPage = () => {
 								</div>
 								<div>
 									<label className="block text-sm font-medium text-foreground mb-2">
-										RFC (Tax ID)
+										RFC (ID Fiscal)
 									</label>
 									<input
 										type="text"
@@ -364,36 +381,36 @@ const CompanySettingsPage = () => {
 						</div>
 
 						{/* Address Information */}
-						<div className="pb-8">
-							<h2 className="text-xl font-semibold text-foreground mb-4">Address Information</h2>
+						<div className="border-b border-border pb-8">
+							<h2 className="text-xl font-semibold text-foreground mb-4">Información de Dirección</h2>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<div className="md:col-span-2">
 									<label className="block text-sm font-medium text-foreground mb-2">
-										Street Address
+										Dirección
 									</label>
 									<input
 										type="text"
 										value={companyData.address || ''}
 										onChange={(e) => handleInputChange('address', e.target.value)}
-										placeholder="123 Main Street"
+										placeholder="Calle Principal 123"
 										className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
 									/>
 								</div>
 								<div>
 									<label className="block text-sm font-medium text-foreground mb-2">
-										City
+										Ciudad
 									</label>
 									<input
 										type="text"
 										value={companyData.city || ''}
 										onChange={(e) => handleInputChange('city', e.target.value)}
-										placeholder="Mexico City"
+										placeholder="Ciudad de México"
 										className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
 									/>
 								</div>
 								<div>
 									<label className="block text-sm font-medium text-foreground mb-2">
-										State
+										Estado
 									</label>
 									<input
 										type="text"
@@ -405,7 +422,7 @@ const CompanySettingsPage = () => {
 								</div>
 								<div>
 									<label className="block text-sm font-medium text-foreground mb-2">
-										ZIP Code
+										Código Postal
 									</label>
 									<input
 										type="text"
@@ -417,18 +434,101 @@ const CompanySettingsPage = () => {
 								</div>
 								<div>
 									<label className="block text-sm font-medium text-foreground mb-2">
-										Country
+										País
 									</label>
 									<select
 										value={companyData.country || 'Mexico'}
 										onChange={(e) => handleInputChange('country', e.target.value)}
 										className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
 									>
-										<option value="Mexico">Mexico</option>
-										<option value="United States">United States</option>
-										<option value="Canada">Canada</option>
-										<option value="Other">Other</option>
+										<option value="Mexico">México</option>
+										<option value="United States">Estados Unidos</option>
+										<option value="Canada">Canadá</option>
+										<option value="Other">Otro</option>
 									</select>
+								</div>
+							</div>
+						</div>
+
+						{/* Company Profile */}
+						<div className="border-b border-border pb-8">
+							<h2 className="text-xl font-semibold text-foreground mb-4">Perfil de la Empresa</h2>
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+								<div>
+									<label className="block text-sm font-medium text-foreground mb-2">
+										Tamaño de la Empresa
+									</label>
+									<select
+										value={companyData.companySize || '11-50'}
+										onChange={(e) => handleInputChange('companySize', e.target.value)}
+										className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+									>
+										{COMPANY_SIZE_OPTIONS.map(option => (
+											<option key={option.value} value={option.value}>
+												{option.label}
+											</option>
+										))}
+									</select>
+								</div>
+								<div>
+									<label className="block text-sm font-medium text-foreground mb-2">
+										Industria
+									</label>
+									<select
+										value={companyData.industry}
+										onChange={(e) => handleInputChange('industry', e.target.value)}
+										className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+									>
+										<option value="">Selecciona una industria</option>
+										{INDUSTRY_OPTIONS.map(option => (
+											<option key={option.value} value={option.value}>
+												{option.label}
+											</option>
+										))}
+									</select>
+								</div>
+							</div>
+						</div>
+
+						{/* Benefits & Culture */}
+						<div className="pb-8">
+							<h2 className="text-xl font-semibold text-foreground mb-4">Beneficios y Cultura de la Empresa</h2>
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+								<div>
+									<label className="block text-sm font-medium text-foreground mb-2">
+										Beneficios (Selecciona todos los que apliquen)
+									</label>
+									<div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border border-border rounded-md p-3">
+										{BENEFITS_OPTIONS.map(benefit => (
+											<label key={benefit.value} className="flex items-center text-sm">
+												<input
+													type="checkbox"
+													checked={companyData.benefits?.includes(benefit.value) || false}
+													onChange={(e) => handleArrayChange('benefits', benefit.value, e.target.checked)}
+													className="mr-2"
+												/>
+												{benefit.label}
+											</label>
+										))}
+									</div>
+								</div>
+								<div>
+									<label className="block text-sm font-medium text-foreground mb-2">
+										Cultura de la Empresa (Selecciona todas las que apliquen)
+									</label>
+									<div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border border-border rounded-md p-3">
+										{COMPANY_CULTURE_OPTIONS.map(culture => (
+											<label key={culture.value} className="flex items-center text-sm">
+												<input
+													type="checkbox"
+													checked={companyData.companyCulture?.includes(culture.value) || false}
+													onChange={(e) => handleArrayChange('companyCulture', culture.value, e.target.checked)}
+													className="mr-2"
+												/>
+												{culture.label}
+											</label>
+										))}
+									</div>
 								</div>
 							</div>
 						</div>
@@ -440,7 +540,7 @@ const CompanySettingsPage = () => {
 								onClick={() => router.back()}
 								className="px-6 py-2 text-muted-foreground bg-secondary border border-border rounded-md hover:bg-accent transition-colors"
 							>
-								Cancel
+								Cancelar
 							</button>
 							<button
 								type="submit"
@@ -450,10 +550,10 @@ const CompanySettingsPage = () => {
 								{saving ? (
 									<div className="flex items-center">
 										<div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-										Saving...
+										Guardando...
 									</div>
 								) : (
-									'Save Changes'
+									'Guardar Cambios'
 								)}
 							</button>
 						</div>

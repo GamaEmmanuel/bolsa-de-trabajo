@@ -48,6 +48,7 @@ export type JobStatus =
 	| 'published'
 	| 'expired'
 	| 'filled'
+	| 'archived'
 export type JobTier = 'clasica' | 'destacada' | 'premium'
 
 // Phase 1 & 2 Job Posting Fields

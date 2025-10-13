@@ -25,6 +25,26 @@ const getStatusColor = (status: string) => {
 	}
 }
 
+// Helper to translate status labels
+const translateStatus = (status: string) => {
+	switch (status) {
+		case 'applied':
+			return 'Aplicado'
+		case 'reviewed':
+			return 'Revisado'
+		case 'interview':
+			return 'Entrevista'
+		case 'offer':
+			return 'Oferta'
+		case 'hired':
+			return 'Contratado'
+		case 'rejected':
+			return 'Rechazado'
+		default:
+			return status
+	}
+}
+
 const MyApplicationsPage = () => {
 	const [applications, setApplications] = useState<Application[]>([])
 	const [jobPostings, setJobPostings] = useState<JobPosting[]>([])
@@ -59,7 +79,7 @@ const MyApplicationsPage = () => {
 				},
 				(error) => {
 					console.error('Error fetching applications:', error)
-					setError('Failed to load applications')
+					setError('Error al cargar las aplicaciones')
 					setLoading(false)
 				}
 			)
@@ -103,7 +123,7 @@ const MyApplicationsPage = () => {
 
 	// Handle application withdrawal
 	const handleWithdraw = async (applicationId: string) => {
-		if (!confirm('Are you sure you want to withdraw this application?')) {
+		if (!confirm('¿Estás seguro de que quieres retirar esta aplicación?')) {
 			return
 		}
 
@@ -111,7 +131,7 @@ const MyApplicationsPage = () => {
 			await deleteDoc(doc(db, 'applications', applicationId))
 		} catch (error) {
 			console.error('Error withdrawing application:', error)
-			setError('Failed to withdraw application')
+			setError('Error al retirar la aplicación')
 		}
 	}
 
@@ -121,7 +141,7 @@ const MyApplicationsPage = () => {
 				<div className="max-w-7xl mx-auto">
 					<div className="flex items-center justify-center py-12">
 						<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-						<p className="ml-2 text-gray-600">Loading applications...</p>
+						<p className="ml-2 text-gray-600">Cargando aplicaciones...</p>
 					</div>
 				</div>
 			</div>
@@ -133,8 +153,8 @@ const MyApplicationsPage = () => {
 			{/* Header */}
 			<div className="flex justify-between items-center">
 				<div>
-					<h1 className="text-3xl font-bold text-gray-900">My Applications</h1>
-					<p className="text-gray-600 mt-1">Track the progress of your job applications</p>
+					<h1 className="text-3xl font-bold text-gray-900">Mis Aplicaciones</h1>
+					<p className="text-gray-600 mt-1">Rastrea el progreso de tus aplicaciones de empleo</p>
 				</div>
 				<div className="flex gap-2">
 					<button
@@ -145,7 +165,7 @@ const MyApplicationsPage = () => {
 								: 'bg-white text-gray-700 border border-gray-300'
 						}`}
 					>
-						Kanban View
+						Vista Kanban
 					</button>
 					<button
 						onClick={() => setViewMode('table')}
@@ -155,7 +175,7 @@ const MyApplicationsPage = () => {
 								: 'bg-white text-gray-700 border border-gray-300'
 						}`}
 					>
-						Table View
+						Vista de Tabla
 					</button>
 				</div>
 			</div>
@@ -178,19 +198,19 @@ const MyApplicationsPage = () => {
 							<thead className="bg-gray-50">
 								<tr>
 									<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-										Job Title
+										Título del Empleo
 									</th>
 									<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-										Company
+										Empresa
 									</th>
 									<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-										Date Applied
+										Fecha de Aplicación
 									</th>
 									<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-										Status
+										Estado
 									</th>
 									<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-										Actions
+										Acciones
 									</th>
 								</tr>
 							</thead>
@@ -198,7 +218,7 @@ const MyApplicationsPage = () => {
 								{enrichedApplications.length === 0 ? (
 									<tr>
 										<td colSpan={5} className="px-6 py-12 text-center text-gray-500">
-											No applications found. Start applying to jobs to see them here.
+											No se encontraron aplicaciones. Comienza a aplicar a empleos para verlos aquí.
 										</td>
 									</tr>
 								) : (
@@ -219,7 +239,7 @@ const MyApplicationsPage = () => {
 														app.pipelineStatus
 													)}`}
 												>
-													{app.pipelineStatus}
+													{translateStatus(app.pipelineStatus)}
 												</span>
 											</td>
 											<td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -228,7 +248,7 @@ const MyApplicationsPage = () => {
 														onClick={() => handleWithdraw(app.applicationId)}
 														className="text-red-600 hover:text-red-800 text-sm font-medium"
 													>
-														Withdraw
+														Retirar
 													</button>
 												)}
 											</td>

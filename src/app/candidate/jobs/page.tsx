@@ -60,7 +60,7 @@ const JobsPage = () => {
 			},
 			(error) => {
 				console.error('Error fetching job postings:', error)
-				setError('Failed to load job postings. Please try again.')
+				setError('Error al cargar las publicaciones de empleo. Por favor, inténtalo de nuevo.')
 				setLoading(false)
 			}
 		)
@@ -152,7 +152,7 @@ const JobsPage = () => {
 		return (
 			<div className="flex items-center justify-center py-12">
 				<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-				<p className="ml-2 text-gray-600">Loading jobs...</p>
+				<p className="ml-2 text-gray-600">Cargando empleos...</p>
 			</div>
 		)
 	}
@@ -162,21 +162,21 @@ const JobsPage = () => {
 			{/* Header */}
 			<div className="flex justify-between items-center">
 				<div>
-					<h1 className="text-3xl font-bold text-gray-900">Find Your Next Job</h1>
+					<h1 className="text-3xl font-bold text-gray-900">Encuentra Tu Próximo Empleo</h1>
 					<p className="text-gray-600 mt-1">
-						{filteredJobs.length} job{filteredJobs.length !== 1 ? 's' : ''} found
+						{filteredJobs.length} empleo{filteredJobs.length !== 1 ? 's' : ''} encontrado{filteredJobs.length !== 1 ? 's' : ''}
 					</p>
 				</div>
 				<div className="flex items-center space-x-4">
-					<label className="text-sm font-medium text-gray-700">Sort by:</label>
+					<label className="text-sm font-medium text-gray-700">Ordenar por:</label>
 					<select
 						value={sortBy}
 						onChange={(e) => setSortBy(e.target.value as 'date' | 'salary' | 'relevance')}
 						className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
 					>
-						<option value="date">Date Posted</option>
-						<option value="salary">Salary</option>
-						<option value="relevance">Relevance</option>
+						<option value="date">Fecha de Publicación</option>
+						<option value="salary">Salario</option>
+						<option value="relevance">Relevancia</option>
 					</select>
 				</div>
 			</div>
@@ -192,12 +192,12 @@ const JobsPage = () => {
 				<div className="lg:col-span-1">
 					<div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
 						<div className="flex justify-between items-center mb-4">
-							<h2 className="text-lg font-semibold text-gray-900">Filters</h2>
+							<h2 className="text-lg font-semibold text-gray-900">Filtros</h2>
 							<button
 								onClick={clearFilters}
 								className="text-sm text-blue-600 hover:text-blue-800"
 							>
-								Clear All
+								Limpiar Todo
 							</button>
 						</div>
 
@@ -205,11 +205,11 @@ const JobsPage = () => {
 							{/* Keyword Search */}
 							<div>
 								<label className="block text-sm font-medium text-gray-700 mb-2">
-									Keywords
+									Palabras Clave
 								</label>
 								<input
 									type="text"
-									placeholder="Job title, company, skills..."
+									placeholder="Título del empleo, empresa, habilidades..."
 									value={filters.keyword}
 									onChange={(e) => handleFilterChange('keyword', e.target.value)}
 									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -219,11 +219,11 @@ const JobsPage = () => {
 							{/* Location */}
 							<div>
 								<label className="block text-sm font-medium text-gray-700 mb-2">
-									Location
+									Ubicación
 								</label>
 								<input
 									type="text"
-									placeholder="City, state, country..."
+									placeholder="Ciudad, estado, país..."
 									value={filters.location}
 									onChange={(e) => handleFilterChange('location', e.target.value)}
 									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -240,44 +240,44 @@ const JobsPage = () => {
 									className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
 								/>
 								<label htmlFor="remote" className="ml-2 text-sm text-gray-700">
-									Remote only
+									Solo remoto
 								</label>
 							</div>
 
 							{/* Job Type */}
 							<div>
 								<label className="block text-sm font-medium text-gray-700 mb-2">
-									Job Type
+									Tipo de Empleo
 								</label>
 								<select
 									value={filters.jobType}
 									onChange={(e) => handleFilterChange('jobType', e.target.value)}
 									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
 								>
-									<option value="">All Types</option>
-									<option value="full-time">Full-time</option>
-									<option value="part-time">Part-time</option>
-									<option value="contract">Contract</option>
-									<option value="internship">Internship</option>
+									<option value="">Todos los Tipos</option>
+									<option value="full-time">Tiempo Completo</option>
+									<option value="part-time">Medio Tiempo</option>
+									<option value="contract">Contrato</option>
+									<option value="internship">Prácticas</option>
 								</select>
 							</div>
 
 							{/* Salary Range */}
 							<div>
 								<label className="block text-sm font-medium text-gray-700 mb-2">
-									Salary Range (MXN)
+									Rango Salarial (MXN)
 								</label>
 								<div className="grid grid-cols-2 gap-2">
 									<input
 										type="number"
-										placeholder="Min"
+										placeholder="Mín"
 										value={filters.salaryMin}
 										onChange={(e) => handleFilterChange('salaryMin', e.target.value)}
 										className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
 									/>
 									<input
 										type="number"
-										placeholder="Max"
+										placeholder="Máx"
 										value={filters.salaryMax}
 										onChange={(e) => handleFilterChange('salaryMax', e.target.value)}
 										className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -293,8 +293,8 @@ const JobsPage = () => {
 					{filteredJobs.length === 0 ? (
 						<div className="text-center py-12">
 							<div className="text-gray-400 text-6xl mb-4">🔍</div>
-							<h3 className="text-lg font-medium text-gray-900 mb-2">No jobs found</h3>
-							<p className="text-gray-500">Try adjusting your filters to see more results.</p>
+							<h3 className="text-lg font-medium text-gray-900 mb-2">No se encontraron empleos</h3>
+							<p className="text-gray-500">Intenta ajustar tus filtros para ver más resultados.</p>
 						</div>
 					) : (
 						<div className="space-y-4">
@@ -310,10 +310,10 @@ const JobsPage = () => {
 												{job.jobTitle}
 											</h3>
 											<p className="text-gray-600 font-medium mt-1">
-												{job.companyName || 'Company Name'}
+												{job.companyName || 'Nombre de la Empresa'}
 											</p>
 											<p className="text-gray-500 text-sm mt-1">
-												{job.location || 'Location not specified'}
+												{job.location || 'Ubicación no especificada'}
 											</p>
 											<div className="flex items-center gap-2 mt-2">
 												{job.jobType && (
@@ -331,11 +331,11 @@ const JobsPage = () => {
 										<div className="ml-4 flex flex-col items-end">
 											{job.postedDate && (
 												<p className="text-xs text-gray-500">
-													Posted {new Date(job.postedDate).toLocaleDateString()}
+													Publicado {new Date(job.postedDate).toLocaleDateString()}
 												</p>
 											)}
 											<div className="mt-2 text-blue-600 text-sm font-medium">
-												View Details →
+												Ver Detalles →
 											</div>
 										</div>
 									</div>

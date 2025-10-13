@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { db, auth } from '../../../../lib/firebase'
 import { collection, addDoc } from 'firebase/firestore'
-import { JobTier, JobStatus, JobType, EmploymentType, ExperienceLevel, EducationLevel, JobCategory, JobLevel, CompanySize, Industry, StartDate, UrgencyLevel, ApplicationProcess, InterviewRounds } from '../../../../../types'
+import { JobTier, JobStatus, JobType, EmploymentType, ExperienceLevel, EducationLevel, JobCategory, JobLevel, StartDate, UrgencyLevel, ApplicationProcess, InterviewRounds } from '../../../../../types'
 import {
 	JOB_TYPE_OPTIONS,
 	EMPLOYMENT_TYPE_OPTIONS,
@@ -13,14 +13,10 @@ import {
 	JOB_CATEGORY_OPTIONS,
 	JOB_LEVEL_OPTIONS,
 	MEXICAN_CITIES,
-	COMPANY_SIZE_OPTIONS,
-	INDUSTRY_OPTIONS,
 	START_DATE_OPTIONS,
 	URGENCY_LEVEL_OPTIONS,
 	APPLICATION_PROCESS_OPTIONS,
 	INTERVIEW_ROUNDS_OPTIONS,
-	BENEFITS_OPTIONS,
-	COMPANY_CULTURE_OPTIONS,
 	EXTERNAL_JOB_BOARDS
 } from '../../../../lib/constants'
 
@@ -48,16 +44,12 @@ const NewJobPostingPage = () => {
 	// Phase 3 Fields
 	const [applicationDeadline, setApplicationDeadline] = useState('')
 	const [startDate, setStartDate] = useState<StartDate>('flexible')
-	const [companySize, setCompanySize] = useState<CompanySize>('11-50')
-	const [industry, setIndustry] = useState<Industry>('technology')
 	const [urgencyLevel, setUrgencyLevel] = useState<UrgencyLevel>('normal')
 	const [applicationProcess, setApplicationProcess] = useState<ApplicationProcess>('resume-only')
 	const [interviewRounds, setInterviewRounds] = useState<InterviewRounds>('2')
 	const [applicationQuestions, setApplicationQuestions] = useState('')
 	const [requiredDocuments, setRequiredDocuments] = useState('')
 	const [internalNotes, setInternalNotes] = useState('')
-	const [selectedBenefits, setSelectedBenefits] = useState<string[]>([])
-	const [selectedCulture, setSelectedCulture] = useState<string[]>([])
 	const [selectedJobBoards, setSelectedJobBoards] = useState<string[]>([])
 
 	// Tier and Status
@@ -65,10 +57,9 @@ const NewJobPostingPage = () => {
 	const [loading, setLoading] = useState(false)
 	const router = useRouter()
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault()
+	const handleSave = async (status: JobStatus) => {
 		if (!auth.currentUser) {
-			alert('You must be logged in to create a job posting.')
+			alert('Debes iniciar sesión para crear una publicación de empleo.')
 			return
 		}
 		setLoading(true)
@@ -89,25 +80,21 @@ const NewJobPostingPage = () => {
 				jobCategory,
 				jobLevel,
 				location,
-				salaryMin: salaryMin ? parseInt(salaryMin) : undefined,
-				salaryMax: salaryMax ? parseInt(salaryMax) : undefined,
+				...(salaryMin && { salaryMin: parseInt(salaryMin) }),
+				...(salaryMax && { salaryMax: parseInt(salaryMax) }),
 				isSalaryHidden,
 				// Phase 3 Fields
-				applicationDeadline: applicationDeadline || undefined,
+				...(applicationDeadline && { applicationDeadline }),
 				startDate,
-				companySize,
-				industry,
 				urgencyLevel,
 				applicationProcess,
 				interviewRounds,
 				applicationQuestions: applicationQuestions.split('\n').filter(q => q.trim()),
 				requiredDocuments: requiredDocuments.split(',').map(doc => doc.trim()).filter(doc => doc),
-				internalNotes: internalNotes || undefined,
-				benefits: selectedBenefits,
-				companyCulture: selectedCulture,
+				...(internalNotes && { internalNotes }),
 				externalJobBoards: selectedJobBoards,
 				tier: selectedTier,
-				status: 'published' as JobStatus,
+				status,
 				createdByUserId: auth.currentUser.uid,
 				companyId: companyId,
 				postedDate: new Date().toISOString().split('T')[0],
@@ -115,11 +102,11 @@ const NewJobPostingPage = () => {
 
 			await addDoc(collection(db, 'jobPostings'), jobData)
 
-			// Redirect to the checkout page after successful save
-			router.push(`/company/checkout?tier=${selectedTier}`)
+			// Redirect to job postings list after successful save
+			router.push('/company/job-postings')
 		} catch (error) {
 			console.error('Error creating job posting:', error)
-			alert('Failed to create job posting. Please try again.')
+			alert('Error al crear la publicación de empleo. Por favor, inténtalo de nuevo.')
 			setLoading(false)
 		}
 	}
@@ -127,16 +114,16 @@ const NewJobPostingPage = () => {
 	return (
 		<div className="min-h-screen bg-gray-50 p-8">
 			<div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
-				<h1 className="text-3xl font-bold mb-6">Create New Job Posting</h1>
+				<h1 className="text-3xl font-bold mb-6">Crear Nueva Publicación de Empleo</h1>
 
-				<form onSubmit={handleSubmit} className="space-y-8">
+				<div className="space-y-8">
 					{/* Basic Information */}
 					<div className="bg-gray-50 p-6 rounded-lg">
-						<h2 className="text-xl font-semibold mb-4">Basic Information</h2>
+						<h2 className="text-xl font-semibold mb-4">Información Básica</h2>
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 							<div>
 								<label htmlFor="jobTitle" className="block text-sm font-medium text-gray-700 mb-2">
-									Job Title *
+									Título del Empleo *
 						</label>
 						<input
 							id="jobTitle"
@@ -145,12 +132,12 @@ const NewJobPostingPage = () => {
 							onChange={e => setJobTitle(e.target.value)}
 							required
 									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-									placeholder="e.g., Senior Software Engineer"
+									placeholder="ej., Ingeniero de Software Senior"
 						/>
 					</div>
 							<div>
 								<label htmlFor="jobCategory" className="block text-sm font-medium text-gray-700 mb-2">
-									Job Category *
+									Categoría del Empleo *
 								</label>
 								<select
 									id="jobCategory"
@@ -168,7 +155,7 @@ const NewJobPostingPage = () => {
 						</div>
 						<div className="mt-6">
 							<label htmlFor="jobDescription" className="block text-sm font-medium text-gray-700 mb-2">
-								Job Description *
+								Descripción del Empleo *
 						</label>
 						<textarea
 							id="jobDescription"
@@ -177,18 +164,18 @@ const NewJobPostingPage = () => {
 							required
 								rows={6}
 								className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-								placeholder="Describe the role, responsibilities, and what makes this opportunity special..."
+								placeholder="Describe el rol, responsabilidades y qué hace especial esta oportunidad..."
 							/>
 						</div>
 					</div>
 
 					{/* Phase 1: Essential Fields */}
 					<div className="bg-blue-50 p-6 rounded-lg">
-						<h2 className="text-xl font-semibold mb-4">Job Details</h2>
+						<h2 className="text-xl font-semibold mb-4">Detalles del Empleo</h2>
 						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 							<div>
 								<label htmlFor="jobType" className="block text-sm font-medium text-gray-700 mb-2">
-									Job Type *
+									Tipo de Empleo *
 								</label>
 								<select
 									id="jobType"
@@ -205,7 +192,7 @@ const NewJobPostingPage = () => {
 							</div>
 							<div>
 								<label htmlFor="employmentType" className="block text-sm font-medium text-gray-700 mb-2">
-									Work Arrangement *
+									Modalidad de Trabajo *
 								</label>
 								<select
 									id="employmentType"
@@ -222,7 +209,7 @@ const NewJobPostingPage = () => {
 							</div>
 							<div>
 								<label htmlFor="jobLevel" className="block text-sm font-medium text-gray-700 mb-2">
-									Job Level *
+									Nivel del Empleo *
 								</label>
 								<select
 									id="jobLevel"
@@ -241,7 +228,7 @@ const NewJobPostingPage = () => {
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
 							<div>
 								<label htmlFor="yearsOfExperience" className="block text-sm font-medium text-gray-700 mb-2">
-									Years of Experience *
+									Años de Experiencia *
 								</label>
 								<select
 									id="yearsOfExperience"
@@ -258,7 +245,7 @@ const NewJobPostingPage = () => {
 							</div>
 							<div>
 								<label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
-									Location *
+									Ubicación *
 								</label>
 								<select
 									id="location"
@@ -266,22 +253,22 @@ const NewJobPostingPage = () => {
 									onChange={e => setLocation(e.target.value)}
 									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 								>
-									<option value="">Select a city</option>
-									<optgroup label="Tier 1 Cities">
+									<option value="">Selecciona una ciudad</option>
+									<optgroup label="Ciudades Nivel 1">
 										{MEXICAN_CITIES['tier-1'].map(city => (
 											<option key={city.value} value={city.value}>
 												{city.label}
 											</option>
 										))}
 									</optgroup>
-									<optgroup label="Tier 2 Cities">
+									<optgroup label="Ciudades Nivel 2">
 										{MEXICAN_CITIES['tier-2'].map(city => (
 											<option key={city.value} value={city.value}>
 												{city.label}
 											</option>
 										))}
 									</optgroup>
-									<optgroup label="Tier 3 Cities">
+									<optgroup label="Ciudades Nivel 3">
 										{MEXICAN_CITIES['tier-3'].map(city => (
 											<option key={city.value} value={city.value}>
 												{city.label}
@@ -295,11 +282,11 @@ const NewJobPostingPage = () => {
 
 					{/* Salary Information */}
 					<div className="bg-green-50 p-6 rounded-lg">
-						<h2 className="text-xl font-semibold mb-4">Salary Information</h2>
+						<h2 className="text-xl font-semibold mb-4">Información Salarial</h2>
 						<div className="space-y-6">
 							<div>
 								<label className="block text-sm font-medium text-gray-700 mb-4">
-									Salary Range (MXN)
+									Rango Salarial (MXN)
 								</label>
 
 								{/* Dual Range Slider Container */}
@@ -363,19 +350,19 @@ const NewJobPostingPage = () => {
 										<div className="text-lg font-semibold text-blue-600">
 											${parseInt(salaryMin || '0').toLocaleString()}
 										</div>
-										<div className="text-sm text-gray-500">Minimum</div>
+										<div className="text-sm text-gray-500">Mínimo</div>
 									</div>
 									<div className="text-center">
 										<div className="text-lg font-semibold text-green-600">
 											${parseInt(salaryMax || '0').toLocaleString()}
 										</div>
-										<div className="text-sm text-gray-500">Maximum</div>
+										<div className="text-sm text-gray-500">Máximo</div>
 									</div>
 								</div>
 
 								{/* Quick Salary Presets */}
 								<div className="mt-6">
-									<div className="text-sm text-gray-600 mb-3">Quick presets:</div>
+									<div className="text-sm text-gray-600 mb-3">Configuraciones rápidas:</div>
 									<div className="flex flex-wrap gap-2">
 										<button
 											type="button"
@@ -439,7 +426,7 @@ const NewJobPostingPage = () => {
 										onChange={e => setIsSalaryHidden(e.target.checked)}
 										className="mr-2"
 									/>
-									<span className="text-sm text-gray-700">Hide salary from public</span>
+									<span className="text-sm text-gray-700">Ocultar salario del público</span>
 								</label>
 							</div>
 						</div>
@@ -447,11 +434,11 @@ const NewJobPostingPage = () => {
 
 					{/* Phase 2: Additional Requirements */}
 					<div className="bg-yellow-50 p-6 rounded-lg">
-						<h2 className="text-xl font-semibold mb-4">Requirements & Skills</h2>
+						<h2 className="text-xl font-semibold mb-4">Requisitos y Habilidades</h2>
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 							<div>
 								<label htmlFor="educationLevel" className="block text-sm font-medium text-gray-700 mb-2">
-									Education Level *
+									Nivel de Educación *
 								</label>
 								<select
 									id="educationLevel"
@@ -468,7 +455,7 @@ const NewJobPostingPage = () => {
 							</div>
 							<div>
 								<label htmlFor="requiredSkills" className="block text-sm font-medium text-gray-700 mb-2">
-									Required Skills
+									Habilidades Requeridas
 								</label>
 								<input
 									id="requiredSkills"
@@ -476,13 +463,13 @@ const NewJobPostingPage = () => {
 									value={requiredSkills}
 									onChange={e => setRequiredSkills(e.target.value)}
 									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-									placeholder="JavaScript, React, Node.js (comma separated)"
+									placeholder="JavaScript, React, Node.js (separadas por comas)"
 								/>
 							</div>
 						</div>
 						<div className="mt-6">
 							<label htmlFor="preferredSkills" className="block text-sm font-medium text-gray-700 mb-2">
-								Preferred Skills
+								Habilidades Preferidas
 							</label>
 							<input
 								id="preferredSkills"
@@ -490,52 +477,18 @@ const NewJobPostingPage = () => {
 								value={preferredSkills}
 								onChange={e => setPreferredSkills(e.target.value)}
 								className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-								placeholder="TypeScript, AWS, Docker (comma separated)"
+								placeholder="TypeScript, AWS, Docker (separadas por comas)"
 							/>
 						</div>
 					</div>
 
 					{/* Phase 3: Advanced Features */}
 					<div className="bg-indigo-50 p-6 rounded-lg">
-						<h2 className="text-xl font-semibold mb-4">Company & Process Information</h2>
-						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-							<div>
-								<label htmlFor="companySize" className="block text-sm font-medium text-gray-700 mb-2">
-									Company Size
-								</label>
-								<select
-									id="companySize"
-									value={companySize}
-									onChange={e => setCompanySize(e.target.value as CompanySize)}
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-								>
-									{COMPANY_SIZE_OPTIONS.map(option => (
-										<option key={option.value} value={option.value}>
-											{option.label}
-										</option>
-									))}
-								</select>
-							</div>
-							<div>
-								<label htmlFor="industry" className="block text-sm font-medium text-gray-700 mb-2">
-									Industry
-								</label>
-								<select
-									id="industry"
-									value={industry}
-									onChange={e => setIndustry(e.target.value as Industry)}
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-								>
-									{INDUSTRY_OPTIONS.map(option => (
-										<option key={option.value} value={option.value}>
-											{option.label}
-										</option>
-									))}
-								</select>
-							</div>
+						<h2 className="text-xl font-semibold mb-4">Información del Proceso</h2>
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 							<div>
 								<label htmlFor="urgencyLevel" className="block text-sm font-medium text-gray-700 mb-2">
-									Urgency Level
+									Nivel de Urgencia
 								</label>
 								<select
 									id="urgencyLevel"
@@ -550,11 +503,9 @@ const NewJobPostingPage = () => {
 									))}
 								</select>
 							</div>
-						</div>
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
 							<div>
 								<label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-2">
-									Start Date
+									Fecha de Inicio
 								</label>
 								<select
 									id="startDate"
@@ -569,9 +520,10 @@ const NewJobPostingPage = () => {
 									))}
 								</select>
 							</div>
-							<div>
+						</div>
+						<div className="mt-6">
 								<label htmlFor="applicationDeadline" className="block text-sm font-medium text-gray-700 mb-2">
-									Application Deadline (Optional)
+									Fecha Límite de Aplicación (Opcional)
 								</label>
 								<input
 									id="applicationDeadline"
@@ -580,17 +532,16 @@ const NewJobPostingPage = () => {
 									onChange={e => setApplicationDeadline(e.target.value)}
 									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 								/>
-							</div>
 						</div>
 					</div>
 
 					{/* Application Process */}
 					<div className="bg-orange-50 p-6 rounded-lg">
-						<h2 className="text-xl font-semibold mb-4">Application Process</h2>
+						<h2 className="text-xl font-semibold mb-4">Proceso de Aplicación</h2>
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 							<div>
 								<label htmlFor="applicationProcess" className="block text-sm font-medium text-gray-700 mb-2">
-									Application Process
+									Proceso de Aplicación
 								</label>
 								<select
 									id="applicationProcess"
@@ -607,7 +558,7 @@ const NewJobPostingPage = () => {
 							</div>
 							<div>
 								<label htmlFor="interviewRounds" className="block text-sm font-medium text-gray-700 mb-2">
-									Interview Rounds
+									Rondas de Entrevista
 								</label>
 								<select
 									id="interviewRounds"
@@ -625,7 +576,7 @@ const NewJobPostingPage = () => {
 						</div>
 						<div className="mt-6">
 							<label htmlFor="applicationQuestions" className="block text-sm font-medium text-gray-700 mb-2">
-								Application Questions (Optional)
+								Preguntas de Aplicación (Opcional)
 							</label>
 							<textarea
 								id="applicationQuestions"
@@ -639,7 +590,7 @@ const NewJobPostingPage = () => {
 						</div>
 						<div className="mt-6">
 							<label htmlFor="requiredDocuments" className="block text-sm font-medium text-gray-700 mb-2">
-								Required Documents
+								Documentos Requeridos
 							</label>
 							<input
 								id="requiredDocuments"
@@ -647,72 +598,18 @@ const NewJobPostingPage = () => {
 								value={requiredDocuments}
 								onChange={e => setRequiredDocuments(e.target.value)}
 								className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-								placeholder="CV, Portafolio, Carta de presentación (comma separated)"
+								placeholder="CV, Portafolio, Carta de presentación (separados por comas)"
 							/>
 						</div>
 					</div>
 
-					{/* Benefits & Culture */}
-					<div className="bg-pink-50 p-6 rounded-lg">
-						<h2 className="text-xl font-semibold mb-4">Benefits & Company Culture</h2>
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-2">
-									Benefits (Select all that apply)
-								</label>
-								<div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border border-gray-300 rounded-md p-3">
-									{BENEFITS_OPTIONS.map(benefit => (
-										<label key={benefit.value} className="flex items-center text-sm">
-											<input
-												type="checkbox"
-												checked={selectedBenefits.includes(benefit.value)}
-												onChange={e => {
-													if (e.target.checked) {
-														setSelectedBenefits([...selectedBenefits, benefit.value])
-													} else {
-														setSelectedBenefits(selectedBenefits.filter(b => b !== benefit.value))
-													}
-												}}
-												className="mr-2"
-											/>
-											{benefit.label}
-										</label>
-									))}
-								</div>
-							</div>
-							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-2">
-									Company Culture (Select all that apply)
-								</label>
-								<div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border border-gray-300 rounded-md p-3">
-									{COMPANY_CULTURE_OPTIONS.map(culture => (
-										<label key={culture.value} className="flex items-center text-sm">
-											<input
-												type="checkbox"
-												checked={selectedCulture.includes(culture.value)}
-												onChange={e => {
-													if (e.target.checked) {
-														setSelectedCulture([...selectedCulture, culture.value])
-													} else {
-														setSelectedCulture(selectedCulture.filter(c => c !== culture.value))
-													}
-												}}
-												className="mr-2"
-											/>
-											{culture.label}
-										</label>
-									))}
-								</div>
-							</div>
-						</div>
-					</div>
 
 					{/* External Job Boards */}
 					<div className="bg-cyan-50 p-6 rounded-lg">
-						<h2 className="text-xl font-semibold mb-4">External Job Boards</h2>
+						<h2 className="text-xl font-semibold mb-4">Plataformas de Empleo Externas</h2>
 						<div>
 							<label className="block text-sm font-medium text-gray-700 mb-2">
-								Post to External Job Boards (Select all that apply)
+								Publicar en Plataformas de Empleo Externas (Selecciona todas las que apliquen)
 							</label>
 							<div className="grid grid-cols-2 md:grid-cols-4 gap-2 border border-gray-300 rounded-md p-3">
 								{EXTERNAL_JOB_BOARDS.map(board => (
@@ -738,10 +635,10 @@ const NewJobPostingPage = () => {
 
 					{/* Internal Notes */}
 					<div className="bg-gray-50 p-6 rounded-lg">
-						<h2 className="text-xl font-semibold mb-4">Internal Notes</h2>
+						<h2 className="text-xl font-semibold mb-4">Notas Internas</h2>
 						<div>
 							<label htmlFor="internalNotes" className="block text-sm font-medium text-gray-700 mb-2">
-								Internal Notes (Not visible to candidates)
+								Notas Internas (No visible para candidatos)
 							</label>
 							<textarea
 								id="internalNotes"
@@ -749,14 +646,14 @@ const NewJobPostingPage = () => {
 								onChange={e => setInternalNotes(e.target.value)}
 								rows={3}
 								className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-								placeholder="Notes for internal use only..."
+								placeholder="Notas para uso interno únicamente..."
 							/>
 						</div>
 					</div>
 
 					{/* Tier Selection */}
 					<div className="bg-purple-50 p-6 rounded-lg">
-						<h2 className="text-xl font-semibold mb-4">Choose a Posting Tier</h2>
+						<h2 className="text-xl font-semibold mb-4">Elige un Nivel de Publicación</h2>
 						<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 							<div
 								onClick={() => setSelectedTier('clasica')}
@@ -767,8 +664,8 @@ const NewJobPostingPage = () => {
 								}`}
 							>
 								<h3 className="text-lg font-bold">Clásica</h3>
-								<p className="text-gray-600 text-sm">Basic visibility</p>
-								<p className="text-xs text-gray-500 mt-2">Standard job posting</p>
+								<p className="text-gray-600 text-sm">Visibilidad básica</p>
+								<p className="text-xs text-gray-500 mt-2">Publicación estándar</p>
 							</div>
 							<div
 								onClick={() => setSelectedTier('destacada')}
@@ -779,8 +676,8 @@ const NewJobPostingPage = () => {
 								}`}
 							>
 								<h3 className="text-lg font-bold">Destacada</h3>
-								<p className="text-gray-600 text-sm">Higher search placement</p>
-								<p className="text-xs text-gray-500 mt-2">Featured in search results</p>
+								<p className="text-gray-600 text-sm">Mayor posicionamiento en búsquedas</p>
+								<p className="text-xs text-gray-500 mt-2">Destacada en resultados de búsqueda</p>
 							</div>
 							<div
 								onClick={() => setSelectedTier('premium')}
@@ -791,23 +688,32 @@ const NewJobPostingPage = () => {
 								}`}
 							>
 								<h3 className="text-lg font-bold">Premium</h3>
-								<p className="text-gray-600 text-sm">Top placement & AI features</p>
-								<p className="text-xs text-gray-500 mt-2">Maximum visibility</p>
+								<p className="text-gray-600 text-sm">Posicionamiento superior y funciones de IA</p>
+								<p className="text-xs text-gray-500 mt-2">Máxima visibilidad</p>
 							</div>
 						</div>
 					</div>
 
 					{/* Submission */}
-					<div className="flex justify-end">
+					<div className="flex justify-end gap-4">
 						<button
-							type="submit"
+							type="button"
+							onClick={() => handleSave('draft')}
+							disabled={loading}
+							className="px-8 py-3 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 disabled:bg-gray-400 font-semibold text-lg"
+						>
+							{loading ? 'Guardando...' : 'Guardar'}
+						</button>
+						<button
+							type="button"
+							onClick={() => handleSave('published')}
 							disabled={loading}
 							className="px-8 py-3 text-white bg-green-600 rounded-md hover:bg-green-700 disabled:bg-gray-400 font-semibold text-lg"
 						>
-							{loading ? 'Creating Job Posting...' : 'Proceed to Payment'}
+							{loading ? 'Publicando...' : 'Publicar'}
 						</button>
 					</div>
-				</form>
+				</div>
 			</div>
 		</div>
 	)
