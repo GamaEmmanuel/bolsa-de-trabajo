@@ -51,51 +51,30 @@ const FullPricingSection: React.FC<FullPricingSectionProps> = ({
 			amount: 0
 		},
 		{
-			name: "Startup",
-			price: "$99",
+			name: "Empresa",
+			price: "$300",
 			period: "/mes",
 			description: "Perfecto para empresas en crecimiento",
 			features: [
-				"Hasta 5 publicaciones de empleo activas",
-				"ATS básico (Sistema de Seguimiento de Aplicantes)",
+				"Hasta 20 publicaciones de empleo activas",
+				"ATS avanzado",
 				"Evaluación y filtrado de currículums",
-				"Notificaciones por email",
-				"Panel de análisis básico",
-				"Gestión de perfil de empresa",
-				"Soporte estándar"
+				"Notificaciones",
+				"Dashboard de análisis",
+				"Soporte",
+				"Hasta 100 candidatos por publicación de empleo"
 			],
 			ctaText: "Suscribirse Ahora",
 			ctaLink: "/company/subscription/checkout?plan=startup",
 			popular: true,
 			buttonStyle: "primary",
 			planId: "startup",
-			amount: 9900
-		},
-		{
-			name: "Professional",
-			price: "$299",
-			period: "/mes",
-			description: "Para empresas establecidas",
-			features: [
-				"Hasta 25 publicaciones de empleo activas",
-				"ATS avanzado con flujos de trabajo personalizados",
-				"Emparejamiento de candidatos con IA",
-				"Herramientas de programación de entrevistas",
-				"Análisis y reportes avanzados",
-				"Funciones de colaboración en equipo",
-				"Soporte prioritario",
-				"Opciones de marca personalizada"
-			],
-			ctaText: "Suscribirse Ahora",
-			ctaLink: "/company/subscription/checkout?plan=professional",
-			buttonStyle: "secondary",
-			planId: "professional",
-			amount: 29900
+			amount: 30000
 		},
 		{
 			name: "Enterprise",
 			price: "Personalizado",
-			description: "Soluciones a medida para grandes organizaciones",
+			description: "Capacidades a la medida de tus necesidades, adaptamos la plataforma para tus workflows",
 			features: [
 				"Publicaciones de empleo ilimitadas",
 				"ATS completo con acceso API",
@@ -116,20 +95,52 @@ const FullPricingSection: React.FC<FullPricingSectionProps> = ({
 
 	const faqItems = [
 		{
-			question: "¿Puedo cambiar de plan en cualquier momento?",
-			answer: "¡Sí! Puedes actualizar o reducir tu plan en cualquier momento. Los cambios toman efecto inmediatamente."
+			question: "¿Cómo funciona el plan gratuito para candidatos?",
+			answer: "El plan gratuito te permite aplicar a empleos ilimitados, crear tu currículum profesional, recibir alertas de trabajo y hacer seguimiento de tus aplicaciones. No necesitas tarjeta de crédito para comenzar."
 		},
 		{
-			question: "¿Hay una prueba gratuita?",
-			answer: "Todos los planes pagos incluyen una prueba gratuita de 14 días. No se requiere tarjeta de crédito para comenzar."
+			question: "¿Puedo cambiar de plan en cualquier momento?",
+			answer: "Sí, puedes actualizar o cancelar tu plan cuando quieras. Los cambios toman efecto inmediatamente y se facturan de forma proporcional."
+		},
+		{
+			question: "¿Qué incluye el plan Empresa?",
+			answer: "El plan Empresa incluye hasta 20 publicaciones activas, ATS avanzado, evaluación automática de currículums, dashboard de análisis, notificaciones y hasta 100 candidatos por publicación de empleo."
+		},
+		{
+			question: "¿Ofrecen periodo de prueba?",
+			answer: "Sí, el plan Empresa incluye 14 días de prueba gratuita. No se requiere tarjeta de crédito para empezar."
 		},
 		{
 			question: "¿Qué métodos de pago aceptan?",
-			answer: "Aceptamos todas las principales tarjetas de crédito, PayPal y transferencias bancarias para planes Enterprise."
+			answer: "Aceptamos tarjetas de crédito/débito (Visa, Mastercard, American Express), transferencias bancarias y PayPal."
 		},
 		{
-			question: "¿Ofrecen reembolsos?",
-			answer: "Sí, ofrecemos una garantía de devolución de dinero de 30 días para todos los planes pagos."
+			question: "¿Cómo funciona el límite de candidatos por publicación?",
+			answer: "El plan Empresa permite hasta 100 candidatos por publicación de empleo. Si recibes más aplicaciones, te notificaremos para que puedas actualizar tu plan o gestionar las aplicaciones existentes."
+		},
+		{
+			question: "¿Mis datos están seguros?",
+			answer: "Absolutamente. Utilizamos encriptación de nivel bancario, cumplimos con GDPR y realizamos auditorías de seguridad regulares. Tus datos nunca se comparten con terceros sin tu consentimiento."
+		},
+		{
+			question: "¿Qué diferencia al plan Enterprise del plan Empresa?",
+			answer: "El plan Enterprise ofrece publicaciones ilimitadas, integraciones personalizadas, API completa, gerente de cuenta dedicado, soporte 24/7 y capacitación personalizada para tu equipo."
+		},
+		{
+			question: "¿Ofrecen capacitación para usar la plataforma?",
+			answer: "Sí, todos los planes incluyen documentación completa y videos tutoriales. El plan Enterprise incluye capacitación personalizada en vivo para tu equipo."
+		},
+		{
+			question: "¿Puedo exportar mis datos si decido cambiar de plataforma?",
+			answer: "Por supuesto. Puedes exportar todos tus datos (candidatos, publicaciones, análisis) en cualquier momento en formatos CSV o JSON."
+		},
+		{
+			question: "¿Qué tipo de soporte ofrecen?",
+			answer: "El plan Empresa incluye soporte por email con respuesta en 24 horas. El plan Enterprise incluye soporte prioritario 24/7 por email, chat y teléfono."
+		},
+		{
+			question: "¿Hay cargos ocultos o comisiones adicionales?",
+			answer: "No. El precio que ves es el precio que pagas. Sin cargos de configuración, sin comisiones por contratación, sin costos ocultos."
 		}
 	]
 
@@ -164,7 +175,7 @@ const FullPricingSection: React.FC<FullPricingSectionProps> = ({
 				</div>
 
 				{/* Pricing Tiers */}
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 					{pricingPlans.map((plan, index) => (
 						<div
 							key={index}
@@ -184,20 +195,20 @@ const FullPricingSection: React.FC<FullPricingSectionProps> = ({
 							<div className="text-center mb-8">
 								<h3 className="text-2xl font-bold text-gray-900">{plan.name}</h3>
 								<div className="mt-4">
-									<span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+									<span className={`font-bold text-gray-900 ${plan.price.length > 8 ? 'text-3xl' : 'text-4xl'}`}>{plan.price}</span>
 									{plan.period && (
 										<span className="text-gray-500">{plan.period}</span>
 									)}
 								</div>
-								<p className="mt-2 text-gray-600">{plan.description}</p>
+								<p className="mt-2 text-gray-600 break-words">{plan.description}</p>
 							</div>
 							<ul className="space-y-4 mb-8 flex-grow">
 								{plan.features.map((feature, featureIndex) => (
 									<li key={featureIndex} className="flex items-start">
-										<svg className="w-5 h-5 text-green-500 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+										<svg className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
 											<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
 										</svg>
-										<span className="text-gray-700">{feature}</span>
+										<span className="text-gray-700 break-words">{feature}</span>
 									</li>
 								))}
 							</ul>
@@ -219,17 +230,19 @@ const FullPricingSection: React.FC<FullPricingSectionProps> = ({
 						<h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
 							Preguntas Frecuentes
 						</h2>
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-							{faqItems.map((item, index) => (
-								<div key={index} className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-									<h3 className="text-lg font-semibold text-gray-900 mb-2">
-										{item.question}
-									</h3>
-									<p className="text-gray-600">
-										{item.answer}
-									</p>
-								</div>
-							))}
+						<div className="max-w-4xl mx-auto">
+							<div className="space-y-6">
+								{faqItems.map((item, index) => (
+									<div key={index} className="border-b border-gray-200 pb-6 last:border-b-0">
+										<h3 className="text-lg font-semibold text-gray-900 mb-3">
+											{item.question}
+										</h3>
+										<p className="text-gray-600 leading-relaxed">
+											{item.answer}
+										</p>
+									</div>
+								))}
+							</div>
 						</div>
 					</div>
 				)}

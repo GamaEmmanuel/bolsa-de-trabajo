@@ -52,7 +52,6 @@ const CompanyDashboard = () => {
 	const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null)
 	const [isLoading, setIsLoading] = useState(true)
 	const [error, setError] = useState<string | null>(null)
-	const [selectedDemographic, setSelectedDemographic] = useState<string>('gender')
 
 	// Mock demographic data - in a real app, this would come from candidate profiles
 	const demographicData = {
@@ -86,10 +85,6 @@ const CompanyDashboard = () => {
 			{ name: 'Monterrey', value: 20, count: 10 },
 			{ name: 'Remoto', value: 16, count: 8 }
 		]
-	}
-
-	const getCurrentData = () => {
-		return demographicData[selectedDemographic as keyof typeof demographicData] || []
 	}
 
 	useEffect(() => {
@@ -251,6 +246,100 @@ const CompanyDashboard = () => {
 					</ResponsiveContainer>
 				</div>
 
+				{/* Gender Demographics */}
+				<div className="bg-card p-6 rounded-xl shadow-sm">
+					<h3 className="text-xl font-semibold mb-4 text-foreground">Género</h3>
+					<ResponsiveContainer width="100%" height={300}>
+						<PieChart>
+							<Pie
+								data={demographicData.gender}
+								cx="50%"
+								cy="50%"
+								labelLine={false}
+								label={renderCustomizedLabel}
+								outerRadius={100}
+								fill="#f97316"
+								dataKey="value"
+							>
+								{demographicData.gender.map((entry, index) => (
+									<Cell
+										key={`cell-${index}`}
+										fill={COLORS[index % COLORS.length]}
+									/>
+								))}
+							</Pie>
+							<Tooltip formatter={(value, name, props) => [`${value}%`, name]} />
+						</PieChart>
+					</ResponsiveContainer>
+					<div className="mt-4 text-center text-sm text-muted-foreground">
+						Total de candidatos: {demographicData.gender.reduce((sum, item) => sum + item.count, 0)}
+					</div>
+				</div>
+
+				{/* Age Demographics */}
+				<div className="bg-card p-6 rounded-xl shadow-sm">
+					<h3 className="text-xl font-semibold mb-4 text-foreground">Edad</h3>
+					<ResponsiveContainer width="100%" height={300}>
+						<BarChart data={demographicData.age}>
+							<XAxis dataKey="name" />
+							<YAxis />
+							<Tooltip formatter={(value, name, props) => [`${value}%`, name]} />
+							<Bar dataKey="value" fill="#f97316" />
+						</BarChart>
+					</ResponsiveContainer>
+					<div className="mt-4 text-center text-sm text-muted-foreground">
+						Total de candidatos: {demographicData.age.reduce((sum, item) => sum + item.count, 0)}
+					</div>
+				</div>
+
+				{/* Education Demographics */}
+				<div className="bg-card p-6 rounded-xl shadow-sm">
+					<h3 className="text-xl font-semibold mb-4 text-foreground">Educación</h3>
+					<ResponsiveContainer width="100%" height={300}>
+						<BarChart data={demographicData.education}>
+							<XAxis dataKey="name" />
+							<YAxis />
+							<Tooltip formatter={(value, name, props) => [`${value}%`, name]} />
+							<Bar dataKey="value" fill="#f97316" />
+						</BarChart>
+					</ResponsiveContainer>
+					<div className="mt-4 text-center text-sm text-muted-foreground">
+						Total de candidatos: {demographicData.education.reduce((sum, item) => sum + item.count, 0)}
+					</div>
+				</div>
+
+				{/* Experience Demographics */}
+				<div className="bg-card p-6 rounded-xl shadow-sm">
+					<h3 className="text-xl font-semibold mb-4 text-foreground">Experiencia</h3>
+					<ResponsiveContainer width="100%" height={300}>
+						<BarChart data={demographicData.experience}>
+							<XAxis dataKey="name" />
+							<YAxis />
+							<Tooltip formatter={(value, name, props) => [`${value}%`, name]} />
+							<Bar dataKey="value" fill="#f97316" />
+						</BarChart>
+					</ResponsiveContainer>
+					<div className="mt-4 text-center text-sm text-muted-foreground">
+						Total de candidatos: {demographicData.experience.reduce((sum, item) => sum + item.count, 0)}
+					</div>
+				</div>
+
+				{/* Location Demographics */}
+				<div className="bg-card p-6 rounded-xl shadow-sm">
+					<h3 className="text-xl font-semibold mb-4 text-foreground">Ubicación</h3>
+					<ResponsiveContainer width="100%" height={300}>
+						<BarChart data={demographicData.location}>
+							<XAxis dataKey="name" />
+							<YAxis />
+							<Tooltip formatter={(value, name, props) => [`${value}%`, name]} />
+							<Bar dataKey="value" fill="#f97316" />
+						</BarChart>
+					</ResponsiveContainer>
+					<div className="mt-4 text-center text-sm text-muted-foreground">
+						Total de candidatos: {demographicData.location.reduce((sum, item) => sum + item.count, 0)}
+					</div>
+				</div>
+
 				{/* AI Interviews */}
 				<div className="bg-card p-6 rounded-xl shadow-sm">
 					<h2 className="text-xl font-semibold mb-4 text-foreground">
@@ -268,58 +357,6 @@ const CompanyDashboard = () => {
 								Análisis de entrevistas impulsado por IA próximamente
 							</p>
 						</div>
-					</div>
-				</div>
-
-				{/* Applicant Demographics */}
-				<div className="bg-card p-6 rounded-xl shadow-sm">
-					<div className="flex justify-between items-center mb-4">
-						<h2 className="text-xl font-semibold text-foreground">Demografía de Candidatos</h2>
-						<select
-							value={selectedDemographic}
-							onChange={(e) => setSelectedDemographic(e.target.value)}
-							className="px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-orange-500"
-						>
-							<option value="gender">Género</option>
-							<option value="age">Edad</option>
-							<option value="education">Educación</option>
-							<option value="experience">Experiencia</option>
-							<option value="location">Ubicación</option>
-						</select>
-					</div>
-					<ResponsiveContainer width="100%" height={300}>
-						{selectedDemographic === 'gender' ? (
-							<PieChart>
-								<Pie
-									data={getCurrentData()}
-									cx="50%"
-									cy="50%"
-									labelLine={false}
-									label={renderCustomizedLabel}
-									outerRadius={100}
-									fill="#f97316"
-									dataKey="value"
-								>
-									{getCurrentData().map((entry, index) => (
-										<Cell
-											key={`cell-${index}`}
-											fill={COLORS[index % COLORS.length]}
-										/>
-									))}
-								</Pie>
-								<Tooltip formatter={(value, name, props) => [`${value}%`, name]} />
-							</PieChart>
-						) : (
-							<BarChart data={getCurrentData()}>
-								<XAxis dataKey="name" />
-								<YAxis />
-								<Tooltip formatter={(value, name, props) => [`${value}%`, name]} />
-								<Bar dataKey="value" fill="#f97316" />
-							</BarChart>
-						)}
-					</ResponsiveContainer>
-					<div className="mt-4 text-center text-sm text-muted-foreground">
-						Total de candidatos: {getCurrentData().reduce((sum, item) => sum + item.count, 0)}
 					</div>
 				</div>
 			</div>

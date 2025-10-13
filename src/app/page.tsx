@@ -60,12 +60,6 @@ const LandingPage = () => {
 							>
 								Iniciar Prueba Gratuita
 							</Link>
-							<Link
-								href="/demo"
-								className="px-8 py-4 bg-white text-gray-900 text-lg font-semibold rounded-lg border-2 border-gray-200 hover:border-gray-300 transition-all duration-200"
-							>
-								Ver Demostración
-							</Link>
 						</div>
 					</div>
 

@@ -114,10 +114,15 @@ const CompanyLayout = ({ children }: { children: React.ReactNode }) => {
 					<div className="flex justify-between items-center py-4">
 						{/* Logo/Brand */}
 						<Link href="/company/dashboard" className="flex items-center">
-							<div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg mr-3 flex items-center justify-center">
-								<span className="text-white font-bold text-sm">T</span>
+							<div className="w-10 h-10 bg-orange-500 rounded-full mr-3 flex items-center justify-center">
+								<svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+									<path d="M13 2L3 14h6v8l10-12h-6V2z"/>
+								</svg>
 							</div>
-							<span className="text-xl font-bold text-foreground">TalentFlow</span>
+							<div className="flex flex-col">
+								<span className="text-xl font-bold text-foreground">TalentFlow</span>
+								<span className="text-xs text-orange-500 font-semibold uppercase tracking-wide">CONTRATA, MÁS RÁPIDO</span>
+							</div>
 						</Link>
 
 						{/* Navigation */}

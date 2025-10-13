@@ -50,41 +50,25 @@ const PricingSection: React.FC<PricingSectionProps> = ({
 			amount: 0
 		},
 		{
-			name: "Startup",
-			price: "$99",
+			name: "Empresa",
+			price: "$300",
 			period: "/mes",
 			description: "Perfecto para empresas en crecimiento",
 			features: [
-				"Hasta 5 publicaciones de empleo",
-				"ATS básico",
-				"Evaluación de currículum",
-				"Notificaciones por email",
-				"Panel de análisis"
+				"Hasta 20 publicaciones de empleo activas",
+				"ATS avanzado",
+				"Evaluación y filtrado de currículums",
+				"Notificaciones",
+				"Dashboard de análisis",
+				"Soporte",
+				"Hasta 100 candidatos por publicación de empleo"
 			],
 			ctaText: "Suscribirse Ahora",
 			ctaLink: "/company/subscription/checkout?plan=startup",
 			popular: true,
 			buttonStyle: "primary",
 			planId: "startup",
-			amount: 9900
-		},
-		{
-			name: "Professional",
-			price: "$299",
-			period: "/mes",
-			description: "Para empresas establecidas",
-			features: [
-				"Hasta 25 publicaciones de empleo",
-				"ATS avanzado",
-				"Emparejamiento con IA",
-				"Programación de entrevistas",
-				"Análisis avanzados"
-			],
-			ctaText: "Suscribirse Ahora",
-			ctaLink: "/company/subscription/checkout?plan=professional",
-			buttonStyle: "secondary",
-			planId: "professional",
-			amount: 29900
+			amount: 30000
 		}
 	]
 
@@ -115,7 +99,7 @@ const PricingSection: React.FC<PricingSectionProps> = ({
 					</p>
 				</div>
 
-				<div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
 					{pricingPlans.map((plan, index) => (
 						<div
 							key={index}
@@ -135,20 +119,20 @@ const PricingSection: React.FC<PricingSectionProps> = ({
 							<div className="text-center mb-8">
 								<h3 className="text-2xl font-bold text-gray-900">{plan.name}</h3>
 								<div className="mt-4">
-									<span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+									<span className={`font-bold text-gray-900 ${plan.price.length > 8 ? 'text-3xl' : 'text-4xl'}`}>{plan.price}</span>
 									{plan.period && (
 										<span className="text-gray-500">{plan.period}</span>
 									)}
 								</div>
-								<p className="mt-2 text-gray-600">{plan.description}</p>
+								<p className="mt-2 text-gray-600 break-words">{plan.description}</p>
 							</div>
 							<ul className="space-y-4 mb-8 flex-grow">
 								{plan.features.map((feature, featureIndex) => (
-									<li key={featureIndex} className="flex items-center">
-										<svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+									<li key={featureIndex} className="flex items-start">
+										<svg className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
 											<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
 										</svg>
-										<span className="text-gray-700">{feature}</span>
+										<span className="text-gray-700 break-words">{feature}</span>
 									</li>
 								))}
 							</ul>
