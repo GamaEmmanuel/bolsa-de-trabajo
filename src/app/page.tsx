@@ -240,12 +240,12 @@ const LandingPage = () => {
 
 
 			{/* Final CTA Section */}
-			<section className="py-20 bg-gradient-to-r from-orange-600 to-red-600">
+			<section className="py-20 bg-gradient-to-r from-orange-500 to-orange-600">
 				<div className="max-w-4xl mx-auto px-6 text-center">
 					<h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
 						¿Listo para transformar tu proceso de contratación?
 					</h2>
-					<p className="text-xl text-orange-100 mb-8">
+					<p className="text-xl text-orange-50 mb-8">
 						Únete a miles de empresas que ya usan TalentFlow para encontrar y contratar el mejor talento.
 					</p>
 					<div className="flex flex-col sm:flex-row gap-4 justify-center">

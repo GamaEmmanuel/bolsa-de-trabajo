@@ -19,6 +19,8 @@ import {
 	INTERVIEW_ROUNDS_OPTIONS,
 	EXTERNAL_JOB_BOARDS
 } from '../../../../lib/constants'
+import LocationSelector from '../../../../components/ui/LocationSelector'
+import { formatNumberWithCommas, parseFormattedNumber } from '../../../../lib/utils'
 
 const NewJobPostingPage = () => {
 	// Basic Information
@@ -247,35 +249,19 @@ const NewJobPostingPage = () => {
 								<label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
 									Ubicación *
 								</label>
-								<select
-									id="location"
+								<LocationSelector
 									value={location}
-									onChange={e => setLocation(e.target.value)}
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-								>
-									<option value="">Selecciona una ciudad</option>
-									<optgroup label="Ciudades Nivel 1">
-										{MEXICAN_CITIES['tier-1'].map(city => (
-											<option key={city.value} value={city.value}>
-												{city.label}
-											</option>
-										))}
-									</optgroup>
-									<optgroup label="Ciudades Nivel 2">
-										{MEXICAN_CITIES['tier-2'].map(city => (
-											<option key={city.value} value={city.value}>
-												{city.label}
-											</option>
-										))}
-									</optgroup>
-									<optgroup label="Ciudades Nivel 3">
-										{MEXICAN_CITIES['tier-3'].map(city => (
-											<option key={city.value} value={city.value}>
-												{city.label}
-											</option>
-										))}
-									</optgroup>
-								</select>
+									onChange={(locationData) => {
+										if (locationData) {
+											const locationString = locationData.city + (locationData.state ? `, ${locationData.state}` : '')
+											setLocation(locationString)
+										} else {
+											setLocation('')
+										}
+									}}
+									placeholder="Selecciona una ciudad"
+									className="w-full"
+								/>
 							</div>
 						</div>
 					</div>
@@ -348,13 +334,13 @@ const NewJobPostingPage = () => {
 								<div className="flex justify-between mt-6">
 									<div className="text-center">
 										<div className="text-lg font-semibold text-blue-600">
-											${parseInt(salaryMin || '0').toLocaleString()}
+											${formatNumberWithCommas(parseInt(salaryMin || '0'))}
 										</div>
 										<div className="text-sm text-gray-500">Mínimo</div>
 									</div>
 									<div className="text-center">
 										<div className="text-lg font-semibold text-green-600">
-											${parseInt(salaryMax || '0').toLocaleString()}
+											${formatNumberWithCommas(parseInt(salaryMax || '0'))}
 										</div>
 										<div className="text-sm text-gray-500">Máximo</div>
 									</div>

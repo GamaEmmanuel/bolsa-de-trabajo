@@ -9,8 +9,7 @@ const columns: PipelineStatus[] = [
 	'reviewed',
 	'interview',
 	'assessments',
-	'offer',
-	'hired',
+	'finalista',
 	'rejected',
 ]
 
@@ -25,10 +24,8 @@ const getStatusColor = (status: PipelineStatus) => {
 			return 'bg-yellow-100 text-yellow-800 border-yellow-200'
 		case 'assessments':
 			return 'bg-purple-100 text-purple-800 border-purple-200'
-		case 'offer':
+		case 'finalista':
 			return 'bg-green-100 text-green-800 border-green-200'
-		case 'hired':
-			return 'bg-emerald-100 text-emerald-800 border-emerald-200'
 		case 'rejected':
 			return 'bg-red-100 text-red-800 border-red-200'
 		default:
@@ -144,14 +141,15 @@ const ApplicantKanban: React.FC<ApplicantKanbanProps> = ({
 			reviewed: [],
 			interview: [],
 			assessments: [],
-			offer: [],
-			hired: [],
+			finalista: [],
 			rejected: [],
 		}
 
 		applications.forEach(app => {
-			if (grouped[app.pipelineStatus]) {
-				grouped[app.pipelineStatus].push(app)
+			// Map old 'offer' and 'hired' statuses to new 'finalista' status
+			const status = (app.pipelineStatus === 'offer' || app.pipelineStatus === 'hired') ? 'finalista' : app.pipelineStatus
+			if (grouped[status]) {
+				grouped[status].push(app)
 			}
 		})
 

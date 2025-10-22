@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { db, auth } from '../../../lib/firebase'
 import { collection, query, onSnapshot, where } from 'firebase/firestore'
 import { onAuthStateChanged } from 'firebase/auth'
+import LocationSelector from '../../../components/ui/LocationSelector'
 
 // Extended CandidateProfile interface for display
 interface CandidateProfile {
@@ -187,12 +188,18 @@ const TalentSearchPage = () => {
 							value={filters.skills}
 							onChange={e => setFilters({ ...filters, skills: e.target.value })}
 						/>
-						<input
-							type="text"
+						<LocationSelector
+							value={filters.location}
+							onChange={(locationData) => {
+								if (locationData) {
+									const locationString = locationData.city + (locationData.state ? `, ${locationData.state}` : '')
+									setFilters({ ...filters, location: locationString })
+								} else {
+									setFilters({ ...filters, location: '' })
+								}
+							}}
 							placeholder="Ubicación (ej., Ciudad de México, Remoto)"
 							className="px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200"
-							value={filters.location}
-							onChange={e => setFilters({ ...filters, location: e.target.value })}
 						/>
 						<button
 							type="submit"

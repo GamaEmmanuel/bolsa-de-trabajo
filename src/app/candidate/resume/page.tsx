@@ -4,13 +4,13 @@ import React, { useState, useEffect } from 'react'
 import { db, auth } from '../../../lib/firebase'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { onAuthStateChanged } from 'firebase/auth'
+import LocationSelector from '../../../components/ui/LocationSelector'
+import { formatNumberWithCommas, parseFormattedNumber } from '../../../lib/utils'
+import { EDUCATION_DEGREE_OPTIONS } from '../../../lib/constants'
 
 interface CandidateProfile {
 	userId: string
-	firstName: string
-	lastName: string
 	email: string
-	phone?: string
 	location?: string
 	summary?: string
 	experience: WorkExperience[]
@@ -19,6 +19,7 @@ interface CandidateProfile {
 	languages?: Record<string, string>
 	desiredSalary?: number
 	availability?: string
+	willingToRelocate?: boolean
 }
 
 interface WorkExperience {
@@ -46,10 +47,7 @@ interface Education {
 const ResumePage = () => {
 	const [profile, setProfile] = useState<CandidateProfile>({
 		userId: '',
-		firstName: '',
-		lastName: '',
 		email: '',
-		phone: '',
 		location: '',
 		summary: '',
 		experience: [],
@@ -58,6 +56,7 @@ const ResumePage = () => {
 		languages: {},
 		desiredSalary: undefined,
 		availability: '',
+		willingToRelocate: false,
 	})
 	const [loading, setLoading] = useState(true)
 	const [saving, setSaving] = useState(false)
@@ -68,6 +67,14 @@ const ResumePage = () => {
 	const [skillSuggestions, setSkillSuggestions] = useState<string[]>([])
 	const [showSuggestions, setShowSuggestions] = useState(false)
 	const [showCategories, setShowCategories] = useState(false)
+	const [formattedSalary, setFormattedSalary] = useState('')
+	const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({})
+	const [userAccount, setUserAccount] = useState({
+		firstName: '',
+		lastName: '',
+		email: '',
+		phone: ''
+	})
 
 	// Expandable sections state
 	const [expandedSections, setExpandedSections] = useState({
@@ -76,6 +83,35 @@ const ResumePage = () => {
 		education: false,
 		skills: false
 	})
+
+	// Update formatted salary when profile changes
+	useEffect(() => {
+		if (profile.desiredSalary) {
+			setFormattedSalary(formatNumberWithCommas(profile.desiredSalary))
+		} else {
+			setFormattedSalary('')
+		}
+	}, [profile.desiredSalary])
+
+	// Fetch user account information
+	const fetchUserAccount = async (userId: string) => {
+		try {
+			const accountRef = doc(db, 'userAccounts', userId)
+			const accountSnap = await getDoc(accountRef)
+
+			if (accountSnap.exists()) {
+				const accountData = accountSnap.data()
+				setUserAccount({
+					firstName: accountData.firstName || '',
+					lastName: accountData.lastName || '',
+					email: accountData.email || '',
+					phone: accountData.phone || ''
+				})
+			}
+		} catch (error) {
+			console.error('Error fetching user account:', error)
+		}
+	}
 
 	// Skills organized by categories
 	const skillCategories = {
@@ -263,6 +299,9 @@ const ResumePage = () => {
 			setUser(currentUser)
 			if (currentUser) {
 				try {
+					// Fetch user account information
+					await fetchUserAccount(currentUser.uid)
+
 					const profileRef = doc(db, 'candidateProfiles', currentUser.uid)
 					const profileDoc = await getDoc(profileRef)
 
@@ -293,6 +332,15 @@ const ResumePage = () => {
 
 	const handleInputChange = (field: keyof CandidateProfile, value: any) => {
 		setProfile(prev => ({ ...prev, [field]: value }))
+	}
+
+	const handleSalaryChange = (value: string) => {
+		// Update the formatted display
+		setFormattedSalary(value)
+
+		// Parse and update the actual numeric value
+		const numericValue = parseFormattedNumber(value)
+		handleInputChange('desiredSalary', numericValue || undefined)
 	}
 
 	const addExperience = () => {
@@ -379,6 +427,13 @@ const ResumePage = () => {
 		}))
 	}
 
+	const toggleCategoryExpansion = (category: string) => {
+		setExpandedCategories(prev => ({
+			...prev,
+			[category]: !prev[category]
+		}))
+	}
+
 	const handleSave = async () => {
 		if (!user) return
 
@@ -460,30 +515,36 @@ const ResumePage = () => {
 				</div>
 				{expandedSections.basicInfo && (
 					<div className="px-4 pb-4">
+						<div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+							<p className="text-sm text-blue-700">
+								<strong>Nota:</strong> Para cambiar tu nombre, apellido, correo electrónico o teléfono,
+								ve a la página de <a href="/candidate/account" className="text-blue-600 hover:text-blue-800 underline">Configuración de Cuenta</a>.
+							</p>
+						</div>
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
 					<div>
 						<label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
 						<input
 							type="text"
-							value={profile.firstName}
-							onChange={(e) => handleInputChange('firstName', e.target.value)}
-							className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+							value={userAccount.firstName}
+							disabled
+							className="w-full px-3 py-1.5 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
 						/>
 					</div>
 					<div>
 						<label className="block text-sm font-medium text-gray-700 mb-1">Apellido</label>
 						<input
 							type="text"
-							value={profile.lastName}
-							onChange={(e) => handleInputChange('lastName', e.target.value)}
-							className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+							value={userAccount.lastName}
+							disabled
+							className="w-full px-3 py-1.5 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
 						/>
 					</div>
 					<div>
 						<label className="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
 						<input
 							type="email"
-							value={profile.email}
+							value={userAccount.email}
 							disabled
 							className="w-full px-3 py-1.5 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
 						/>
@@ -492,29 +553,50 @@ const ResumePage = () => {
 						<label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
 						<input
 							type="tel"
-							value={profile.phone || ''}
-							onChange={(e) => handleInputChange('phone', e.target.value)}
-							className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+							value={userAccount.phone || ''}
+							disabled
+							className="w-full px-3 py-1.5 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
 						/>
 					</div>
 					<div>
 						<label className="block text-sm font-medium text-gray-700 mb-1">Ubicación</label>
-						<input
-							type="text"
+						<LocationSelector
 							value={profile.location || ''}
-							onChange={(e) => handleInputChange('location', e.target.value)}
-							placeholder="Ciudad, Estado, País"
-							className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+							onChange={(location) => {
+								if (location) {
+									const locationString = location.city + (location.state ? `, ${location.state}` : '')
+									handleInputChange('location', locationString)
+								} else {
+									handleInputChange('location', '')
+								}
+							}}
+							placeholder="Selecciona tu ciudad"
+							className="w-full"
 						/>
 					</div>
 					<div>
 						<label className="block text-sm font-medium text-gray-700 mb-1">Salario Deseado (MXN)</label>
 						<input
-							type="number"
-							value={profile.desiredSalary || ''}
-							onChange={(e) => handleInputChange('desiredSalary', e.target.value ? parseInt(e.target.value) : undefined)}
+							type="text"
+							value={formattedSalary}
+							onChange={(e) => handleSalaryChange(e.target.value)}
+							placeholder="Ej: 25,000"
 							className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
 						/>
+					</div>
+					<div className="md:col-span-2">
+						<div className="flex items-center">
+							<input
+								type="checkbox"
+								id="willingToRelocate"
+								checked={profile.willingToRelocate || false}
+								onChange={(e) => handleInputChange('willingToRelocate', e.target.checked)}
+								className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+							/>
+							<label htmlFor="willingToRelocate" className="ml-2 text-sm text-gray-700">
+								Dispuesto a reubicación
+							</label>
+						</div>
 					</div>
 				</div>
 				<div className="mt-3">
@@ -679,13 +761,19 @@ const ResumePage = () => {
 									/>
 								</div>
 								<div>
-									<label className="block text-sm font-medium text-gray-700 mb-1">Título</label>
-									<input
-										type="text"
+									<label className="block text-sm font-medium text-gray-700 mb-1">Nivel Educativo</label>
+									<select
 										value={edu.degree}
 										onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
 										className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-									/>
+									>
+										<option value="">Selecciona un nivel</option>
+										{EDUCATION_DEGREE_OPTIONS.map((option) => (
+											<option key={option.value} value={option.value}>
+												{option.label}
+											</option>
+										))}
+									</select>
 								</div>
 								<div>
 									<label className="block text-sm font-medium text-gray-700 mb-1">Campo de Estudio</label>
@@ -826,7 +914,7 @@ const ResumePage = () => {
 											<div key={category} className="mb-3">
 												<h4 className="text-xs font-medium text-gray-600 mb-1">{category}</h4>
 												<div className="flex flex-wrap gap-1">
-													{skills.slice(0, 6).map((skill, index) => (
+													{(expandedCategories[category] ? skills : skills.slice(0, 6)).map((skill, index) => (
 														<button
 															key={index}
 															onClick={() => addSkillFromCategory(skill)}
@@ -841,9 +929,12 @@ const ResumePage = () => {
 														</button>
 													))}
 													{skills.length > 6 && (
-														<span className="text-xs text-gray-400 px-2 py-1">
-															+{skills.length - 6} más
-														</span>
+														<button
+															onClick={() => toggleCategoryExpansion(category)}
+															className="px-2 py-1 text-xs rounded-full border border-gray-300 bg-gray-50 text-gray-600 hover:bg-gray-100 transition-colors"
+														>
+															{expandedCategories[category] ? 'Ver menos' : `+${skills.length - 6} más`}
+														</button>
 													)}
 												</div>
 											</div>

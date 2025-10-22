@@ -66,6 +66,7 @@ const OnboardingPage = () => {
 				await setDoc(
 					userRef,
 					{
+						uid: user.uid,
 						accountType: accountType,
 						role: accountType === 'personal' ? 'candidate' : 'recruiter',
 						email: user.email,

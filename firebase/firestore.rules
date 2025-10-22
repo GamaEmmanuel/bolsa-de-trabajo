@@ -14,7 +14,7 @@ service cloud.firestore {
     // Each user can read/write their own user document
     // Also allow public read access to user documents that have company data (for job postings)
     match /users/{userId} {
-      allow read: if isOwner(userId) || resource.data.companyData != null;
+      allow read: if isOwner(userId) || (resource != null && 'companyData' in resource.data);
       allow update, delete: if isOwner(userId);
       allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
     }

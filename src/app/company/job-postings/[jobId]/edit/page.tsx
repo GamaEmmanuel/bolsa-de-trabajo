@@ -6,6 +6,7 @@ import { db, auth } from '../../../../../lib/firebase'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import { onAuthStateChanged } from 'firebase/auth'
 import { JobPosting, JobTier, JobStatus } from '../../../../../../types'
+import LocationSelector from '../../../../../components/ui/LocationSelector'
 
 const EditJobPage = () => {
 	const { jobId } = useParams()
@@ -290,12 +291,18 @@ const EditJobPage = () => {
 									<label className="block text-sm font-medium text-foreground mb-2">
 										Location
 									</label>
-									<input
-										type="text"
+									<LocationSelector
 										value={formData.location}
-										onChange={(e) => handleInputChange('location', e.target.value)}
-										placeholder="e.g., Mexico City, Remote"
-										className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+										onChange={(locationData) => {
+											if (locationData) {
+												const locationString = locationData.city + (locationData.state ? `, ${locationData.state}` : '')
+												handleInputChange('location', locationString)
+											} else {
+												handleInputChange('location', '')
+											}
+										}}
+										placeholder="Selecciona una ciudad"
+										className="w-full"
 									/>
 								</div>
 								<div>

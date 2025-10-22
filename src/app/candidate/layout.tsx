@@ -14,7 +14,7 @@ const CandidateLayout = ({ children }: { children: React.ReactNode }) => {
 	const handleSignOut = async () => {
 		try {
 			await signOut(auth)
-			router.push('/signin')
+			router.push('/')
 		} catch (error) {
 			console.error('Error signing out:', error)
 		}

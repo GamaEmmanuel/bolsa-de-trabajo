@@ -197,74 +197,74 @@ const CompanySettingsPage = () => {
 	}
 
 	return (
-		<div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-			<div className="mb-8">
-				<h1 className="text-3xl font-bold text-foreground mb-2">Configuración de la Empresa</h1>
-				<p className="text-muted-foreground">Gestiona la información y preferencias de tu empresa</p>
-			</div>
+		<div className="min-h-screen bg-gray-50 p-8">
+			<div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
+				<div className="mb-8">
+					<h1 className="text-3xl font-bold text-gray-900 mb-2">Configuración de la Empresa</h1>
+					<p className="text-gray-600">Gestiona la información y preferencias de tu empresa</p>
+				</div>
 
-			{/* Success Message */}
-			{success && (
-				<div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
-					<div className="flex">
-						<div className="flex-shrink-0">
-							<svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-								<path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-							</svg>
-						</div>
-						<div className="ml-3">
-							<p className="text-sm font-medium text-green-800">
-								¡Configuración de la empresa guardada exitosamente!
-							</p>
+				{/* Success Message */}
+				{success && (
+					<div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+						<div className="flex">
+							<div className="flex-shrink-0">
+								<svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+									<path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+								</svg>
+							</div>
+							<div className="ml-3">
+								<p className="text-sm font-medium text-green-800">
+									¡Configuración de la empresa guardada exitosamente!
+								</p>
+							</div>
 						</div>
 					</div>
-				</div>
-			)}
+				)}
 
-			{/* Error Message */}
-			{error && (
-				<div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
-					<div className="flex">
-						<div className="flex-shrink-0">
-							<svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-								<path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+				{/* Error Message */}
+				{error && (
+					<div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+						<div className="flex">
+							<div className="flex-shrink-0">
+								<svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+									<path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
 							</svg>
 						</div>
 						<div className="ml-3">
 							<p className="text-sm font-medium text-red-800">{error}</p>
 						</div>
 					</div>
-				</div>
-			)}
+					</div>
+				)}
 
-			<div className="bg-card rounded-lg border border-border">
-				<div className="p-6">
+				<div className="space-y-8">
 					<form onSubmit={(e) => { e.preventDefault(); handleSave(); }} className="space-y-8">
 
 						{/* Company Logo Section */}
-						<div className="border-b border-border pb-8">
-							<h2 className="text-xl font-semibold text-foreground mb-4">Logo de la Empresa</h2>
+						<div className="bg-blue-50 p-6 rounded-lg">
+							<h2 className="text-xl font-semibold text-gray-900 mb-4">Logo de la Empresa</h2>
 							<div className="flex items-center space-x-6">
 								{logoPreview && (
 									<div className="flex-shrink-0">
 										<img
 											src={logoPreview}
 											alt="Logo de la empresa"
-											className="h-20 w-20 rounded-lg object-cover border border-border"
+											className="h-20 w-20 rounded-lg object-cover border border-gray-200"
 										/>
 									</div>
 								)}
 								<div className="flex-1">
-									<label className="block text-sm font-medium text-foreground mb-2">
+									<label className="block text-sm font-medium text-gray-700 mb-2">
 										Subir Logo
 									</label>
 									<input
 										type="file"
 										accept="image/*"
 										onChange={handleLogoChange}
-										className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+										className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
 									/>
-									<p className="mt-1 text-sm text-muted-foreground">
+									<p className="mt-1 text-sm text-gray-500">
 										PNG, JPG, GIF hasta 10MB. Tamaño recomendado: 200x200px
 									</p>
 								</div>
@@ -272,23 +272,23 @@ const CompanySettingsPage = () => {
 						</div>
 
 						{/* Basic Information */}
-						<div className="border-b border-border pb-8">
-							<h2 className="text-xl font-semibold text-foreground mb-4">Información Básica</h2>
+						<div className="bg-gray-50 p-6 rounded-lg">
+							<h2 className="text-xl font-semibold text-gray-900 mb-4">Información Básica</h2>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<div>
-									<label className="block text-sm font-medium text-foreground mb-2">
+									<label className="block text-sm font-medium text-gray-700 mb-2">
 										Nombre de la Empresa *
 									</label>
 									<input
 										type="text"
 										value={companyData.companyName}
 										onChange={(e) => handleInputChange('companyName', e.target.value)}
-										className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 										required
 									/>
 								</div>
 								<div>
-									<label className="block text-sm font-medium text-foreground mb-2">
+									<label className="block text-sm font-medium text-gray-700 mb-2">
 										Industria
 									</label>
 									<input
@@ -296,11 +296,11 @@ const CompanySettingsPage = () => {
 										value={companyData.industry}
 										onChange={(e) => handleInputChange('industry', e.target.value)}
 										placeholder="ej., Tecnología, Salud, Finanzas"
-										className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 									/>
 								</div>
 								<div>
-									<label className="block text-sm font-medium text-foreground mb-2">
+									<label className="block text-sm font-medium text-gray-700 mb-2">
 										URL del Sitio Web
 									</label>
 									<input
@@ -308,11 +308,11 @@ const CompanySettingsPage = () => {
 										value={companyData.websiteUrl}
 										onChange={(e) => handleInputChange('websiteUrl', e.target.value)}
 										placeholder="https://www.company.com"
-										className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 									/>
 								</div>
 								<div>
-									<label className="block text-sm font-medium text-foreground mb-2">
+									<label className="block text-sm font-medium text-gray-700 mb-2">
 										Correo Electrónico
 									</label>
 									<input
@@ -320,11 +320,11 @@ const CompanySettingsPage = () => {
 										value={companyData.email || ''}
 										onChange={(e) => handleInputChange('email', e.target.value)}
 										placeholder="contact@company.com"
-										className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 									/>
 								</div>
 								<div>
-									<label className="block text-sm font-medium text-foreground mb-2">
+									<label className="block text-sm font-medium text-gray-700 mb-2">
 										Teléfono
 									</label>
 									<input
@@ -332,41 +332,41 @@ const CompanySettingsPage = () => {
 										value={companyData.phone || ''}
 										onChange={(e) => handleInputChange('phone', e.target.value)}
 										placeholder="+52 55 1234 5678"
-										className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 									/>
 								</div>
 							</div>
 							<div className="mt-6">
-									<label className="block text-sm font-medium text-foreground mb-2">
-										Descripción de la Empresa
-									</label>
+								<label className="block text-sm font-medium text-gray-700 mb-2">
+									Descripción de la Empresa
+								</label>
 								<textarea
 									value={companyData.description}
 									onChange={(e) => handleInputChange('description', e.target.value)}
 									rows={4}
 									placeholder="Cuéntanos sobre tu empresa..."
-									className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 								/>
 							</div>
 						</div>
 
 						{/* Legal Information */}
-						<div className="border-b border-border pb-8">
-							<h2 className="text-xl font-semibold text-foreground mb-4">Información Legal</h2>
+						<div className="bg-green-50 p-6 rounded-lg">
+							<h2 className="text-xl font-semibold text-gray-900 mb-4">Información Legal</h2>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<div>
-									<label className="block text-sm font-medium text-foreground mb-2">
+									<label className="block text-sm font-medium text-gray-700 mb-2">
 										Razón Social (Nombre Legal)
 									</label>
 									<input
 										type="text"
 										value={companyData.razonSocial}
 										onChange={(e) => handleInputChange('razonSocial', e.target.value)}
-										className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 									/>
 								</div>
 								<div>
-									<label className="block text-sm font-medium text-foreground mb-2">
+									<label className="block text-sm font-medium text-gray-700 mb-2">
 										RFC (ID Fiscal)
 									</label>
 									<input
@@ -374,18 +374,18 @@ const CompanySettingsPage = () => {
 										value={companyData.rfc}
 										onChange={(e) => handleInputChange('rfc', e.target.value)}
 										placeholder="ABC123456789"
-										className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 									/>
 								</div>
 							</div>
 						</div>
 
 						{/* Address Information */}
-						<div className="border-b border-border pb-8">
-							<h2 className="text-xl font-semibold text-foreground mb-4">Información de Dirección</h2>
+						<div className="bg-yellow-50 p-6 rounded-lg">
+							<h2 className="text-xl font-semibold text-gray-900 mb-4">Información de Dirección</h2>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<div className="md:col-span-2">
-									<label className="block text-sm font-medium text-foreground mb-2">
+									<label className="block text-sm font-medium text-gray-700 mb-2">
 										Dirección
 									</label>
 									<input
@@ -393,11 +393,11 @@ const CompanySettingsPage = () => {
 										value={companyData.address || ''}
 										onChange={(e) => handleInputChange('address', e.target.value)}
 										placeholder="Calle Principal 123"
-										className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 									/>
 								</div>
 								<div>
-									<label className="block text-sm font-medium text-foreground mb-2">
+									<label className="block text-sm font-medium text-gray-700 mb-2">
 										Ciudad
 									</label>
 									<input
@@ -405,11 +405,11 @@ const CompanySettingsPage = () => {
 										value={companyData.city || ''}
 										onChange={(e) => handleInputChange('city', e.target.value)}
 										placeholder="Ciudad de México"
-										className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 									/>
 								</div>
 								<div>
-									<label className="block text-sm font-medium text-foreground mb-2">
+									<label className="block text-sm font-medium text-gray-700 mb-2">
 										Estado
 									</label>
 									<input
@@ -417,11 +417,11 @@ const CompanySettingsPage = () => {
 										value={companyData.state || ''}
 										onChange={(e) => handleInputChange('state', e.target.value)}
 										placeholder="CDMX"
-										className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 									/>
 								</div>
 								<div>
-									<label className="block text-sm font-medium text-foreground mb-2">
+									<label className="block text-sm font-medium text-gray-700 mb-2">
 										Código Postal
 									</label>
 									<input
@@ -429,17 +429,17 @@ const CompanySettingsPage = () => {
 										value={companyData.zipCode || ''}
 										onChange={(e) => handleInputChange('zipCode', e.target.value)}
 										placeholder="01000"
-										className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 									/>
 								</div>
 								<div>
-									<label className="block text-sm font-medium text-foreground mb-2">
+									<label className="block text-sm font-medium text-gray-700 mb-2">
 										País
 									</label>
 									<select
 										value={companyData.country || 'Mexico'}
 										onChange={(e) => handleInputChange('country', e.target.value)}
-										className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 									>
 										<option value="Mexico">México</option>
 										<option value="United States">Estados Unidos</option>
@@ -451,17 +451,17 @@ const CompanySettingsPage = () => {
 						</div>
 
 						{/* Company Profile */}
-						<div className="border-b border-border pb-8">
-							<h2 className="text-xl font-semibold text-foreground mb-4">Perfil de la Empresa</h2>
+						<div className="bg-indigo-50 p-6 rounded-lg">
+							<h2 className="text-xl font-semibold text-gray-900 mb-4">Perfil de la Empresa</h2>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<div>
-									<label className="block text-sm font-medium text-foreground mb-2">
+									<label className="block text-sm font-medium text-gray-700 mb-2">
 										Tamaño de la Empresa
 									</label>
 									<select
 										value={companyData.companySize || '11-50'}
 										onChange={(e) => handleInputChange('companySize', e.target.value)}
-										className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 									>
 										{COMPANY_SIZE_OPTIONS.map(option => (
 											<option key={option.value} value={option.value}>
@@ -471,13 +471,13 @@ const CompanySettingsPage = () => {
 									</select>
 								</div>
 								<div>
-									<label className="block text-sm font-medium text-foreground mb-2">
+									<label className="block text-sm font-medium text-gray-700 mb-2">
 										Industria
 									</label>
 									<select
 										value={companyData.industry}
 										onChange={(e) => handleInputChange('industry', e.target.value)}
-										className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 									>
 										<option value="">Selecciona una industria</option>
 										{INDUSTRY_OPTIONS.map(option => (
@@ -491,14 +491,14 @@ const CompanySettingsPage = () => {
 						</div>
 
 						{/* Benefits & Culture */}
-						<div className="pb-8">
-							<h2 className="text-xl font-semibold text-foreground mb-4">Beneficios y Cultura de la Empresa</h2>
+						<div className="bg-orange-50 p-6 rounded-lg">
+							<h2 className="text-xl font-semibold text-gray-900 mb-4">Beneficios y Cultura de la Empresa</h2>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<div>
-									<label className="block text-sm font-medium text-foreground mb-2">
+									<label className="block text-sm font-medium text-gray-700 mb-2">
 										Beneficios (Selecciona todos los que apliquen)
 									</label>
-									<div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border border-border rounded-md p-3">
+									<div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border border-gray-300 rounded-md p-3 bg-white">
 										{BENEFITS_OPTIONS.map(benefit => (
 											<label key={benefit.value} className="flex items-center text-sm">
 												<input
@@ -513,10 +513,10 @@ const CompanySettingsPage = () => {
 									</div>
 								</div>
 								<div>
-									<label className="block text-sm font-medium text-foreground mb-2">
+									<label className="block text-sm font-medium text-gray-700 mb-2">
 										Cultura de la Empresa (Selecciona todas las que apliquen)
 									</label>
-									<div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border border-border rounded-md p-3">
+									<div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border border-gray-300 rounded-md p-3 bg-white">
 										{COMPANY_CULTURE_OPTIONS.map(culture => (
 											<label key={culture.value} className="flex items-center text-sm">
 												<input
@@ -534,18 +534,18 @@ const CompanySettingsPage = () => {
 						</div>
 
 						{/* Save Button */}
-						<div className="flex justify-end space-x-4">
+						<div className="flex justify-end gap-4">
 							<button
 								type="button"
 								onClick={() => router.back()}
-								className="px-6 py-2 text-muted-foreground bg-secondary border border-border rounded-md hover:bg-accent transition-colors"
+								className="px-8 py-3 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 font-semibold text-lg transition-colors"
 							>
 								Cancelar
 							</button>
 							<button
 								type="submit"
 								disabled={saving}
-								className="px-6 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+								className="px-8 py-3 text-white bg-green-600 rounded-md hover:bg-green-700 disabled:bg-gray-400 font-semibold text-lg disabled:cursor-not-allowed transition-colors"
 							>
 								{saving ? (
 									<div className="flex items-center">

@@ -94,7 +94,7 @@ export interface JobPosting {
 	companyCulture?: string[]
 }
 
-export type PipelineStatus = 'applied' | 'reviewed' | 'interview' | 'assessments' | 'offer' | 'hired' | 'rejected' | 'not_moving_forward'
+export type PipelineStatus = 'applied' | 'reviewed' | 'interview' | 'assessments' | 'finalista' | 'rejected' | 'not_moving_forward'
 
 export interface Application {
 	applicationId: UUID

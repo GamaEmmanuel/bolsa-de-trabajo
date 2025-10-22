@@ -53,24 +53,28 @@ const JobDetailPage = () => {
 					}
 
 					// Fetch company data
-					try {
-						console.log('Fetching company data for companyId:', jobData.companyId)
-						const companyUserDoc = await getDoc(doc(db, 'users', jobData.companyId))
-						if (companyUserDoc.exists()) {
-							const userData = companyUserDoc.data()
-							console.log('User data found:', userData)
-							if (userData.companyData) {
-								console.log('Company data found:', userData.companyData)
-								setCompanyData(userData.companyData)
+					if (jobData.companyId) {
+						try {
+							console.log('Fetching company data for companyId:', jobData.companyId)
+							const companyUserDoc = await getDoc(doc(db, 'users', jobData.companyId))
+							if (companyUserDoc.exists()) {
+								const userData = companyUserDoc.data()
+								console.log('User data found:', userData)
+								if (userData.companyData) {
+									console.log('Company data found:', userData.companyData)
+									setCompanyData(userData.companyData)
+								} else {
+									console.log('No company data found in user document')
+								}
 							} else {
-								console.log('No company data found in user document')
+								console.log('Company user document does not exist')
 							}
-						} else {
-							console.log('Company user document does not exist')
+						} catch (companyErr) {
+							console.error('Error fetching company data:', companyErr)
+							// Continue without company data - this is not critical for job display
 						}
-					} catch (companyErr) {
-						console.error('Error fetching company data:', companyErr)
-						// Continue without company data
+					} else {
+						console.log('No companyId found in job data')
 					}
 				} else {
 					setError('Job not found')
@@ -469,9 +473,9 @@ const JobDetailPage = () => {
 					</div>
 
 					{/* Skills Section */}
-					{(job.requiredSkills?.length > 0 || job.preferredSkills?.length > 0) && (
+					{((job.requiredSkills && job.requiredSkills.length > 0) || (job.preferredSkills && job.preferredSkills.length > 0)) && (
 						<div className="mb-8">
-							{job.requiredSkills?.length > 0 && (
+							{job.requiredSkills && job.requiredSkills.length > 0 && (
 								<div className="mb-4">
 									<h3 className="text-lg font-semibold text-gray-700 mb-2">Required Skills</h3>
 									<div className="flex flex-wrap gap-2">
@@ -483,7 +487,7 @@ const JobDetailPage = () => {
 									</div>
 								</div>
 							)}
-							{job.preferredSkills?.length > 0 && (
+							{job.preferredSkills && job.preferredSkills.length > 0 && (
 								<div>
 									<h3 className="text-lg font-semibold text-gray-700 mb-2">Preferred Skills</h3>
 									<div className="flex flex-wrap gap-2">

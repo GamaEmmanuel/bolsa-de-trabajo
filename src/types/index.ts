@@ -112,8 +112,7 @@ export type PipelineStatus =
 	| 'reviewed'
 	| 'interview'
 	| 'assessments'
-	| 'offer'
-	| 'hired'
+	| 'finalista'
 	| 'rejected'
 	| 'not_moving_forward'
 
