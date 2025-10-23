@@ -1,0 +1,29 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Profile pictures: users can upload, read, and delete their own profile pictures
+    // Also allow public read access for displaying in job postings
+    match /profile-pictures/{userId}/{allPaths=**} {
+      allow read: if true; // Public read access for profile pictures
+      allow write, delete: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Company logos: users can upload, read, and delete their own company logos
+    // Also allow public read access for displaying in job postings
+    match /company-logos/{userId}/{allPaths=**} {
+      allow read: if true; // Public read access for company logos
+      allow write, delete: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // CV/Resume files: users can upload, read, and delete their own CV files
+    match /cv-files/{userId}/{allPaths=**} {
+      allow read, write, delete: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Deny all other access
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
