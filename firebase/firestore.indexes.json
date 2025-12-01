@@ -5,7 +5,11 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "createdByUserId",
+          "fieldPath": "companyId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "status",
           "order": "ASCENDING"
         },
         {
@@ -29,71 +33,25 @@
       ]
     },
     {
-      "collectionGroup": "applications",
+      "collectionGroup": "jobPostings",
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "companyId",
+          "fieldPath": "createdByUserId",
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "jobId",
-          "order": "ASCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "applications",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "companyId",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "pipelineStatus",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "applicationDate",
+          "fieldPath": "postedDate",
           "order": "DESCENDING"
         }
       ]
     },
     {
-      "collectionGroup": "applications",
+      "collectionGroup": "jobPostings",
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "companyId",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "applicationDate",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "applications",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "pipelineStatus",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "applicationDate",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "offers",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "companyId",
+          "fieldPath": "createdByUserId",
           "order": "ASCENDING"
         },
         {
@@ -101,13 +59,41 @@
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "createdDate",
+          "fieldPath": "postedDate",
           "order": "DESCENDING"
         }
       ]
     },
     {
-      "collectionGroup": "offers",
+      "collectionGroup": "messages",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "conversationId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "conversations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "participants",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "lastMessageTimestamp",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "conversations",
       "queryScope": "COLLECTION",
       "fields": [
         {
@@ -115,39 +101,21 @@
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "createdDate",
+          "fieldPath": "lastMessageTimestamp",
           "order": "DESCENDING"
         }
       ]
     },
     {
-      "collectionGroup": "interviews",
+      "collectionGroup": "conversations",
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "companyId",
+          "fieldPath": "candidateId",
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "status",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "scheduledDate",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "interviews",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "companyId",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "scheduledDate",
+          "fieldPath": "lastMessageTimestamp",
           "order": "DESCENDING"
         }
       ]
@@ -155,3 +123,4 @@
   ],
   "fieldOverrides": []
 }
+

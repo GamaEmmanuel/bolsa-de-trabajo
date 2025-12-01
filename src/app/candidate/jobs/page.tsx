@@ -1,15 +1,17 @@
 'use client'
 
 import React, { useState, useEffect, useMemo } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { JobPosting } from '../../../types'
 import { db } from '../../../lib/firebase'
-import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore'
+import { collection, query, where, orderBy, onSnapshot, doc, getDoc } from 'firebase/firestore'
 import Link from 'next/link'
 
 // Extend the JobPosting interface for additional fields
 declare module '../../../types' {
 	interface JobPosting {
 		companyName?: string
+		companyLogoUrl?: string
 		location?: string
 	}
 }
@@ -25,9 +27,16 @@ interface JobFilters {
 }
 
 const JobsPage = () => {
+	const searchParams = useSearchParams()
+	const router = useRouter()
+	const companyIdParam = searchParams?.get('companyId')
+
 	const [jobs, setJobs] = useState<JobPosting[]>([])
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState<string | null>(null)
+	const [companyName, setCompanyName] = useState<string | null>(null)
+	const [companyLogoUrl, setCompanyLogoUrl] = useState<string | null>(null)
+	const [companyLogos, setCompanyLogos] = useState<Record<string, string>>({})
 	const [filters, setFilters] = useState<JobFilters>({
 		keyword: '',
 		location: '',
@@ -39,23 +48,156 @@ const JobsPage = () => {
 	})
 	const [sortBy, setSortBy] = useState<'date' | 'salary' | 'relevance'>('date')
 
+	// Fetch company name if companyId is provided
+	useEffect(() => {
+		const fetchCompanyName = async () => {
+			if (!companyIdParam) {
+				setCompanyName(null)
+				return
+			}
+
+			try {
+				const userDoc = await getDoc(doc(db, 'users', companyIdParam))
+				if (userDoc.exists()) {
+					const userData = userDoc.data()
+
+					// Get company name from companyData (matching job detail page)
+					if (userData.companyData?.companyName) {
+						setCompanyName(userData.companyData.companyName)
+					}
+
+					// Get logo from companies collection
+					const actualCompanyId = userData.companyId || companyIdParam
+					const companyDoc = await getDoc(doc(db, 'companies', actualCompanyId))
+					if (companyDoc.exists()) {
+						const companyData = companyDoc.data()
+						if (companyData.logoUrl) {
+							setCompanyLogoUrl(companyData.logoUrl)
+						}
+					}
+				}
+			} catch (err) {
+				console.error('Error fetching company data:', err)
+			}
+		}
+
+		fetchCompanyName()
+	}, [companyIdParam])
+
+	// Fetch company logos for all jobs
+	useEffect(() => {
+		const fetchCompanyLogos = async () => {
+			if (jobs.length === 0) return
+
+			// Get unique company IDs, filtering out mock/invalid IDs
+			const uniqueCompanyIds = [...new Set(
+				jobs
+					.map(job => job.companyId)
+					.filter(id => id && id !== 'mock-company-id' && !id.includes('mock'))
+			)]
+			console.log('🏢 Fetching logos for', uniqueCompanyIds.length, 'companies')
+
+			const logos: Record<string, string> = {}
+
+			// Fetch each company's logo
+			await Promise.all(
+				uniqueCompanyIds.map(async (companyId) => {
+					try {
+						// First try to get companyId from users collection
+						const userDoc = await getDoc(doc(db, 'users', companyId as string))
+						if (userDoc.exists()) {
+							const userData = userDoc.data()
+							const actualCompanyId = userData.companyId || companyId
+
+							// Fetch from companies collection
+							const companyDoc = await getDoc(doc(db, 'companies', actualCompanyId))
+							if (companyDoc.exists()) {
+								const companyData = companyDoc.data()
+								if (companyData.logoUrl) {
+									logos[companyId as string] = companyData.logoUrl
+								}
+							}
+						}
+					} catch (err: any) {
+						// Silently skip permission errors for mock or invalid companies
+						if (err?.code !== 'permission-denied') {
+							console.error('Error fetching logo for company:', companyId, err)
+						}
+					}
+				})
+			)
+
+			console.log('✅ Logos fetched:', Object.keys(logos).length)
+			setCompanyLogos(logos)
+		}
+
+		fetchCompanyLogos()
+	}, [jobs])
+
 	// Fetch jobs from database
 	useEffect(() => {
-		const q = query(
-			collection(db, 'jobPostings'),
-			where('status', '==', 'published'),
-			orderBy('postedDate', 'desc')
-		)
+		let q
+
+		// If companyId is provided, filter by company
+		if (companyIdParam) {
+			q = query(
+				collection(db, 'jobPostings'),
+				where('companyId', '==', companyIdParam),
+				where('status', '==', 'published'),
+				orderBy('postedDate', 'desc')
+			)
+		} else {
+			q = query(
+				collection(db, 'jobPostings'),
+				where('status', '==', 'published'),
+				orderBy('postedDate', 'desc')
+			)
+		}
 
 		const unsubscribe = onSnapshot(q,
-			(querySnapshot) => {
+			async (querySnapshot) => {
 				const jobsData: JobPosting[] = []
 				querySnapshot.forEach(doc => {
 					jobsData.push({ jobId: doc.id, ...doc.data() } as JobPosting)
 				})
 				console.log('Fetched jobs:', jobsData.length, 'jobs found')
-				console.log('Jobs data:', jobsData)
-				setJobs(jobsData)
+
+				// Enrich jobs with company names (matching job detail page approach)
+				const enrichedJobs = await Promise.all(
+					jobsData.map(async (job) => {
+						// Skip enrichment for jobs with mock or invalid company IDs
+						if (!job.companyName && job.companyId && job.companyId !== 'mock-company-id' && !job.companyId.includes('mock')) {
+							try {
+								// Get company data from users collection (same as job detail page)
+								const userDoc = await getDoc(doc(db, 'users', job.companyId))
+								if (userDoc.exists()) {
+									const userData = userDoc.data()
+									// First try companyData (if it exists)
+									if (userData.companyData?.companyName) {
+										job.companyName = userData.companyData.companyName
+									} else {
+										// Fallback: try fetching from companies collection
+										const actualCompanyId = userData.companyId || job.companyId
+										const companyDoc = await getDoc(doc(db, 'companies', actualCompanyId))
+										if (companyDoc.exists()) {
+											const companyData = companyDoc.data()
+											job.companyName = companyData.companyName || 'Nombre de la Empresa'
+										}
+									}
+								}
+							} catch (err: any) {
+								// Silently skip permission errors for mock companies
+								if (err?.code !== 'permission-denied') {
+									console.error('Error fetching company name for job:', job.jobId, err)
+								}
+							}
+						}
+						return job
+					})
+				)
+
+				console.log('Jobs enriched with company names:', enrichedJobs)
+				setJobs(enrichedJobs)
 				setLoading(false)
 			},
 			(error) => {
@@ -66,7 +208,7 @@ const JobsPage = () => {
 		)
 
 		return () => unsubscribe()
-	}, [])
+	}, [companyIdParam])
 
 	// Filter and sort jobs
 	const filteredJobs = useMemo(() => {
@@ -148,6 +290,10 @@ const JobsPage = () => {
 		})
 	}
 
+	const clearCompanyFilter = () => {
+		router.push('/candidate/jobs')
+	}
+
 	if (loading) {
 		return (
 			<div className="flex items-center justify-center py-12">
@@ -159,6 +305,47 @@ const JobsPage = () => {
 
 	return (
 		<div className="space-y-6">
+			{/* Company Filter Banner */}
+			{companyIdParam && companyName && (
+				<div className="bg-orange-50 border-2 border-orange-200 rounded-lg p-4">
+					<div className="flex items-center justify-between">
+						<div className="flex items-center gap-3">
+							{/* Company Logo */}
+							<div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center overflow-hidden flex-shrink-0 border border-orange-300">
+								{companyLogoUrl ? (
+									<img
+										src={companyLogoUrl}
+										alt={companyName}
+										className="w-full h-full object-cover"
+									/>
+								) : (
+									<span className="text-lg font-semibold text-orange-600">
+										{companyName.charAt(0)}
+									</span>
+								)}
+							</div>
+							<div>
+								<p className="text-sm font-semibold text-orange-900">
+									Mostrando empleos de: <span className="font-bold">{companyName}</span>
+								</p>
+								<p className="text-xs text-orange-700">
+									{filteredJobs.length} {filteredJobs.length === 1 ? 'posición disponible' : 'posiciones disponibles'}
+								</p>
+							</div>
+						</div>
+						<button
+							onClick={clearCompanyFilter}
+							className="flex items-center gap-2 px-4 py-2 bg-white border border-orange-300 text-orange-700 rounded-lg hover:bg-orange-100 transition-colors text-sm font-medium"
+						>
+							<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+							</svg>
+							Ver todos los empleos
+						</button>
+					</div>
+				</div>
+			)}
+
 			{/* Header */}
 			<div className="flex justify-between items-center">
 				<div>
@@ -306,26 +493,45 @@ const JobsPage = () => {
 								>
 									<div className="flex justify-between items-start">
 										<div className="flex-1">
-											<h3 className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors">
-												{job.jobTitle}
-											</h3>
-											<p className="text-gray-600 font-medium mt-1">
-												{job.companyName || 'Nombre de la Empresa'}
-											</p>
-											<p className="text-gray-500 text-sm mt-1">
-												{job.location || 'Ubicación no especificada'}
-											</p>
-											<div className="flex items-center gap-2 mt-2">
-												{job.jobType && (
-													<span className="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
-														{job.jobType}
-													</span>
-												)}
-												{job.salaryMin && job.salaryMax && !job.isSalaryHidden && (
-													<span className="text-sm text-green-600 font-medium">
-														${job.salaryMin.toLocaleString()} - ${job.salaryMax.toLocaleString()} MXN
-													</span>
-												)}
+											<div className="flex items-start gap-3">
+												{/* Company Logo */}
+												<div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-200">
+													{companyLogos[job.companyId] ? (
+														<img
+															src={companyLogos[job.companyId]}
+															alt={job.companyName || 'Company'}
+															className="w-full h-full object-cover"
+														/>
+													) : (
+														<span className="text-lg font-semibold text-gray-400">
+															{job.companyName?.charAt(0) || 'C'}
+														</span>
+													)}
+												</div>
+
+												<div className="flex-1">
+													<h3 className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors">
+														{job.jobTitle}
+													</h3>
+													<p className="text-gray-600 font-medium mt-1">
+														{job.companyName || 'Nombre de la Empresa'}
+													</p>
+													<p className="text-gray-500 text-sm mt-1">
+														{job.location || 'Ubicación no especificada'}
+													</p>
+													<div className="flex items-center gap-2 mt-2">
+														{job.jobType && (
+															<span className="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+																{job.jobType}
+															</span>
+														)}
+														{job.salaryMin && job.salaryMax && !job.isSalaryHidden && (
+															<span className="text-sm text-green-600 font-medium">
+																${job.salaryMin.toLocaleString()} - ${job.salaryMax.toLocaleString()} MXN
+															</span>
+														)}
+													</div>
+												</div>
 											</div>
 										</div>
 										<div className="ml-4 flex flex-col items-end">

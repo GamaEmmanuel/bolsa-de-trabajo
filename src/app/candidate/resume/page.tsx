@@ -5,6 +5,7 @@ import { db, auth } from '../../../lib/firebase'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { onAuthStateChanged } from 'firebase/auth'
 import LocationSelector from '../../../components/ui/LocationSelector'
+import PlaceAutocomplete from '../../../components/ui/PlaceAutocomplete'
 import { formatNumberWithCommas, parseFormattedNumber } from '../../../lib/utils'
 import { EDUCATION_DEGREE_OPTIONS } from '../../../lib/constants'
 
@@ -26,6 +27,9 @@ interface WorkExperience {
 	id: string
 	company: string
 	position: string
+	location?: string // Location from Google Maps
+	locationPlaceId?: string // Google Place ID for verification
+	locationAddress?: string // Full address from Google Places
 	startDate: string
 	endDate?: string
 	current: boolean
@@ -115,91 +119,124 @@ const ResumePage = () => {
 
 	// Skills organized by categories
 	const skillCategories = {
-		'Tecnología y Programación': [
-			'JavaScript', 'Python', 'Java', 'TypeScript', 'C++', 'C#', 'PHP', 'Ruby', 'Go', 'Rust',
-			'React', 'Angular', 'Vue.js', 'Node.js', 'Express.js', 'Django', 'Flask', 'Spring Boot',
-			'HTML', 'CSS', 'SASS', 'SCSS', 'Bootstrap', 'Tailwind CSS', 'Material-UI',
-			'SQL', 'MySQL', 'PostgreSQL', 'MongoDB', 'Redis', 'Elasticsearch',
-			'AWS', 'Azure', 'Google Cloud', 'Docker', 'Kubernetes', 'Jenkins',
-			'Git', 'GitHub', 'GitLab', 'Bitbucket', 'Jira', 'Confluence',
-			'Machine Learning', 'Artificial Intelligence', 'Data Science', 'TensorFlow', 'PyTorch',
-			'REST API', 'GraphQL', 'Microservices', 'Agile', 'Scrum', 'DevOps',
-			'Linux', 'Windows', 'macOS', 'iOS', 'Android', 'React Native', 'Flutter',
-			'Photoshop', 'Illustrator', 'Figma', 'Sketch', 'Adobe XD',
-			'Excel', 'PowerPoint', 'Word', 'Google Analytics', 'Tableau'
+		'👨‍🍳 Chef y Cocina - Tipos de Cocina': [
+			'Cocina Mexicana', 'Cocina Italiana', 'Cocina Francesa', 'Cocina Española', 'Cocina Japonesa',
+			'Cocina China', 'Cocina Tailandesa', 'Cocina India', 'Cocina Peruana', 'Cocina Argentina',
+			'Cocina Mediterránea', 'Cocina Fusión', 'Cocina Molecular', 'Cocina Vegetariana', 'Cocina Vegana',
+			'Cocina Internacional', 'Cocina Regional', 'Cocina Contemporánea', 'Alta Cocina', 'Cocina de Autor'
 		],
-		'Construcción y Oficios': [
-			'Construcción', 'Albañilería', 'Plomería', 'Electricidad', 'Carpintería', 'Herrería',
-			'Pintura', 'Soldadura', 'Instalación de Pisos', 'Techado', 'Demolición',
-			'Instalación Eléctrica', 'Fontanería', 'Refrigeración', 'Aire Acondicionado',
-			'Instalación de Ventanas', 'Drywall', 'Azulejos', 'Mármol', 'Granito',
-			'Operador de Grúa', 'Operador de Excavadora', 'Operador de Retroexcavadora',
-			'Andamios', 'Seguridad en Construcción', 'Lectura de Planos'
+		'🔪 Chef y Cocina - Especialidades': [
+			'Parrillero', 'Asador', 'Saucier (Salsas)', 'Garde Manger (Entradas Frías)', 'Pastelero',
+			'Repostero', 'Panadero', 'Chocolatero', 'Pizzero', 'Sushiman',
+			'Carnicero', 'Pescadero', 'Sous Chef', 'Chef de Partie', 'Commis de Cocina',
+			'Chef Ejecutivo', 'Chef de Banquetes', 'Chef de Catering', 'Chef Privado'
 		],
-		'Manufactura y Producción': [
-			'Manufactura', 'Producción', 'Ensamblaje', 'Soldadura MIG', 'Soldadura TIG',
-			'Maquinaria CNC', 'Torno', 'Fresadora', 'Prensa Hidráulica', 'Control de Calidad',
-			'Embalaje', 'Almacén', 'Inventario', 'Forklift', 'Montacargas',
-			'Operador de Máquinas', 'Mantenimiento Industrial', 'Mecánica Industrial',
-			'Automatización', 'Robótica Industrial', 'Soldadura por Puntos'
+		'🍳 Cocina - Técnicas y Habilidades': [
+			'Corte de Vegetales', 'Fileteado de Pescado', 'Deshuese de Carnes', 'Emplatado', 'Presentación de Platos',
+			'Cocción a la Parrilla', 'Cocción al Horno', 'Fritura', 'Cocción al Vapor', 'Sous Vide',
+			'Preparación de Salsas', 'Preparación de Caldos', 'Preparación de Masas', 'Fermentación',
+			'Manejo de Cuchillos', 'Control de Porciones', 'Control de Costos', 'HACCP', 'Manipulación de Alimentos',
+			'Seguridad e Higiene', 'Almacenamiento de Alimentos', 'Inventario de Cocina'
 		],
-		'Transporte y Logística': [
-			'Conducción', 'Manejo de Camión', 'Transporte de Carga', 'Logística',
-			'Distribución', 'Entrega', 'Mensajería', 'Taxi', 'Uber', 'DiDi',
-			'Operador de Grúa', 'Conductor de Autobús', 'Manejo de Equipo Pesado',
-			'Rutas de Entrega', 'Inventario de Transporte', 'Manejo de Documentos'
+		'☕ Barista y Café': [
+			'Preparación de Espresso', 'Latte Art', 'Cappuccino', 'Americano', 'Macchiato',
+			'Café de Filtro', 'Prensa Francesa', 'Chemex', 'V60', 'Aeropress',
+			'Cold Brew', 'Café Helado', 'Métodos de Extracción', 'Calibración de Molienda',
+			'Máquina de Espresso', 'Molino de Café', 'Vaporización de Leche', 'Tostado de Café',
+			'Catación de Café', 'Café Specialty', 'Certificación Barista', 'SCA Certification'
 		],
-		'Servicios y Atención': [
-			'Atención al Cliente', 'Ventas', 'Cajero', 'Mesero', 'Cocina', 'Chef',
-			'Bartender', 'Hostess', 'Limpieza', 'Mantenimiento', 'Seguridad',
-			'Recepcionista', 'Conserje', 'Portero', 'Lavandería', 'Cuidado de Niños',
-			'Enfermería', 'Asistente de Salud', 'Cuidado de Ancianos', 'Fisioterapia'
+		'🍹 Bartender y Mixología': [
+			'Preparación de Cocteles', 'Mixología', 'Flair Bartending', 'Coctelería Clásica',
+			'Coctelería Molecular', 'Margarita', 'Mojito', 'Martini', 'Manhattan', 'Negroni',
+			'Old Fashioned', 'Caipirinha', 'Pisco Sour', 'Daiquiri', 'Cosmopolitan',
+			'Destilados', 'Vinos', 'Cervezas Artesanales', 'Licores', 'Vermut',
+			'Bar Setup', 'Inventario de Bar', 'Cost Control', 'Servicio de Vinos', 'Maridaje',
+			'Certificación TIPS', 'Certificación WSET', 'Sommelier'
 		],
-		'Automotriz y Mecánica': [
-			'Mecánica Automotriz', 'Reparación de Autos', 'Diagnóstico Automotriz',
-			'Cambio de Aceite', 'Frenos', 'Transmisión', 'Motor', 'Suspensión',
-			'Pintura Automotriz', 'Hojalatería', 'Vidrios Automotrices',
-			'Mecánica de Motos', 'Reparación de Bicicletas', 'Mantenimiento Preventivo'
+		'🍽️ Mesero y Servicio de Restaurante': [
+			'Servicio a la Mesa', 'Toma de Órdenes', 'Servicio Emplatado', 'Servicio Francés',
+			'Servicio Inglés', 'Servicio Americano', 'Servicio de Buffet', 'Room Service',
+			'Manejo de Bandeja', 'Apertura de Vinos', 'Servicio de Vinos', 'Flambeo',
+			'Descripción de Menú', 'Sugerencias de Platillos', 'Upselling', 'Cross-selling',
+			'Manejo de Quejas', 'POS (Punto de Venta)', 'Facturación', 'Cobro',
+			'Atención al Cliente', 'Hospitalidad', 'Etiqueta de Servicio', 'Protocolo de Eventos'
 		],
-		'Agricultura y Jardinería': [
-			'Agricultura', 'Jardinería', 'Paisajismo', 'Mantenimiento de Jardines',
-			'Podar Árboles', 'Corte de Césped', 'Riego', 'Fertilización',
-			'Trabajo en Campo', 'Cosecha', 'Plantación', 'Manejo de Tractor',
-			'Pesticidas', 'Invernaderos', 'Viveros'
+		'🏨 Hotel - Recepción y Front Desk': [
+			'Check-in', 'Check-out', 'Reservaciones', 'Sistema PMS', 'Opera PMS',
+			'Atención al Huésped', 'Resolución de Problemas', 'Facturación Hotelera',
+			'Manejo de Efectivo', 'Tarjetas de Crédito', 'Night Audit', 'Concierge',
+			'Información Turística', 'Reservas de Tours', 'Reservas de Restaurantes',
+			'Manejo de Equipaje', 'Valet Parking', 'Bell Boy', 'Portero'
 		],
-		'Limpieza y Mantenimiento': [
-			'Limpieza Residencial', 'Limpieza Comercial', 'Limpieza Industrial',
-			'Limpieza de Oficinas', 'Limpieza de Hospitales', 'Limpieza de Escuelas',
-			'Mantenimiento de Edificios', 'Limpieza de Ventanas', 'Limpieza de Alfombras',
-			'Desinfección', 'Limpieza Post-Construcción', 'Limpieza de Eventos'
+		'🧹 Hotel - Housekeeping y Limpieza': [
+			'Limpieza de Habitaciones', 'Tendido de Camas', 'Cambio de Sábanas', 'Limpieza de Baños',
+			'Reabastecimiento de Amenidades', 'Room Attendant', 'Camarera de Piso', 'Supervisora de Pisos',
+			'Limpieza Profunda', 'Limpieza de Áreas Públicas', 'Lavandería', 'Planchado',
+			'Doblado de Toallas', 'Manejo de Químicos de Limpieza', 'Inventario de Amenidades',
+			'Estándares de Limpieza', 'Turn Down Service', 'Lost & Found'
 		],
-		'Gastronomía y Hospitalidad': [
-			'Cocina', 'Preparación de Alimentos', 'Servicio de Mesa', 'Catering',
-			'Panadería', 'Repostería', 'Carnicería', 'Pescadería', 'Verdulería',
-			'Barista', 'Café', 'Bebidas', 'Cocktails', 'Cocina Mexicana',
-			'Cocina Internacional', 'Buffet', 'Banquetes', 'Eventos'
+		'🍴 Restaurante - Gestión y Administración': [
+			'Gestión de Restaurante', 'Gerencia de Alimentos y Bebidas', 'Control de Costos',
+			'Inventario de Alimentos', 'Compras', 'Negociación con Proveedores', 'Food Cost',
+			'Beverage Cost', 'Planificación de Menú', 'Ingeniería de Menú', 'Pricing',
+			'Supervisión de Personal', 'Capacitación de Staff', 'Horarios de Personal',
+			'Nómina', 'HACCP', 'Cumplimiento Sanitario', 'Permisos y Licencias'
 		],
-		'Salud y Cuidado Personal': [
-			'Enfermería', 'Asistente Médico', 'Técnico en Radiología', 'Farmacéutico',
-			'Fisioterapeuta', 'Masajista', 'Esteticista', 'Barbero', 'Peluquero',
-			'Manicurista', 'Pedicurista', 'Cuidado Personal', 'Terapia Física',
-			'Asistente Dental', 'Técnico de Laboratorio'
+		'🎉 Banquetes y Eventos': [
+			'Servicio de Banquetes', 'Montaje de Eventos', 'Catering', 'Buffet',
+			'Servicio de Bodas', 'Eventos Corporativos', 'Cocteles de Pie', 'Coffee Break',
+			'Coordinación de Eventos', 'Logística de Eventos', 'Capitán de Meseros',
+			'Servicio Francés (Banquetes)', 'Russian Service', 'Family Style Service'
 		],
-		'Ventas y Retail': [
-			'Ventas', 'Atención al Cliente', 'Cajero', 'Inventario', 'Merchandising',
-			'Ventas por Teléfono', 'Ventas en Línea', 'E-commerce', 'Tienda',
-			'Supermercado', 'Farmacia', 'Electrónicos', 'Ropa', 'Calzado',
-			'Joyería', 'Muebles', 'Decoración', 'Ventas de Autos'
+		'🥐 Panadería y Repostería': [
+			'Panadería', 'Repostería', 'Pastelería', 'Panadería Artesanal', 'Masa Madre',
+			'Pan Francés', 'Pan Dulce Mexicano', 'Bollería', 'Croissants', 'Danishes',
+			'Pasteles', 'Tartas', 'Cupcakes', 'Macarons', 'Galletas', 'Brownies',
+			'Decoración de Pasteles', 'Fondant', 'Buttercream', 'Ganache', 'Royal Icing',
+			'Chocolatería', 'Bombones', 'Trufas', 'Temperado de Chocolate'
 		],
-		'Idiomas': [
+		'☕ Cafetería y Coffee Shop': [
+			'Operación de Cafetería', 'Atención en Mostrador', 'Caja Registradora', 'POS',
+			'Preparación de Bebidas', 'Bebidas Calientes', 'Bebidas Frías', 'Smoothies',
+			'Frappes', 'Tés', 'Infusiones', 'Preparación de Alimentos Ligeros',
+			'Sandwiches', 'Ensaladas', 'Wraps', 'Bagels', 'Muffins', 'Scones',
+			'Display de Productos', 'Visual Merchandising', 'Inventario de Cafetería'
+		],
+		'🍕 Comida Rápida y Fast Food': [
+			'Preparación Rápida de Alimentos', 'Línea de Ensamblaje', 'Freidora',
+			'Parrilla', 'Plancha', 'Preparación de Hamburguesas', 'Pizzas', 'Hot Dogs',
+			'Tacos', 'Tortas', 'Alitas', 'Papas Fritas', 'Drive Thru', 'Toma de Órdenes',
+			'Empaque de Alimentos', 'Delivery', 'Apps de Delivery', 'Uber Eats', 'Rappi', 'DiDi Food'
+		],
+		'🏨 Hotel - Otros Departamentos': [
+			'Spa', 'Masajista', 'Terapias', 'Gimnasio', 'Instructor de Fitness',
+			'Animación Turística', 'Recreación', 'Kids Club', 'Actividades',
+			'Seguridad Hotelera', 'Mantenimiento Hotelero', 'Jardinería',
+			'Piscina', 'Salvavidas', 'Valet Parking', 'Room Service'
+		],
+		'📋 Certificaciones y Seguridad Alimentaria': [
+			'Manejo Higiénico de Alimentos', 'HACCP', 'Distintivo H', 'ServSafe',
+			'Food Handler Certificate', 'TIPS Certification', 'Alcohol Service',
+			'Primeros Auxilios', 'RCP', 'Prevención de Incendios',
+			'Seguridad en el Trabajo', 'Prevención de Riesgos Laborales'
+		],
+		'💻 Sistemas y Software para Hospitalidad': [
+			'POS (Punto de Venta)', 'Micros', 'Aloha', 'Toast', 'Square',
+			'Opera PMS', 'Sistemas de Reservaciones', 'OpenTable', 'Resy',
+			'Gestión de Inventarios', 'Control de Costos', 'Excel',
+			'Uber Eats Manager', 'Rappi Manager', 'DiDi Food Manager'
+		],
+		'🌍 Idiomas': [
 			'Español', 'Inglés', 'Francés', 'Alemán', 'Portugués', 'Italiano',
 			'Chino', 'Japonés', 'Coreano', 'Árabe', 'Ruso'
 		],
-		'Habilidades Blandas': [
-			'Liderazgo', 'Comunicación', 'Resolución de Problemas', 'Trabajo en Equipo',
-			'Gestión del Tiempo', 'Pensamiento Crítico', 'Habilidades Analíticas',
-			'Adaptabilidad', 'Creatividad', 'Organización', 'Responsabilidad',
-			'Iniciativa', 'Paciencia', 'Empatía', 'Honestidad', 'Puntualidad'
+		'✨ Habilidades Blandas para Hospitalidad': [
+			'Atención al Cliente', 'Servicio al Cliente', 'Hospitalidad', 'Trabajo en Equipo',
+			'Comunicación Efectiva', 'Resolución de Conflictos', 'Manejo de Quejas',
+			'Trabajo Bajo Presión', 'Multitasking', 'Organización', 'Puntualidad',
+			'Responsabilidad', 'Proactividad', 'Actitud Positiva', 'Empatía',
+			'Adaptabilidad', 'Flexibilidad de Horario', 'Disponibilidad Fines de Semana',
+			'Presentación Personal', 'Higiene Personal', 'Ética Profesional'
 		]
 	}
 
@@ -644,13 +681,15 @@ const ResumePage = () => {
 				<div className="space-y-3">
 					{profile.experience.map((exp) => (
 						<div key={exp.id} className="border border-gray-200 rounded-lg p-3">
-							<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+							{/* First Row: Empresa and Posición */}
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
 								<div>
 									<label className="block text-sm font-medium text-gray-700 mb-1">Empresa</label>
 									<input
 										type="text"
 										value={exp.company}
 										onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
+										placeholder="Ej: Starbucks, Hotel Marriott, etc."
 										className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
 									/>
 								</div>
@@ -660,6 +699,40 @@ const ResumePage = () => {
 										type="text"
 										value={exp.position}
 										onChange={(e) => updateExperience(exp.id, 'position', e.target.value)}
+										placeholder="Ej: Mesero, Chef, Recepcionista, etc."
+										className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+									/>
+								</div>
+							</div>
+
+							{/* Second Row: Ubicación en Google Maps, Fecha de Inicio, Fecha de Fin */}
+							<div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+								<div>
+									<label className="block text-sm font-medium text-gray-700 mb-1">
+										Ubicación en Google Maps
+										<span className="text-xs text-gray-500 ml-1">(Opcional)</span>
+									</label>
+									<PlaceAutocomplete
+										value={exp.location || ''}
+										onChange={(place) => {
+											// Update location with full details
+											const displayValue = place.address
+												? `${place.name} - ${place.address}`
+												: place.name
+											updateExperience(exp.id, 'location', displayValue)
+											// Store place ID and address separately
+											if (place.placeId) {
+												updateExperience(exp.id, 'locationPlaceId', place.placeId)
+											}
+											if (place.address) {
+												updateExperience(exp.id, 'locationAddress', place.address)
+											}
+										}}
+										onManualChange={(value) => {
+											// Allow manual entry as fallback
+											updateExperience(exp.id, 'location', value)
+										}}
+										placeholder="Buscar ubicación exacta"
 										className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
 									/>
 								</div>

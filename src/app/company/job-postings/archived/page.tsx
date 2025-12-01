@@ -147,35 +147,24 @@ const ArchivedJobPostingsPage = () => {
 								jobs.map(job => (
 									<div
 										key={job.jobId}
-										className="block bg-white p-6 rounded-lg border border-gray-200 hover:border-gray-300 transition-all duration-200"
+										className="block bg-white p-4 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200"
 									>
-										<div className="flex justify-between items-start">
-											<div className="flex-1">
-												<div className="flex items-center justify-between mb-2">
-													<h3 className="text-lg font-semibold text-gray-900">{job.jobTitle}</h3>
-													<span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-														{translateStatus(job.status || '')}
-													</span>
-												</div>
-												<p className="text-sm text-gray-600 mb-2 line-clamp-2">
+										<div className="flex justify-between items-center gap-4">
+											<div className="flex-1 min-w-0">
+												<h3 className="text-lg font-semibold text-gray-900 mb-1">{job.jobTitle}</h3>
+												<p className="text-sm text-gray-600 line-clamp-1">
 													{job.jobDescription?.substring(0, 150)}...
 												</p>
-												<div className="flex items-center space-x-4 text-sm text-gray-500">
-													<span className="capitalize">{job.tier || 'Clásico'} Nivel</span>
-													<span>•</span>
-													<span>{job.postedDate || 'No publicado'}</span>
-												</div>
 											</div>
-											<div className="ml-4 flex items-center space-x-2">
-												<button
-													onClick={() => handleUnarchiveJob(job.jobId)}
-													className="px-3 py-1 text-xs bg-orange-100 text-orange-700 rounded-md hover:bg-orange-200 transition-colors"
-												>
-													Desarchivar
-												</button>
+											<div className="flex items-center gap-3 flex-shrink-0">
+												<span className="text-xs text-gray-500 capitalize whitespace-nowrap">{job.tier || 'Clásico'} Nivel</span>
+												<span className="text-xs text-gray-500 whitespace-nowrap">{job.postedDate || 'No publicado'}</span>
+												<span className="px-2 py-1 text-xs font-semibold rounded-full whitespace-nowrap bg-gray-100 text-gray-800">
+													{translateStatus(job.status || '')}
+												</span>
 												<Link
 													href={`/jobs/${job.jobId}`}
-													className="text-primary text-sm font-medium hover:underline"
+													className="text-primary text-sm font-medium whitespace-nowrap"
 												>
 													Ver Detalles →
 												</Link>

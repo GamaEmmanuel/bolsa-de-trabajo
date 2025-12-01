@@ -1,0 +1,65 @@
+GOOGLE MAPS API KEY SETUP - TROUBLESHOOTING
+===========================================
+
+The API key is not being loaded. Here's how to fix it:
+
+STEP 1: Create/Edit .env.local file
+------------------------------------
+In your project root (/Users/emmanuel/hr-portal/), create or edit the file: .env.local
+
+IMPORTANT: Make sure the file is named EXACTLY ".env.local" (with the dot at the beginning)
+
+STEP 2: Add your API key
+-------------------------
+Add this line to .env.local (replace YOUR_API_KEY_HERE with your actual Google Maps API key):
+
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=YOUR_API_KEY_HERE
+
+IMPORTANT NOTES:
+- NO spaces around the = sign
+- NO quotes around the value
+- Must start with NEXT_PUBLIC_ to be available in the browser
+
+CORRECT FORMAT EXAMPLE:
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=AIzaSyBxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+INCORRECT FORMATS (don't do these):
+❌ NEXT_PUBLIC_GOOGLE_MAPS_API_KEY = AIzaSyB...   (no spaces)
+❌ NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="AIzaSyB..."   (no quotes)
+❌ GOOGLE_MAPS_API_KEY=AIzaSyB...                 (must have NEXT_PUBLIC_ prefix)
+
+STEP 3: Restart the development server
+---------------------------------------
+After saving .env.local, you MUST restart your server:
+
+1. In the terminal, press Ctrl+C to stop the server
+2. Run: npm run dev
+3. Wait for the server to fully start
+
+STEP 4: Verify it's working
+----------------------------
+After restarting, go to /candidate/resume and add a work experience.
+You should see:
+✅ "💡 Escribe para buscar negocios en tu área o ingresa manualmente"
+❌ "💡 Configurando búsqueda de negocios..." (this means it's still not working)
+
+QUICK VERIFICATION COMMAND:
+---------------------------
+Run this in your terminal to check if the API key is loaded:
+cd /Users/emmanuel/hr-portal && grep NEXT_PUBLIC_GOOGLE_MAPS_API_KEY .env.local
+
+COMMON ISSUES:
+--------------
+1. File in wrong location → Must be in /Users/emmanuel/hr-portal/.env.local
+2. Wrong filename → Must be ".env.local" exactly (not "env.local" or ".env")
+3. Server not restarted → Must restart after editing .env.local
+4. Typo in variable name → Must be NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+5. API key not activated → Check Google Cloud Console
+
+WHERE TO GET YOUR API KEY:
+--------------------------
+1. Go to: https://console.cloud.google.com/
+2. Select your project
+3. Go to: APIs & Services → Credentials
+4. Copy your API key (should start with "AIza")
+

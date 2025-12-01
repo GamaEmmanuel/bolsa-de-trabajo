@@ -147,8 +147,8 @@ const PipelineColumn = ({
 				ref={setNodeRef}
 				className={`p-4 rounded-xl transition-all duration-200 w-full ${
 					status === 'finalista'
-						? 'bg-green-50/30 border border-green-100'
-						: 'bg-gray-50/20 border border-gray-100'
+						? 'bg-green-50/40 border-2 border-green-200'
+						: 'bg-gray-50/50 border-2 border-gray-200'
 				} ${
 					isOver
 						? 'bg-primary/5 border-2 border-dashed border-primary/30'
@@ -217,7 +217,7 @@ const ResultadoColumn = ({
 	})
 
 	return (
-		<div className="p-4 rounded-xl bg-gray-50/20 border border-gray-100 w-full">
+		<div className="p-4 rounded-xl bg-gray-50/50 border-2 border-gray-200 w-full">
 			<h2 className="text-sm font-bold text-gray-800 mb-4">Resultado</h2>
 
 			{/* Finalista Section */}
@@ -233,7 +233,7 @@ const ResultadoColumn = ({
 					className={`p-3 rounded-lg transition-all duration-200 ${
 						isFinalistaOver
 							? 'bg-primary/5 border-2 border-dashed border-primary/30'
-							: 'bg-green-50/30 border border-green-100'
+							: 'bg-green-50/40 border-2 border-green-200'
 					}`}
 				>
 					<SortableContext
@@ -273,7 +273,7 @@ const ResultadoColumn = ({
 					className={`p-3 rounded-lg transition-all duration-200 ${
 						isRejectedOver
 							? 'bg-primary/5 border-2 border-dashed border-primary/30'
-							: 'bg-red-50/30 border border-red-100'
+							: 'bg-red-50/40 border-2 border-red-200'
 					}`}
 				>
 					<SortableContext
@@ -310,6 +310,8 @@ const AtsPage = () => {
 	const [selectedJobId, setSelectedJobId] = useState<string | null>(null)
 	const [loading, setLoading] = useState(true)
 	const [user, setUser] = useState(auth.currentUser)
+	const [jobsCurrentPage, setJobsCurrentPage] = useState(1)
+	const jobsPerPage = 6
 
 	const translateStatus = (status: string) => {
 		switch (status) {
@@ -333,6 +335,16 @@ const AtsPage = () => {
 	const selectedJob = useMemo(() => {
 		return jobPostings.find(job => job.jobId === selectedJobId)
 	}, [jobPostings, selectedJobId])
+
+	// Pagination for jobs
+	const totalJobPages = Math.ceil(jobPostings.length / jobsPerPage)
+	const startJobIndex = (jobsCurrentPage - 1) * jobsPerPage
+	const endJobIndex = startJobIndex + jobsPerPage
+	const currentJobsPage = jobPostings.slice(startJobIndex, endJobIndex)
+
+	const handleJobPageChange = (page: number) => {
+		setJobsCurrentPage(page)
+	}
 
 	const filteredApplicants = useMemo(() => {
 		if (!selectedJobId) return []
@@ -360,10 +372,11 @@ const AtsPage = () => {
 				return
 			}
 
-			// Fetch job postings created by the current user
+			// Fetch job postings created by the current user (only published, not archived)
 			const jobsQuery = query(
 				collection(db, 'jobPostings'),
 				where('createdByUserId', '==', currentUser.uid),
+				where('status', '==', 'published'),
 				orderBy('postedDate', 'desc')
 			)
 
@@ -478,8 +491,11 @@ const AtsPage = () => {
 		const overId = over.id
 		let newStatus: PipelineStatus
 
+		// All valid droppable statuses including resultado columns
+		const allValidStatuses = [...columns, 'finalista', 'not_moving_forward']
+
 		// If dropping over a column directly
-		if (columns.includes(overId as PipelineStatus)) {
+		if (allValidStatuses.includes(overId as PipelineStatus)) {
 			newStatus = overId as PipelineStatus
 		} else {
 			// If dropping over another card, find which column that card belongs to
@@ -518,15 +534,14 @@ const AtsPage = () => {
 	}
 
 	return (
-		<div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-			<div className="mb-8">
-				<h1 className="text-3xl font-bold text-foreground mb-2">Candidatos</h1>
-				<p className="text-muted-foreground">Gestiona tu pipeline de candidatos y seguimiento de aplicaciones</p>
+		<div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+			<div className="mb-6">
+				<h1 className="text-3xl font-bold text-foreground">Candidatos</h1>
 			</div>
 
 			{/* Job Selection */}
-			<div className="bg-card p-6 rounded-xl shadow-sm mb-8">
-				<h2 className="text-xl font-semibold text-foreground mb-4">Seleccionar Publicación de Empleo</h2>
+			<div className="bg-card p-4 rounded-xl shadow-sm mb-6">
+				<h2 className="text-lg font-semibold text-foreground mb-3">Seleccionar Publicación de Empleo</h2>
 				{loading ? (
 					<div className="text-center py-8">
 						<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
@@ -547,44 +562,100 @@ const AtsPage = () => {
 						</a>
 					</div>
 				) : (
-					<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-						{jobPostings.map(job => (
-							<div
-								key={job.jobId}
-								onClick={() => setSelectedJobId(job.jobId)}
-								className={`p-6 rounded-xl cursor-pointer transition-all duration-200 ${
-									selectedJobId === job.jobId
-										? 'bg-orange-50 shadow-lg shadow-orange-200/50'
-										: 'bg-card hover:shadow-lg hover:shadow-gray-200/50 hover:bg-gray-50'
-								} shadow-sm`}
-							>
-								<h3 className="text-lg font-bold text-foreground mb-3">{job.jobTitle}</h3>
-								<div className="space-y-2">
-									<div className="flex items-center text-xs text-gray-500">
-										<svg className="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-										</svg>
-										<span>Publicado: {job.postedDate ? new Date(job.postedDate).toLocaleDateString() : 'N/A'}</span>
-									</div>
-									<div className="flex items-center justify-between">
-										<div className="flex items-center text-xs text-gray-500">
-											<svg className="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-											</svg>
-											<span>{getApplicationCount(applicants, job.jobId)} aplicaciones</span>
+					<>
+						<div className="space-y-1.5">
+							{currentJobsPage.map(job => (
+								<div
+									key={job.jobId}
+									onClick={() => setSelectedJobId(job.jobId)}
+									className={`p-3 rounded-lg cursor-pointer transition-all duration-200 ${
+										selectedJobId === job.jobId
+											? 'bg-orange-50 border-2 border-orange-400'
+											: 'bg-card hover:bg-gray-50 border border-gray-200'
+									}`}
+								>
+									<div className="flex items-center justify-between gap-3">
+										<h3 className="text-base font-semibold text-foreground truncate flex-1 min-w-0">{job.jobTitle}</h3>
+										<div className="flex items-center gap-3 flex-shrink-0">
+											<span className={`px-2 py-0.5 text-xs rounded-full ${
+												job.status === 'published'
+													? 'bg-green-100 text-green-800'
+													: 'bg-gray-100 text-gray-800'
+											}`}>
+												{job.status}
+											</span>
+											<div className="flex items-center text-xs text-gray-500">
+												<svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+												</svg>
+												<span className="font-medium">{getApplicationCount(applicants, job.jobId)}</span>
+											</div>
+											<div className="flex items-center text-xs text-gray-500">
+												<svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+												</svg>
+												<span>{job.postedDate ? new Date(job.postedDate).toLocaleDateString('es-MX', { month: 'short', day: 'numeric' }) : 'N/A'}</span>
+											</div>
 										</div>
-									<span className={`px-2 py-1 text-xs rounded-full ${
-										job.status === 'published'
-											? 'bg-green-100 text-green-800'
-											: 'bg-gray-100 text-gray-800'
-									}`}>
-										{job.status}
-									</span>
 									</div>
 								</div>
+							))}
+						</div>
+
+						{/* Pagination */}
+						{totalJobPages > 1 ? (
+							<div className="flex items-center justify-between mt-4">
+								<div className="flex items-center justify-center gap-2 flex-1">
+									<button
+										onClick={() => handleJobPageChange(jobsCurrentPage - 1)}
+										disabled={jobsCurrentPage === 1}
+										className={`px-3 py-1 rounded-md text-sm font-medium ${
+											jobsCurrentPage === 1
+												? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+												: 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+										}`}
+									>
+										Anterior
+									</button>
+
+									{Array.from({ length: totalJobPages }, (_, i) => i + 1).map(page => (
+										<button
+											key={page}
+											onClick={() => handleJobPageChange(page)}
+											className={`px-3 py-1 rounded-md text-sm font-medium ${
+												jobsCurrentPage === page
+													? 'bg-orange-600 text-white'
+													: 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+											}`}
+										>
+											{page}
+										</button>
+									))}
+
+									<button
+										onClick={() => handleJobPageChange(jobsCurrentPage + 1)}
+										disabled={jobsCurrentPage === totalJobPages}
+										className={`px-3 py-1 rounded-md text-sm font-medium ${
+											jobsCurrentPage === totalJobPages
+												? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+												: 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+										}`}
+									>
+										Siguiente
+									</button>
+								</div>
+
+								{/* Results Info */}
+								<div className="text-xs text-gray-600 ml-4 whitespace-nowrap">
+									Mostrando {startJobIndex + 1}-{Math.min(endJobIndex, jobPostings.length)} de {jobPostings.length}
+								</div>
 							</div>
-						))}
-					</div>
+						) : (
+							<div className="text-center mt-3 text-xs text-gray-600">
+								Mostrando {startJobIndex + 1}-{Math.min(endJobIndex, jobPostings.length)} de {jobPostings.length} publicaciones
+							</div>
+						)}
+					</>
 				)}
 			</div>
 

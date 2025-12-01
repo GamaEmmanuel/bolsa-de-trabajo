@@ -36,8 +36,20 @@ const getStatusColor = (status: PipelineStatus) => {
 // Helper function to get status display name
 const getStatusDisplayName = (status: PipelineStatus) => {
 	switch (status) {
+		case 'applied':
+			return 'Aplicado'
+		case 'reviewed':
+			return 'Revisado'
+		case 'interview':
+			return 'Entrevista'
+		case 'assessments':
+			return 'Evaluaciones'
+		case 'finalista':
+			return 'Finalista'
+		case 'rejected':
+			return 'Rechazado'
 		case 'not_moving_forward':
-			return 'Not Moving Forward'
+			return 'No Avanza'
 		default:
 			return status.charAt(0).toUpperCase() + status.slice(1)
 	}
@@ -57,26 +69,26 @@ const ApplicationCard = ({
 		<div className="bg-white p-4 mb-3 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
 			<div className="flex justify-between items-start mb-2">
 				<h3 className="font-semibold text-gray-900 text-sm">
-					{app.jobTitle || 'Job Title'}
+					{app.jobTitle || 'Título del Empleo'}
 				</h3>
 				{canWithdraw && (
 					<button
 						onClick={() => onWithdraw(app.applicationId)}
 						className="text-xs text-red-600 hover:text-red-800 font-medium"
 					>
-						Withdraw
+						Retirar
 					</button>
 				)}
 			</div>
 			<p className="text-sm text-gray-600 mb-2">
-				{app.companyName || 'Company Name'}
+				{app.companyName || 'Nombre de la Empresa'}
 			</p>
 			<p className="text-xs text-gray-500">
-				Applied on {new Date(app.applicationDate).toLocaleDateString()}
+				Aplicado el {new Date(app.applicationDate).toLocaleDateString()}
 			</p>
 			{app.updatedAt && (
 				<p className="text-xs text-gray-400 mt-1">
-					Last updated: {new Date(app.updatedAt).toLocaleDateString()}
+					Última actualización: {new Date(app.updatedAt).toLocaleDateString()}
 				</p>
 			)}
 		</div>
@@ -94,7 +106,7 @@ const PipelineColumn = ({
 	onWithdraw: (applicationId: string) => void
 }) => {
 	return (
-		<div className="flex-1 min-w-[250px] p-4 rounded-lg border border-gray-200 bg-gray-50">
+		<div className="flex-1 min-w-[200px] p-4 rounded-lg border border-gray-200 bg-gray-50">
 			<div className="flex items-center justify-between mb-4">
 				<h2 className={`text-lg font-semibold capitalize ${getStatusColor(status).split(' ')[1]}`}>
 					{getStatusDisplayName(status)}
@@ -106,7 +118,7 @@ const PipelineColumn = ({
 			<div className="min-h-[200px]">
 				{applications.length === 0 ? (
 					<div className="text-center text-gray-500 text-sm py-8">
-						No applications in this stage
+						No hay aplicaciones en esta etapa
 					</div>
 				) : (
 					applications.map(app => (
@@ -160,7 +172,7 @@ const ApplicantKanban: React.FC<ApplicantKanbanProps> = ({
 		return (
 			<div className="flex items-center justify-center py-12">
 				<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-				<p className="ml-2 text-gray-600">Loading applications...</p>
+				<p className="ml-2 text-gray-600">Cargando aplicaciones...</p>
 			</div>
 		)
 	}
@@ -169,8 +181,8 @@ const ApplicantKanban: React.FC<ApplicantKanbanProps> = ({
 		return (
 			<div className="text-center py-12">
 				<div className="text-gray-400 text-6xl mb-4">📋</div>
-				<h3 className="text-lg font-medium text-gray-900 mb-2">No Applications Yet</h3>
-				<p className="text-gray-500">Start applying to jobs to see your progress here.</p>
+				<h3 className="text-lg font-medium text-gray-900 mb-2">Aún no hay aplicaciones</h3>
+				<p className="text-gray-500">Comienza a aplicar a empleos para ver tu progreso aquí.</p>
 			</div>
 		)
 	}
@@ -178,9 +190,9 @@ const ApplicantKanban: React.FC<ApplicantKanbanProps> = ({
 	return (
 		<div className="w-full">
 			<div className="mb-6">
-				<h2 className="text-2xl font-bold text-gray-900 mb-2">Application Pipeline</h2>
+				<h2 className="text-2xl font-bold text-gray-900 mb-2">Pipeline de Aplicaciones</h2>
 				<p className="text-gray-600">
-					Track the progress of your job applications. You can withdraw applications that are still in the early stages.
+					Rastrea el progreso de tus aplicaciones de empleo. Puedes retirar aplicaciones que aún están en las primeras etapas.
 				</p>
 			</div>
 

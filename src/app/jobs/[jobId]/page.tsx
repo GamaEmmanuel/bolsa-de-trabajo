@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { JobPosting } from '../../../types'
 import { db, auth } from '../../../lib/firebase'
-import { doc, getDoc, collection, addDoc, query, where, getDocs, deleteDoc } from 'firebase/firestore'
+import { doc, getDoc, collection, addDoc, query, where, getDocs, deleteDoc, updateDoc } from 'firebase/firestore'
 import { onAuthStateChanged } from 'firebase/auth'
 
 // Extend the JobPosting interface for additional fields
@@ -29,6 +29,9 @@ const JobDetailPage = () => {
 	const [withdrawing, setWithdrawing] = useState(false)
 	const [isJobOwner, setIsJobOwner] = useState(false)
 	const [showShareModal, setShowShareModal] = useState(false)
+	const [archiving, setArchiving] = useState(false)
+	const [republishing, setRepublishing] = useState(false)
+	const [showCompanyJobsModal, setShowCompanyJobsModal] = useState(false)
 
 
 	// Fetch job details from database and check auth state
@@ -122,14 +125,14 @@ const JobDetailPage = () => {
 		}
 
 		if (!job) {
-			alert('Job information not available')
+			alert('Información del empleo no disponible')
 			return
 		}
 
 		setApplying(true)
 		try {
 			// Get candidate name from their profile
-			let candidateName = 'Unknown Candidate'
+			let candidateName = 'Candidato Desconocido'
 			try {
 				const candidateProfileQuery = query(
 					collection(db, 'candidateProfiles'),
@@ -162,10 +165,10 @@ const JobDetailPage = () => {
 
 			setApplied(true)
 			setApplicationId(applicationRef.id)
-			alert('Application submitted successfully!')
+			alert('¡Solicitud enviada exitosamente!')
 		} catch (error) {
 			console.error('Error applying for job:', error)
-			alert('Failed to submit application. Please try again.')
+			alert('Error al enviar la solicitud. Por favor, inténtalo de nuevo.')
 		} finally {
 			setApplying(false)
 		}
@@ -173,11 +176,11 @@ const JobDetailPage = () => {
 
 	const handleWithdraw = async () => {
 		if (!user || !applicationId) {
-			alert('Unable to withdraw application')
+			alert('No se puede retirar la solicitud')
 			return
 		}
 
-		const confirmed = window.confirm('Are you sure you want to withdraw your application? This action cannot be undone.')
+		const confirmed = window.confirm('¿Estás seguro de que quieres retirar tu solicitud? Esta acción no se puede deshacer.')
 		if (!confirmed) return
 
 		setWithdrawing(true)
@@ -185,10 +188,10 @@ const JobDetailPage = () => {
 			await deleteDoc(doc(db, 'applications', applicationId))
 			setApplied(false)
 			setApplicationId(null)
-			alert('Application withdrawn successfully!')
+			alert('¡Solicitud retirada exitosamente!')
 		} catch (error) {
 			console.error('Error withdrawing application:', error)
-			alert('Failed to withdraw application. Please try again.')
+			alert('Error al retirar la solicitud. Por favor, inténtalo de nuevo.')
 		} finally {
 			setWithdrawing(false)
 		}
@@ -201,19 +204,113 @@ const JobDetailPage = () => {
 	const copyJobLink = () => {
 		const jobUrl = `${window.location.origin}/jobs/${jobId}`
 		navigator.clipboard.writeText(jobUrl).then(() => {
-			alert('Job link copied to clipboard!')
+			alert('¡Enlace del empleo copiado!')
 		}).catch(() => {
-			alert('Failed to copy link. Please copy manually.')
+			alert('Error al copiar enlace. Por favor, copia manualmente.')
 		})
+	}
+
+	const copyCompanyJobsLink = () => {
+		if (!job?.companyId) return
+		const companyJobsUrl = `${window.location.origin}/company/${job.companyId}/jobs`
+		navigator.clipboard.writeText(companyJobsUrl).then(() => {
+			alert('¡Enlace de empleos de la empresa copiado!')
+		}).catch(() => {
+			alert('Error al copiar enlace. Por favor, copia manualmente.')
+		})
+	}
+
+	const shareCompanyJobsToSocial = (platform: string) => {
+		if (!job?.companyId) return
+		const url = encodeURIComponent(`${window.location.origin}/company/${job.companyId}/jobs`)
+		const title = encodeURIComponent(`Oportunidades laborales en ${companyData?.companyName || 'nuestra empresa'}`)
+		const text = encodeURIComponent(`¡Mira las oportunidades laborales en ${companyData?.companyName || 'nuestra empresa'}!`)
+
+		let shareUrl = ''
+		switch (platform) {
+			case 'twitter':
+				shareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}`
+				break
+			case 'linkedin':
+				shareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${title}&summary=${text}`
+				break
+			case 'facebook':
+				shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`
+				break
+		}
+
+		if (shareUrl) {
+			const width = 600
+			const height = 600
+			const left = (window.screen.width - width) / 2
+			const top = (window.screen.height - height) / 2
+			window.open(shareUrl, '_blank', `width=${width},height=${height},left=${left},top=${top},toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes`)
+		}
+	}
+
+	const handleArchiveJob = async () => {
+		if (!user || !jobId) {
+			alert('No se puede archivar la publicación')
+			return
+		}
+
+		const confirmed = window.confirm('¿Estás seguro de que quieres archivar esta publicación? Ya no será visible para los candidatos.')
+		if (!confirmed) return
+
+		setArchiving(true)
+		try {
+			const jobRef = doc(db, 'jobPostings', jobId as string)
+			await updateDoc(jobRef, {
+				status: 'archived',
+				archivedAt: new Date().toISOString()
+			})
+
+			alert('¡Publicación archivada exitosamente!')
+			// Refresh the page to show updated status
+			window.location.reload()
+		} catch (error) {
+			console.error('Error archiving job:', error)
+			alert('Error al archivar la publicación. Por favor, inténtalo de nuevo.')
+		} finally {
+			setArchiving(false)
+		}
+	}
+
+	const handleRepublishJob = async () => {
+		if (!user || !jobId) {
+			alert('No se puede republicar la publicación')
+			return
+		}
+
+		const confirmed = window.confirm('¿Quieres publicar nuevamente esta posición? Será visible para los candidatos.')
+		if (!confirmed) return
+
+		setRepublishing(true)
+		try {
+			const jobRef = doc(db, 'jobPostings', jobId as string)
+			await updateDoc(jobRef, {
+				status: 'published',
+				republishedAt: new Date().toISOString()
+			})
+
+			alert('¡Publicación republicada exitosamente!')
+			// Refresh the page to show updated status
+			window.location.reload()
+		} catch (error) {
+			console.error('Error republishing job:', error)
+			alert('Error al republicar la publicación. Por favor, inténtalo de nuevo.')
+		} finally {
+			setRepublishing(false)
+		}
 	}
 
 	const handleDeleteJob = async () => {
 		if (!user || !jobId) {
-			alert('Unable to delete job posting')
+			alert('No se puede eliminar la publicación')
 			return
 		}
 
-		const confirmed = window.confirm('Are you sure you want to delete this job posting? This action cannot be undone.')
+		const confirmed = window.confirm('¿Estás seguro de que quieres eliminar esta publicación? Esta acción no se puede deshacer.')
 		if (!confirmed) return
 
 		try {
@@ -222,10 +319,10 @@ const JobDetailPage = () => {
 
 			// Redirect to job postings page
 			router.push('/company/job-postings')
-			alert('Job posting deleted successfully!')
+			alert('¡Publicación eliminada exitosamente!')
 		} catch (error) {
 			console.error('Error deleting job:', error)
-			alert('Failed to delete job posting. Please try again.')
+			alert('Error al eliminar la publicación. Por favor, inténtalo de nuevo.')
 		}
 	}
 
@@ -236,7 +333,7 @@ const JobDetailPage = () => {
 				<div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
 					<div className="text-center">
 						<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-						<p className="mt-2 text-muted-foreground">Loading job details...</p>
+						<p className="mt-2 text-muted-foreground">Cargando detalles del empleo...</p>
 					</div>
 				</div>
 			</div>
@@ -249,7 +346,7 @@ const JobDetailPage = () => {
 			<div className="min-h-screen bg-secondary">
 				<div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
 					<div className="text-center">
-						<p className="text-red-500">{error || 'Job not found'}</p>
+						<p className="text-red-500">{error || 'Empleo no encontrado'}</p>
 					</div>
 				</div>
 			</div>
@@ -267,7 +364,7 @@ const JobDetailPage = () => {
 					<svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
 					</svg>
-					Back to Jobs
+					Volver a Empleos
 				</button>
 
 				<div className="bg-card p-8 rounded-lg border border-border">
@@ -330,27 +427,87 @@ const JobDetailPage = () => {
 							)}
 							<div className="space-y-3">
 								{isJobOwner ? (
-									<div className="flex flex-col space-y-3">
+									<div className="grid grid-cols-2 gap-2">
 										<button
 											onClick={handleShare}
-											className="px-8 py-3 text-lg font-semibold rounded-lg bg-green-600 text-white hover:bg-green-700 hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
+											className="px-4 py-2 text-sm font-medium rounded-lg bg-green-500/80 text-white hover:bg-green-600/80 transition-all duration-200"
 										>
-											<div className="flex items-center">
-												<svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<div className="flex items-center justify-center">
+												<svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
 												</svg>
-												Share Job
+												Compartir Empleo
 											</div>
 										</button>
 										<button
 											onClick={() => router.push(`/company/job-postings/${jobId}/edit`)}
-											className="px-8 py-3 text-lg font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
+											className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-500/80 text-white hover:bg-blue-600/80 transition-all duration-200"
 										>
-											<div className="flex items-center">
-												<svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<div className="flex items-center justify-center">
+												<svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
 												</svg>
-												Edit Job
+												Editar Empleo
+											</div>
+										</button>
+										{job.status === 'archived' ? (
+											<button
+												onClick={handleRepublishJob}
+												disabled={republishing}
+												className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+													republishing
+														? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+														: 'bg-green-500/80 text-white hover:bg-green-600/80'
+												}`}
+											>
+												{republishing ? (
+													<div className="flex items-center justify-center">
+														<div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-1.5"></div>
+														Publicando...
+													</div>
+												) : (
+													<div className="flex items-center justify-center">
+														<svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+															<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+														</svg>
+														Publicar Nuevamente
+													</div>
+												)}
+											</button>
+										) : (
+											<button
+												onClick={handleArchiveJob}
+												disabled={archiving}
+												className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+													archiving
+														? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+														: 'bg-orange-500/80 text-white hover:bg-orange-600/80'
+												}`}
+											>
+												{archiving ? (
+													<div className="flex items-center justify-center">
+														<div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-1.5"></div>
+														Archivando...
+													</div>
+												) : (
+													<div className="flex items-center justify-center">
+														<svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+															<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+														</svg>
+														Archivar Empleo
+													</div>
+												)}
+											</button>
+										)}
+										<button
+											onClick={() => setShowCompanyJobsModal(true)}
+											className="px-4 py-2 text-sm font-medium rounded-lg bg-purple-500/80 text-white hover:bg-purple-600/80 transition-all duration-200"
+										>
+											<div className="flex items-center justify-center">
+												<svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+												</svg>
+												Compartir Todos los Empleos
 											</div>
 										</button>
 									</div>
@@ -359,54 +516,54 @@ const JobDetailPage = () => {
 										<button
 											onClick={handleWithdraw}
 											disabled={withdrawing}
-											className={`px-8 py-3 text-lg font-semibold rounded-lg transition-all duration-200 ${
+											className={`px-5 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
 												withdrawing
 													? 'bg-gray-100 text-gray-500 cursor-not-allowed'
-													: 'bg-red-100 text-red-800 border-2 border-red-300 hover:bg-red-200 hover:border-red-400'
+													: 'bg-red-50 text-red-700 border border-red-200 hover:bg-red-100'
 											}`}
 										>
 											{withdrawing ? (
 												<div className="flex items-center">
-													<div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500 mr-2"></div>
-													Withdrawing...
+													<div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500 mr-1.5"></div>
+													Retirando...
 												</div>
 											) : (
 												<div className="flex items-center">
-													<svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 														<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
 													</svg>
-													Withdraw Application
+													Retirar Solicitud
 												</div>
 											)}
 										</button>
-										<div className="flex items-center justify-center text-green-600 text-sm font-medium">
+										<div className="flex items-center justify-center text-green-600 text-sm font-medium mt-2">
 											<svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
 												<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
 											</svg>
-											Application Submitted
+											Solicitud Enviada
 										</div>
 									</>
 								) : (
 									<button
 										onClick={handleApply}
 										disabled={applying || !user}
-										className={`px-8 py-3 text-lg font-semibold rounded-lg transition-all duration-200 ${
+										className={`px-5 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
 											applying
 												? 'bg-gray-100 text-gray-500 cursor-not-allowed'
 												: !user
-												? 'bg-orange-100 text-orange-800 border-2 border-orange-300'
-												: 'bg-blue-600 text-white hover:bg-blue-700 hover:shadow-lg transform hover:-translate-y-0.5'
+												? 'bg-orange-50 text-orange-700 border border-orange-200'
+												: 'bg-blue-500/80 text-white hover:bg-blue-600/80'
 										}`}
 									>
 										{applying ? (
 											<div className="flex items-center">
-												<div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500 mr-2"></div>
-												Applying...
+												<div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500 mr-1.5"></div>
+												Aplicando...
 											</div>
 										) : !user ? (
-											'Sign In to Apply'
+											'Iniciar Sesión para Aplicar'
 										) : (
-											'Apply Now'
+											'Aplicar Ahora'
 										)}
 									</button>
 								)}
@@ -420,7 +577,7 @@ const JobDetailPage = () => {
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
 						{job.yearsOfExperience && (
 							<div className="bg-gray-50 p-4 rounded-lg">
-								<h3 className="font-semibold text-gray-700 mb-2">Experience Required</h3>
+								<h3 className="font-semibold text-gray-700 mb-2">Experiencia Requerida</h3>
 								<p className="text-gray-600">
 									{job.yearsOfExperience === '0-1' ? '0-1 años' :
 									 job.yearsOfExperience === '1-3' ? '1-3 años' :
@@ -432,7 +589,7 @@ const JobDetailPage = () => {
 						)}
 						{job.educationLevel && (
 							<div className="bg-gray-50 p-4 rounded-lg">
-								<h3 className="font-semibold text-gray-700 mb-2">Education Level</h3>
+								<h3 className="font-semibold text-gray-700 mb-2">Nivel de Educación</h3>
 								<p className="text-gray-600">
 									{job.educationLevel === 'no-requirement' ? 'Sin requisito' :
 									 job.educationLevel === 'high-school' ? 'Preparatoria' :
@@ -444,7 +601,7 @@ const JobDetailPage = () => {
 						)}
 						{job.jobLevel && (
 							<div className="bg-gray-50 p-4 rounded-lg">
-								<h3 className="font-semibold text-gray-700 mb-2">Job Level</h3>
+								<h3 className="font-semibold text-gray-700 mb-2">Nivel del Empleo</h3>
 								<p className="text-gray-600">
 									{job.jobLevel === 'entry' ? 'Junior' :
 									 job.jobLevel === 'mid-level' ? 'Intermedio' :
@@ -456,7 +613,7 @@ const JobDetailPage = () => {
 						)}
 						{job.jobCategory && (
 							<div className="bg-gray-50 p-4 rounded-lg">
-								<h3 className="font-semibold text-gray-700 mb-2">Category</h3>
+								<h3 className="font-semibold text-gray-700 mb-2">Categoría</h3>
 								<p className="text-gray-600">
 									{job.jobCategory === 'engineering' ? 'Ingeniería' :
 									 job.jobCategory === 'sales' ? 'Ventas' :
@@ -477,7 +634,7 @@ const JobDetailPage = () => {
 						<div className="mb-8">
 							{job.requiredSkills && job.requiredSkills.length > 0 && (
 								<div className="mb-4">
-									<h3 className="text-lg font-semibold text-gray-700 mb-2">Required Skills</h3>
+									<h3 className="text-lg font-semibold text-gray-700 mb-2">Habilidades Requeridas</h3>
 									<div className="flex flex-wrap gap-2">
 										{job.requiredSkills.map((skill, index) => (
 											<span key={index} className="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm">
@@ -489,7 +646,7 @@ const JobDetailPage = () => {
 							)}
 							{job.preferredSkills && job.preferredSkills.length > 0 && (
 								<div>
-									<h3 className="text-lg font-semibold text-gray-700 mb-2">Preferred Skills</h3>
+									<h3 className="text-lg font-semibold text-gray-700 mb-2">Habilidades Preferidas</h3>
 									<div className="flex flex-wrap gap-2">
 										{job.preferredSkills.map((skill, index) => (
 											<span key={index} className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
@@ -505,11 +662,11 @@ const JobDetailPage = () => {
 					{/* Phase 3: Advanced Information */}
 					{(job.companySize || job.industry || job.startDate || job.applicationDeadline || job.urgencyLevel) && (
 						<div className="mb-8">
-							<h3 className="text-lg font-semibold text-gray-700 mb-4">Additional Information</h3>
+							<h3 className="text-lg font-semibold text-gray-700 mb-4">Información Adicional</h3>
 							<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 								{job.companySize && (
 									<div className="bg-gray-50 p-4 rounded-lg">
-										<h4 className="font-semibold text-gray-700 mb-1">Company Size</h4>
+										<h4 className="font-semibold text-gray-700 mb-1">Tamaño de la Empresa</h4>
 										<p className="text-gray-600">
 											{job.companySize === '1-10' ? '1-10 empleados' :
 											 job.companySize === '11-50' ? '11-50 empleados' :
@@ -521,7 +678,7 @@ const JobDetailPage = () => {
 								)}
 								{job.industry && (
 									<div className="bg-gray-50 p-4 rounded-lg">
-										<h4 className="font-semibold text-gray-700 mb-1">Industry</h4>
+										<h4 className="font-semibold text-gray-700 mb-1">Industria</h4>
 										<p className="text-gray-600">
 											{job.industry === 'technology' ? 'Tecnología' :
 											 job.industry === 'healthcare' ? 'Salud' :
@@ -538,7 +695,7 @@ const JobDetailPage = () => {
 								)}
 								{job.startDate && (
 									<div className="bg-gray-50 p-4 rounded-lg">
-										<h4 className="font-semibold text-gray-700 mb-1">Start Date</h4>
+										<h4 className="font-semibold text-gray-700 mb-1">Fecha de Inicio</h4>
 										<p className="text-gray-600">
 											{job.startDate === 'immediate' ? 'Inmediato' :
 											 job.startDate === '1-2-weeks' ? '1-2 semanas' :
@@ -550,13 +707,13 @@ const JobDetailPage = () => {
 								)}
 								{job.applicationDeadline && (
 									<div className="bg-gray-50 p-4 rounded-lg">
-										<h4 className="font-semibold text-gray-700 mb-1">Application Deadline</h4>
+										<h4 className="font-semibold text-gray-700 mb-1">Fecha Límite de Solicitud</h4>
 										<p className="text-gray-600">{new Date(job.applicationDeadline).toLocaleDateString()}</p>
 									</div>
 								)}
 								{job.urgencyLevel && (
 									<div className="bg-gray-50 p-4 rounded-lg">
-										<h4 className="font-semibold text-gray-700 mb-1">Urgency</h4>
+										<h4 className="font-semibold text-gray-700 mb-1">Urgencia</h4>
 										<p className={`font-medium ${
 											job.urgencyLevel === 'urgent' ? 'text-orange-600' :
 											job.urgencyLevel === 'critical' ? 'text-red-600' :
@@ -575,11 +732,11 @@ const JobDetailPage = () => {
 					{/* Application Process */}
 					{(job.applicationProcess || job.interviewRounds || job.requiredDocuments?.length > 0) && (
 						<div className="mb-8">
-							<h3 className="text-lg font-semibold text-gray-700 mb-4">Application Process</h3>
+							<h3 className="text-lg font-semibold text-gray-700 mb-4">Proceso de Solicitud</h3>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 								{job.applicationProcess && (
 									<div className="bg-gray-50 p-4 rounded-lg">
-										<h4 className="font-semibold text-gray-700 mb-1">Application Process</h4>
+										<h4 className="font-semibold text-gray-700 mb-1">Proceso de Solicitud</h4>
 										<p className="text-gray-600">
 											{job.applicationProcess === 'resume-only' ? 'Solo CV' :
 											 job.applicationProcess === 'portfolio-required' ? 'Portafolio requerido' :
@@ -591,7 +748,7 @@ const JobDetailPage = () => {
 								)}
 								{job.interviewRounds && (
 									<div className="bg-gray-50 p-4 rounded-lg">
-										<h4 className="font-semibold text-gray-700 mb-1">Interview Rounds</h4>
+										<h4 className="font-semibold text-gray-700 mb-1">Rondas de Entrevista</h4>
 										<p className="text-gray-600">
 											{job.interviewRounds === '1' ? '1 ronda' :
 											 job.interviewRounds === '2' ? '2 rondas' :
@@ -603,7 +760,7 @@ const JobDetailPage = () => {
 								)}
 								{job.requiredDocuments?.length > 0 && (
 									<div className="bg-gray-50 p-4 rounded-lg">
-										<h4 className="font-semibold text-gray-700 mb-1">Required Documents</h4>
+										<h4 className="font-semibold text-gray-700 mb-1">Documentos Requeridos</h4>
 										<div className="flex flex-wrap gap-2">
 											{job.requiredDocuments.map((doc, index) => (
 												<span key={index} className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-sm">
@@ -620,11 +777,11 @@ const JobDetailPage = () => {
 					{/* Benefits & Culture */}
 					{(job.benefits?.length > 0 || job.companyCulture?.length > 0) && (
 						<div className="mb-8">
-							<h3 className="text-lg font-semibold text-gray-700 mb-4">Benefits & Culture</h3>
+							<h3 className="text-lg font-semibold text-gray-700 mb-4">Beneficios y Cultura</h3>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 								{job.benefits?.length > 0 && (
 									<div>
-										<h4 className="font-semibold text-gray-700 mb-2">Benefits</h4>
+										<h4 className="font-semibold text-gray-700 mb-2">Beneficios</h4>
 										<div className="flex flex-wrap gap-2">
 											{job.benefits.map((benefit, index) => (
 												<span key={index} className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
@@ -650,7 +807,7 @@ const JobDetailPage = () => {
 								)}
 								{job.companyCulture?.length > 0 && (
 									<div>
-										<h4 className="font-semibold text-gray-700 mb-2">Company Culture</h4>
+										<h4 className="font-semibold text-gray-700 mb-2">Cultura de la Empresa</h4>
 										<div className="flex flex-wrap gap-2">
 											{job.companyCulture.map((culture, index) => (
 												<span key={index} className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
@@ -676,12 +833,12 @@ const JobDetailPage = () => {
 					)}
 
 					<div className="prose prose-lg max-w-none text-foreground">
-						<h2 className="text-2xl font-semibold mb-4">Job Description</h2>
+						<h2 className="text-2xl font-semibold mb-4">Descripción del Empleo</h2>
 						<p>{job.jobDescription}</p>
 
 						{job.requirements && (
 							<>
-								<h2 className="text-2xl font-semibold mt-6 mb-4">Requirements</h2>
+								<h2 className="text-2xl font-semibold mt-6 mb-4">Requisitos</h2>
 								{typeof job.requirements === 'string'
 									? <div dangerouslySetInnerHTML={{ __html: job.requirements }} />
 									: <div className="whitespace-pre-wrap">{String(job.requirements as any)}</div>
@@ -701,7 +858,7 @@ const JobDetailPage = () => {
 									<svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
 									</svg>
-									Delete Job Posting
+									Eliminar Publicación
 								</div>
 							</button>
 						</div>
@@ -709,13 +866,13 @@ const JobDetailPage = () => {
 				</div>
 			</div>
 
-			{/* Share Modal */}
+			{/* Share Individual Job Modal */}
 			{showShareModal && (
 				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
 					<div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-						<h3 className="text-xl font-semibold mb-4">Share Job Posting</h3>
+						<h3 className="text-xl font-semibold mb-4">Compartir Publicación de Empleo</h3>
 						<p className="text-gray-600 mb-4">
-							Share this job posting with candidates by copying the link below:
+							Comparte esta publicación con candidatos copiando el enlace:
 						</p>
 						<div className="flex items-center space-x-2 mb-4">
 							<input
@@ -728,7 +885,7 @@ const JobDetailPage = () => {
 								onClick={copyJobLink}
 								className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
 							>
-								Copy
+								Copiar
 							</button>
 						</div>
 						<div className="flex justify-end space-x-2">
@@ -736,7 +893,78 @@ const JobDetailPage = () => {
 								onClick={() => setShowShareModal(false)}
 								className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
 							>
-								Close
+								Cerrar
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
+
+			{/* Share All Company Jobs Modal */}
+			{showCompanyJobsModal && job && (
+				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+					<div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+						<h3 className="text-xl font-semibold mb-4">Compartir Todos los Empleos de la Empresa</h3>
+						<p className="text-gray-600 mb-4">
+							Comparte todas las oportunidades laborales de {companyData?.companyName || 'tu empresa'}:
+						</p>
+
+						{/* Copy Link */}
+						<div className="flex items-center space-x-2 mb-4">
+							<input
+								type="text"
+								value={`${window.location.origin}/company/${job.companyId}/jobs`}
+								readOnly
+								className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-sm"
+							/>
+							<button
+								onClick={copyCompanyJobsLink}
+								className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
+							>
+								Copiar
+							</button>
+						</div>
+
+						{/* Social Media Buttons */}
+						<div className="mb-4">
+							<p className="text-sm text-gray-600 mb-2">Compartir en redes sociales:</p>
+							<div className="flex gap-2">
+								<button
+									onClick={() => shareCompanyJobsToSocial('linkedin')}
+									className="flex-1 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm flex items-center justify-center gap-1"
+								>
+									<svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+										<path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+									</svg>
+									LinkedIn
+								</button>
+								<button
+									onClick={() => shareCompanyJobsToSocial('twitter')}
+									className="flex-1 px-3 py-2 bg-sky-500 text-white rounded-md hover:bg-sky-600 transition-colors text-sm flex items-center justify-center gap-1"
+								>
+									<svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+										<path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+									</svg>
+									Twitter
+								</button>
+								<button
+									onClick={() => shareCompanyJobsToSocial('facebook')}
+									className="flex-1 px-3 py-2 bg-blue-800 text-white rounded-md hover:bg-blue-900 transition-colors text-sm flex items-center justify-center gap-1"
+								>
+									<svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+										<path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+									</svg>
+									Facebook
+								</button>
+							</div>
+						</div>
+
+						<div className="flex justify-end space-x-2">
+							<button
+								onClick={() => setShowCompanyJobsModal(false)}
+								className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+							>
+								Cerrar
 							</button>
 						</div>
 					</div>

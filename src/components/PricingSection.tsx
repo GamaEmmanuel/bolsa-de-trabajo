@@ -51,11 +51,11 @@ const PricingSection: React.FC<PricingSectionProps> = ({
 		},
 		{
 			name: "Empresa",
-			price: "$300",
+			price: "$1000 mx",
 			period: "/mes",
 			description: "Perfecto para empresas en crecimiento",
 			features: [
-				"Hasta 20 publicaciones de empleo activas",
+				"Publicaciones ilimitadas",
 				"ATS avanzado",
 				"Evaluación y filtrado de currículums",
 				"Notificaciones",
@@ -68,7 +68,7 @@ const PricingSection: React.FC<PricingSectionProps> = ({
 			popular: true,
 			buttonStyle: "primary",
 			planId: "startup",
-			amount: 30000
+			amount: 100000
 		}
 	]
 

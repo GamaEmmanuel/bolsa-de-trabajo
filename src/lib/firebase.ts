@@ -22,12 +22,15 @@ if (!getApps().length) {
   app = getApps()[0];
 }
 
+// Initialize auth with explicit LOCAL persistence
 const auth = getAuth(app);
 
-// Set persistence to local storage so users remain logged in across browser sessions
-setPersistence(auth, browserLocalPersistence).catch((error) => {
-  console.error('Error setting auth persistence:', error);
-});
+// Explicitly set persistence to LOCAL (survives page refreshes and browser restarts)
+if (typeof window !== 'undefined') {
+  setPersistence(auth, browserLocalPersistence).catch((error) => {
+    console.error("Error setting auth persistence:", error);
+  });
+}
 
 const db = getFirestore(app);
 const storage = getStorage(app);

@@ -1,12 +1,13 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import React, { useState, useEffect, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { auth, db, storage } from '../../../lib/firebase'
 import { doc, updateDoc, getDoc } from 'firebase/firestore'
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage'
 import { CompanySize, Industry } from '../../../../types'
 import { COMPANY_SIZE_OPTIONS, INDUSTRY_OPTIONS, BENEFITS_OPTIONS, COMPANY_CULTURE_OPTIONS } from '../../../lib/constants'
+import SubscriptionStatus from '../../../components/SubscriptionStatus'
 
 interface CompanyData {
 	companyName: string
@@ -54,7 +55,24 @@ const CompanySettingsPage = () => {
 	const [success, setSuccess] = useState(false)
 	const [logoFile, setLogoFile] = useState<File | null>(null)
 	const [logoPreview, setLogoPreview] = useState<string | null>(null)
+	const [companyId, setCompanyId] = useState<string | null>(null)
+	const [paymentSuccess, setPaymentSuccess] = useState(false)
 	const router = useRouter()
+	const searchParams = useSearchParams()
+
+	// Check for payment success
+	useEffect(() => {
+		const payment = searchParams.get('payment')
+		if (payment === 'success') {
+			setPaymentSuccess(true)
+			// Clear the query parameter after showing message
+			setTimeout(() => {
+				setPaymentSuccess(false)
+				// Remove query param from URL
+				router.replace('/company/settings')
+			}, 10000) // Show for 10 seconds
+		}
+	}, [searchParams, router])
 
 	// Load existing company data
 	useEffect(() => {
@@ -71,6 +89,12 @@ const CompanySettingsPage = () => {
 
 				if (userDoc.exists()) {
 					const userData = userDoc.data()
+
+					// Get companyId for subscription display
+					if (userData.companyId) {
+						setCompanyId(userData.companyId)
+					}
+
 					if (userData.companyData) {
 						setCompanyData(prev => ({
 							...prev,
@@ -203,6 +227,44 @@ const CompanySettingsPage = () => {
 					<h1 className="text-3xl font-bold text-gray-900 mb-2">Configuración de la Empresa</h1>
 					<p className="text-gray-600">Gestiona la información y preferencias de tu empresa</p>
 				</div>
+
+				{/* Payment Success Message */}
+				{paymentSuccess && (
+					<div className="mb-6 bg-green-50 border-2 border-green-500 rounded-lg p-6 shadow-lg">
+						<div className="flex items-start">
+							<div className="flex-shrink-0">
+								<svg className="h-8 w-8 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+									<path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+								</svg>
+							</div>
+							<div className="ml-4 flex-1">
+								<h3 className="text-lg font-bold text-green-900 mb-1">
+									¡Suscripción Exitosa! 🎉
+								</h3>
+								<p className="text-green-800 mb-2">
+									Tu suscripción ha sido activada correctamente. Ya tienes acceso a todas las funciones premium.
+								</p>
+								<ul className="text-sm text-green-700 space-y-1">
+									<li>✓ 1000 créditos de IA agregados a tu cuenta</li>
+									<li>✓ Publicaciones de empleo ilimitadas</li>
+									<li>✓ ATS avanzado disponible</li>
+									<li>✓ Soporte prioritario activado</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				)}
+
+				{/* Subscription Status Section */}
+				{companyId && (
+					<div className="mb-8">
+						<SubscriptionStatus
+							companyId={companyId}
+							showManageButton={true}
+							compact={false}
+						/>
+					</div>
+				)}
 
 				{/* Success Message */}
 				{success && (
@@ -564,4 +626,22 @@ const CompanySettingsPage = () => {
 	)
 }
 
-export default CompanySettingsPage
+// Wrap in Suspense for useSearchParams
+export default function CompanySettingsPageWrapper() {
+	return (
+		<Suspense fallback={
+			<div className="min-h-screen bg-gray-50 p-8">
+				<div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
+					<div className="flex items-center justify-center h-64">
+						<div className="text-center">
+							<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
+							<p className="mt-2 text-gray-600">Cargando configuración...</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		}>
+			<CompanySettingsPage />
+		</Suspense>
+	)
+}

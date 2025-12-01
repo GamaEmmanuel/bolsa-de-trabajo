@@ -21,6 +21,14 @@ service firebase.storage {
       allow read, write, delete: if request.auth != null && request.auth.uid == userId;
     }
 
+    // Message attachments: authenticated users can upload and read files in conversations
+    // Files are stored in messages/{conversationId}/{fileName}
+    match /messages/{conversationId}/{fileName} {
+      allow read: if request.auth != null; // Authenticated users can read message attachments
+      allow write: if request.auth != null && request.resource.size < 10 * 1024 * 1024; // Max 10MB file size
+      allow delete: if false; // Don't allow deleting attachments
+    }
+
     // Deny all other access
     match /{allPaths=**} {
       allow read, write: if false;

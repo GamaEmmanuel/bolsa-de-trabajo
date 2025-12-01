@@ -31,6 +31,28 @@ export interface CandidateProfile {
 	preferences?: unknown
 }
 
+export type SubscriptionStatus =
+	| 'active'
+	| 'canceled'
+	| 'past_due'
+	| 'trialing'
+	| 'incomplete'
+	| 'incomplete_expired'
+	| 'unpaid'
+	| null
+
+export interface Subscription {
+	stripeCustomerId?: string
+	stripeSubscriptionId?: string
+	stripePriceId?: string
+	status?: SubscriptionStatus
+	currentPeriodStart?: any // Firestore Timestamp
+	currentPeriodEnd?: any // Firestore Timestamp
+	cancelAtPeriodEnd?: boolean
+	createdAt?: any // Firestore Timestamp
+	updatedAt?: any // Firestore Timestamp
+}
+
 export interface Company {
 	companyId: UUID
 	companyName: string
@@ -40,6 +62,8 @@ export interface Company {
 	logoUrl?: string
 	description?: string
 	createdAt: string
+	subscription?: Subscription
+	credits?: number // AI credits
 }
 
 export type JobStatus =
@@ -134,4 +158,56 @@ export interface Purchase {
 	amount: number
 	transactionDate: string
 	paymentTxnId?: string
+}
+
+export type UserType = 'company' | 'candidate'
+
+export interface MessageAttachment {
+	name: string
+	url: string
+	type: string
+	size: number
+}
+
+export interface Message {
+	messageId: string
+	conversationId: string
+	senderId: string
+	senderType: UserType
+	senderName: string
+	receiverId: string
+	receiverType: UserType
+	receiverName: string
+	content: string
+	attachments: MessageAttachment[]
+	read: boolean
+	timestamp: any // Firestore Timestamp
+	createdAt: any // Firestore Timestamp
+	deleted?: boolean
+	deletedAt?: any // Firestore Timestamp
+	deletedBy?: string
+	edited?: boolean
+	editedAt?: any // Firestore Timestamp
+	originalContent?: string // Store original for history
+}
+
+export interface Conversation {
+	conversationId: string
+	companyId: string
+	companyName: string
+	companyLogoUrl?: string
+	candidateId: string
+	candidateName: string
+	candidateProfileId?: string
+	lastMessage: string
+	lastMessageTimestamp: any // Firestore Timestamp
+	lastMessageSenderId: string
+	participants: string[]
+	unreadCount: {
+		[userId: string]: number
+	}
+	createdAt: any // Firestore Timestamp
+	updatedAt: any // Firestore Timestamp
+	archived?: boolean
+	archivedBy?: string[] // Array of user IDs who archived this conversation
 }

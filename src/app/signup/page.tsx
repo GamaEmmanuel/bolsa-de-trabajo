@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence } from 'firebase/auth'
 import { auth } from '../../lib/firebase'
 import { getUserPreferences, getRedirectPath } from '../../lib/userPreferences'
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Loader2, User } from 'lucide-react'
@@ -40,6 +40,8 @@ const SignUpPage = () => {
 		setError(null)
 		setIsLoading(true)
 		try {
+			// Ensure persistence is set before signing up
+			await setPersistence(auth, browserLocalPersistence)
 			const userCredential = await createUserWithEmailAndPassword(auth, email, password)
 			await redirectUser(userCredential.user)
 		} catch (error) {
@@ -53,6 +55,8 @@ const SignUpPage = () => {
 		const provider = new GoogleAuthProvider()
 		setIsGoogleLoading(true)
 		try {
+			// Ensure persistence is set before signing in
+			await setPersistence(auth, browserLocalPersistence)
 			const userCredential = await signInWithPopup(auth, provider)
 			await redirectUser(userCredential.user)
 		} catch (error) {

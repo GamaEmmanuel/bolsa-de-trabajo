@@ -1,17 +1,26 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import PricingSection from '../components/PricingSection'
+import PublicJobListings from '../components/PublicJobListings'
+
+type TabType = 'home' | 'jobs'
 
 const LandingPage = () => {
+	const [activeTab, setActiveTab] = useState<TabType>('home')
+
 	return (
 		<div className="min-h-screen bg-white">
 			{/* Navigation */}
 			<nav className="fixed w-full top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
 				<div className="max-w-6xl mx-auto px-6">
 					<div className="flex justify-between items-center py-4">
-						<div className="flex items-center">
+						<button
+							onClick={() => setActiveTab('home')}
+							className="flex items-center hover:opacity-80 transition-opacity cursor-pointer"
+						>
 							<div className="w-10 h-10 bg-orange-500 rounded-full mr-3 flex items-center justify-center">
 								<svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
 									<path d="M13 2L3 14h6v8l10-12h-6V2z"/>
@@ -21,8 +30,28 @@ const LandingPage = () => {
 							<span className="text-xl font-bold text-gray-900">TalentFlow</span>
 								<span className="text-xs text-orange-500 font-semibold uppercase tracking-wide">CONTRATA, MÁS RÁPIDO</span>
 							</div>
-						</div>
+						</button>
 						<div className="hidden md:flex items-center space-x-8">
+							<button
+								onClick={() => setActiveTab('home')}
+								className={`font-medium px-3 py-2 transition-colors ${
+									activeTab === 'home'
+										? 'text-orange-600 border-b-2 border-orange-600'
+										: 'text-gray-700 hover:text-gray-900'
+								}`}
+							>
+								Inicio
+							</button>
+							<button
+								onClick={() => setActiveTab('jobs')}
+								className={`font-medium px-3 py-2 transition-colors ${
+									activeTab === 'jobs'
+										? 'text-orange-600 border-b-2 border-orange-600'
+										: 'text-gray-700 hover:text-gray-900'
+								}`}
+							>
+								Empleos Disponibles
+							</button>
 						</div>
 						<div className="flex items-center space-x-3">
 							<Link
@@ -40,18 +69,93 @@ const LandingPage = () => {
 						</div>
 					</div>
 				</div>
+				{/* Mobile Tab Navigation */}
+				<div className="md:hidden border-t border-gray-100">
+					<div className="flex">
+						<button
+							onClick={() => setActiveTab('home')}
+							className={`flex-1 text-center py-3 font-medium transition-colors ${
+								activeTab === 'home'
+									? 'text-orange-600 border-b-2 border-orange-600 bg-orange-50'
+									: 'text-gray-700'
+							}`}
+						>
+							Inicio
+						</button>
+						<button
+							onClick={() => setActiveTab('jobs')}
+							className={`flex-1 text-center py-3 font-medium transition-colors ${
+								activeTab === 'jobs'
+									? 'text-orange-600 border-b-2 border-orange-600 bg-orange-50'
+									: 'text-gray-700'
+							}`}
+						>
+							Empleos
+						</button>
+					</div>
+				</div>
 			</nav>
 
+			{/* Jobs Section */}
+			{activeTab === 'jobs' && (
+				<section className="relative pt-24 pb-16 bg-gray-50 min-h-screen overflow-hidden">
+					{/* Decorative Background Illustration - Top Right */}
+					<div className="absolute top-32 right-10 w-96 h-96 opacity-40 pointer-events-none">
+						<Image
+							src="/illustrations/pizza, slice, food, cuisine, cartoon, illustration, character.png"
+							alt=""
+							width={384}
+							height={384}
+							className="transform rotate-8"
+						/>
+					</div>
+					<div className="max-w-7xl mx-auto px-6">
+						<div className="text-center mb-8">
+							<h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+								Empleos en Restaurantes y Hoteles
+							</h1>
+							<p className="text-xl text-gray-600 max-w-3xl mx-auto">
+								Encuentra oportunidades como mesero, cocinero, chef, bartender, camarera y más en el sector de hospitalidad.
+								<Link href="/signup" className="text-orange-600 hover:text-orange-700 font-semibold"> Regístrate</Link> para aplicar.
+							</p>
+						</div>
+						<PublicJobListings />
+					</div>
+				</section>
+			)}
+
 			{/* Hero Section */}
-			<section className="relative pt-24 pb-16 bg-gradient-to-b from-gray-50 to-white">
+			{activeTab === 'home' && (
+			<>
+			<section className="relative pt-24 pb-16 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
+				{/* Decorative Background Illustration - Top Right */}
+				<div className="absolute top-10 right-0 w-96 h-96 opacity-40 pointer-events-none">
+					<Image
+						src="/illustrations/chef, cooking, meal preparation, food service, kitchen, Vector illustration.png"
+						alt=""
+						width={384}
+						height={384}
+						className="transform rotate-12"
+					/>
+				</div>
+				{/* Decorative Background Illustration - Left Side */}
+				<div className="absolute top-40 -left-20 w-80 h-80 opacity-40 pointer-events-none">
+					<Image
+						src="/illustrations/cooking, food preparation, kitchen, sandwich, Vector illustration.png"
+						alt=""
+						width={320}
+						height={320}
+						className="transform -rotate-15"
+					/>
+				</div>
 				<div className="max-w-6xl mx-auto px-6 text-center">
 					<div className="max-w-4xl mx-auto">
 						<h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight mb-6">
-							Plataforma moderna de RRHH para
-							<span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600"> contrataciones más inteligentes</span>
+							Encuentra el mejor talento para tu
+							<span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600"> restaurante u hotel</span>
 						</h1>
 						<p className="text-xl text-gray-600 leading-relaxed mb-10 max-w-2xl mx-auto">
-							Optimiza todo tu proceso de contratación con herramientas impulsadas por IA. Desde la publicación de empleos hasta la incorporación, toma mejores decisiones de contratación más rápido.
+							Contrata meseros, cocineros, camareras, chefs, bartenders y más personal de servicio de manera rápida y eficiente. Plataforma especializada en el sector de hospitalidad.
 						</p>
 						<div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
 							<Link
@@ -71,8 +175,8 @@ const LandingPage = () => {
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
 								</svg>
 							</div>
-							<h3 className="text-xl font-semibold text-gray-900 mb-3">Emparejamiento con IA</h3>
-							<p className="text-gray-600">Empareja automáticamente candidatos con roles usando algoritmos avanzados de IA y análisis de habilidades.</p>
+							<h3 className="text-xl font-semibold text-gray-900 mb-3">Personal Calificado</h3>
+							<p className="text-gray-600">Encuentra meseros, cocineros, chefs, bartenders y personal de limpieza verificado y listo para trabajar.</p>
 						</div>
 						<div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
 							<div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
@@ -80,8 +184,8 @@ const LandingPage = () => {
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
 								</svg>
 							</div>
-							<h3 className="text-xl font-semibold text-gray-900 mb-3">Flujo de Trabajo Optimizado</h3>
-							<p className="text-gray-600">Gestiona todo tu pipeline de contratación desde un panel con flujos de trabajo automatizados.</p>
+							<h3 className="text-xl font-semibold text-gray-900 mb-3">Contratación Rápida</h3>
+							<p className="text-gray-600">Publica una vacante y recibe aplicaciones calificadas en minutos. Ideal para cubrir turnos urgentes.</p>
 						</div>
 						<div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
 							<div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
@@ -89,45 +193,65 @@ const LandingPage = () => {
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
 								</svg>
 							</div>
-							<h3 className="text-xl font-semibold text-gray-900 mb-3">Colaboración en Equipo</h3>
-							<p className="text-gray-600">Habilita la colaboración perfecta entre gerentes de contratación, reclutadores y miembros del equipo.</p>
+							<h3 className="text-xl font-semibold text-gray-900 mb-3">Especializado en Hospitalidad</h3>
+							<p className="text-gray-600">Plataforma diseñada específicamente para restaurantes, hoteles, cafeterías y el sector de servicio.</p>
 						</div>
 					</div>
 				</div>
 			</section>
 
 			{/* Value Proposition */}
-			<section className="py-20 bg-white">
+			<section className="relative py-20 bg-white overflow-hidden">
+				{/* Decorative Background Illustration - Top Right */}
+				<div className="absolute top-20 right-10 w-96 h-96 opacity-35 pointer-events-none">
+					<Image
+						src="/illustrations/cooking, tasting, chef, kitchen, culinary.png"
+						alt=""
+						width={384}
+						height={384}
+						className="transform rotate-6"
+					/>
+				</div>
+				{/* Decorative Background Illustration - Bottom Left */}
+				<div className="absolute bottom-32 -left-16 w-96 h-96 opacity-35 pointer-events-none">
+					<Image
+						src="/illustrations/frying-pan, egg, spatula, cooking, breakfast.png"
+						alt=""
+						width={384}
+						height={384}
+						className="transform -rotate-12"
+					/>
+				</div>
 				<div className="max-w-6xl mx-auto px-6">
 					<div className="text-center mb-16">
 						<h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
 							¿Por qué elegir TalentFlow?
 						</h2>
 						<p className="text-xl text-gray-600 max-w-3xl mx-auto">
-							Construido para equipos modernos que quieren contratar de manera más inteligente, no más difícil
+							La plataforma #1 para restaurantes y hoteles que necesitan contratar personal de servicio calificado
 						</p>
 					</div>
 
 					<div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-20">
 						<div>
 							<h3 className="text-3xl font-bold text-gray-900 mb-6">
-								Reduce el tiempo de contratación en un 60%
+								Contrata personal en horas, no en semanas
 							</h3>
 							<p className="text-lg text-gray-600 mb-8 leading-relaxed">
-								Nuestra plataforma impulsada por IA automatiza tareas repetitivas, evalúa candidatos de manera inteligente y te ayuda a identificar el mejor talento más rápido que los métodos tradicionales.
+								Publicar una vacante para meseros, cocineros, chefs, bartenders o camareras nunca ha sido tan fácil. Recibe aplicaciones calificadas en minutos y contrata el mismo día.
 							</p>
 							<div className="space-y-4">
 								<div className="flex items-center">
 									<div className="w-2 h-2 bg-orange-600 rounded-full mr-3"></div>
-									<span className="text-gray-700">Evaluación automatizada de candidatos</span>
+									<span className="text-gray-700">Candidatos verificados con experiencia en hospitalidad</span>
 								</div>
 								<div className="flex items-center">
 									<div className="w-2 h-2 bg-orange-600 rounded-full mr-3"></div>
-									<span className="text-gray-700">Programación inteligente de entrevistas</span>
+									<span className="text-gray-700">Disponibilidad inmediata para turnos urgentes</span>
 								</div>
 								<div className="flex items-center">
 									<div className="w-2 h-2 bg-orange-600 rounded-full mr-3"></div>
-									<span className="text-gray-700">Herramientas de colaboración en tiempo real</span>
+									<span className="text-gray-700">Contacto directo con aspirantes</span>
 								</div>
 							</div>
 						</div>
@@ -180,23 +304,23 @@ const LandingPage = () => {
 						</div>
 						<div className="lg:order-1">
 							<h3 className="text-3xl font-bold text-gray-900 mb-6">
-								Encuentra la coincidencia perfecta cada vez
+								Personal especializado para tu negocio
 							</h3>
 							<p className="text-lg text-gray-600 mb-8 leading-relaxed">
-								Los algoritmos avanzados de IA analizan habilidades, experiencia y ajuste cultural para encontrar candidatos que no solo están calificados, sino que son perfectos para tu equipo.
+								Accede a una base de datos de profesionales de hospitalidad: meseros con experiencia, cocineros capacitados, chefs certificados, bartenders expertos, camareras de hotel y más.
 							</p>
 							<div className="space-y-4">
 								<div className="flex items-center">
 									<div className="w-2 h-2 bg-orange-600 rounded-full mr-3"></div>
-									<span className="text-gray-700">Emparejamiento basado en habilidades</span>
+									<span className="text-gray-700">Experiencia comprobada en el sector</span>
 								</div>
 								<div className="flex items-center">
 									<div className="w-2 h-2 bg-orange-600 rounded-full mr-3"></div>
-									<span className="text-gray-700">Evaluación de ajuste cultural</span>
+									<span className="text-gray-700">Referencias y certificaciones verificadas</span>
 								</div>
 								<div className="flex items-center">
 									<div className="w-2 h-2 bg-orange-600 rounded-full mr-3"></div>
-									<span className="text-gray-700">Puntuación predictiva de éxito</span>
+									<span className="text-gray-700">Perfiles completos con disponibilidad</span>
 								</div>
 							</div>
 						</div>
@@ -205,11 +329,31 @@ const LandingPage = () => {
 			</section>
 
 			{/* Social Proof */}
-			<section className="py-16 bg-gray-50">
+			<section className="relative py-16 bg-gray-50 overflow-hidden">
+				{/* Decorative Background Illustration - Right Side */}
+				<div className="absolute top-10 -right-12 w-96 h-96 opacity-35 pointer-events-none">
+					<Image
+						src="/illustrations/pizza, slice, food, cuisine, cartoon, illustration, character.png"
+						alt=""
+						width={384}
+						height={384}
+						className="transform rotate-18"
+					/>
+				</div>
+				{/* Decorative Background Illustration - Left Bottom */}
+				<div className="absolute bottom-10 -left-10 w-80 h-80 opacity-35 pointer-events-none">
+					<Image
+						src="/illustrations/chopsticks, dollar, steaming, currency, cuisine.png"
+						alt=""
+						width={320}
+						height={320}
+						className="transform -rotate-20"
+					/>
+				</div>
 				<div className="max-w-6xl mx-auto px-6 text-center">
-					<h2 className="text-2xl font-bold text-gray-900 mb-12">Confiado por más de 500 empresas en todo el mundo</h2>
+					<h2 className="text-2xl font-bold text-gray-900 mb-12">Confiado por restaurantes y hoteles en toda Latinoamérica</h2>
 					<div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center opacity-60">
-						{['TechCorp', 'StartupXYZ', 'GlobalInc', 'InnovateCo'].map((company, index) => (
+						{['Restaurante El Buen Sabor', 'Hotel Plaza', 'Café Gourmet', 'Grupo Hotelero'].map((company, index) => (
 							<div key={index} className="text-xl font-bold text-gray-400">
 								{company}
 							</div>
@@ -224,10 +368,10 @@ const LandingPage = () => {
 							))}
 						</div>
 						<blockquote className="text-lg text-gray-700 mb-4">
-							&ldquo;TalentFlow redujo nuestro tiempo de contratación de 6 semanas a 2 semanas. El emparejamiento con IA es increíblemente preciso y las funciones de colaboración en equipo son revolucionarias.&rdquo;
+							&ldquo;Necesitábamos 3 meseros urgente para el fin de semana y TalentFlow nos ayudó a encontrarlos en menos de 24 horas. Personal calificado y con experiencia. ¡Increíble!&rdquo;
 						</blockquote>
-						<div className="font-semibold text-gray-900">Maria Rodriguez</div>
-						<div className="text-gray-600">Jefa de Talento, TechCorp</div>
+						<div className="font-semibold text-gray-900">Carlos Martínez</div>
+						<div className="text-gray-600">Gerente General, Restaurante La Hacienda</div>
 					</div>
 				</div>
 			</section>
@@ -243,23 +387,23 @@ const LandingPage = () => {
 			<section className="py-20 bg-gradient-to-r from-orange-500 to-orange-600">
 				<div className="max-w-4xl mx-auto px-6 text-center">
 					<h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-						¿Listo para transformar tu proceso de contratación?
+						¿Necesitas personal para tu restaurante u hotel?
 					</h2>
 					<p className="text-xl text-orange-50 mb-8">
-						Únete a miles de empresas que ya usan TalentFlow para encontrar y contratar el mejor talento.
+						Únete a cientos de restaurantes y hoteles que encuentran meseros, cocineros, chefs y personal de servicio en TalentFlow.
 					</p>
 					<div className="flex flex-col sm:flex-row gap-4 justify-center">
 						<Link
 							href="/signup?type=company"
 							className="px-8 py-4 bg-white text-orange-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors"
 						>
-							Iniciar Prueba Gratuita
+							Publicar Vacante
 						</Link>
 						<Link
 							href="/signup?type=candidate"
 							className="px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-orange-600 transition-colors"
 						>
-							Buscar Empleos
+							Buscar Trabajo en Hospitalidad
 						</Link>
 					</div>
 				</div>
@@ -282,7 +426,7 @@ const LandingPage = () => {
 								</div>
 							</div>
 							<p className="text-gray-400 mb-4">
-								Plataforma moderna de RRHH para decisiones de contratación más inteligentes.
+								La plataforma #1 para encontrar personal de restaurantes y hoteles en Latinoamérica.
 							</p>
 							<div className="flex space-x-4">
 								<Link href="#" className="text-gray-400 hover:text-white transition-colors">
@@ -339,6 +483,8 @@ const LandingPage = () => {
 					</div>
 				</div>
 			</footer>
+			</>
+			)}
 		</div>
 	)
 }

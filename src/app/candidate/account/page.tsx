@@ -14,6 +14,7 @@ interface UserAccount {
 	displayName: string
 	firstName: string
 	lastName: string
+	dateOfBirth?: string
 	phone?: string
 	location?: string
 	profilePictureUrl?: string
@@ -32,6 +33,7 @@ const AccountPage = () => {
 		displayName: '',
 		firstName: '',
 		lastName: '',
+		dateOfBirth: '',
 		phone: '',
 		location: '',
 		profilePictureUrl: '',
@@ -124,7 +126,7 @@ const AccountPage = () => {
 		setAccount(prev => ({ ...prev, [field]: value }))
 
 		// Auto-save certain fields with debouncing
-		if (user && (field === 'phone' || field === 'location' || field === 'firstName' || field === 'lastName')) {
+		if (user && (field === 'phone' || field === 'location' || field === 'firstName' || field === 'lastName' || field === 'dateOfBirth')) {
 			// Clear existing timeout
 			if (saveTimeoutRef.current) {
 				clearTimeout(saveTimeoutRef.current)
@@ -563,86 +565,87 @@ const AccountPage = () => {
 	}
 
 	return (
-		<div className="max-w-4xl mx-auto space-y-6">
+		<div className="max-w-4xl mx-auto space-y-4 py-4">
 			{/* Header */}
 			<div>
-				<h1 className="text-3xl font-bold text-gray-900">Configuración de Cuenta</h1>
-				<p className="text-gray-600 mt-1">Gestiona la información de tu cuenta y preferencias</p>
+				<h1 className="text-2xl font-bold text-gray-900">Configuración de Cuenta</h1>
+				<p className="text-gray-600 text-sm mt-1">Gestiona la información de tu cuenta y preferencias</p>
 			</div>
 
 			{/* Success/Error Messages */}
 			{success && (
-				<div className="p-4 bg-green-50 border border-green-200 rounded-md">
-					<p className="text-green-600">¡Cuenta actualizada exitosamente!</p>
+				<div className="p-3 bg-green-50 border border-green-200 rounded-md">
+					<p className="text-green-600 text-sm">¡Cuenta actualizada exitosamente!</p>
 				</div>
 			)}
 			{error && (
-				<div className="p-4 bg-red-50 border border-red-200 rounded-md">
-					<p className="text-red-600">{error}</p>
+				<div className="p-3 bg-red-50 border border-red-200 rounded-md">
+					<p className="text-red-600 text-sm">{error}</p>
 				</div>
 			)}
 
 			{/* Personal Information */}
-			<div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-				<h2 className="text-xl font-semibold text-gray-900 mb-4">Información Personal</h2>
+			<div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+				<h2 className="text-lg font-semibold text-gray-900 mb-3">Información Personal</h2>
 
-				{/* Profile Picture and Name Section */}
-				<div className="mb-4">
-					<div className="flex items-start space-x-4">
-						{/* Profile Picture - Clickable */}
-						<div
-							className="flex flex-col items-center cursor-pointer group"
-							onClick={() => !uploadingImage && setShowUploadModal(true)}
-						>
-							<div className="relative w-20 h-20">
-								{(account.profilePictureUrl || imagePreview) && !imageLoadError ? (
-									<div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-gray-300 group-hover:border-blue-500 transition-colors">
-										<Image
-											key={imagePreview || account.profilePictureUrl}
-											src={imagePreview || account.profilePictureUrl}
-											alt="Profile"
-											width={80}
-											height={80}
-											className="object-cover"
-											onLoad={() => {
-												console.log('Image loaded successfully:', imagePreview || account.profilePictureUrl)
-												setImageLoadError(false)
-											}}
-											onError={() => {
-												console.error('Image failed to load:', imagePreview || account.profilePictureUrl)
-												setImageLoadError(true)
-											}}
-											unoptimized
-										/>
-									</div>
-								) : (
-									<div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center border-2 border-gray-300 group-hover:border-blue-500 transition-colors">
-										{/* User initials when no photo */}
-										<span className="text-2xl font-bold text-white">
-											{account.firstName && account.lastName
-												? `${account.firstName.charAt(0).toUpperCase()}${account.lastName.charAt(0).toUpperCase()}`
-												: 'U'}
-										</span>
-									</div>
-								)}
-								{uploadingImage && (
-									<div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center z-20">
-										<div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-									</div>
-								)}
-							</div>
-							<p className="text-xs text-gray-500 mt-2 text-center">Foto de Perfil</p>
+				{/* Profile Picture and All Fields Section */}
+				<div className="flex items-start space-x-4">
+					{/* Profile Picture - Clickable */}
+					<div
+						className="flex flex-col items-center cursor-pointer group flex-shrink-0"
+						onClick={() => !uploadingImage && setShowUploadModal(true)}
+					>
+						<div className="relative w-20 h-20">
+							{(account.profilePictureUrl || imagePreview) && !imageLoadError ? (
+								<div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-gray-300 group-hover:border-blue-500 transition-colors">
+									<Image
+										key={imagePreview || account.profilePictureUrl}
+										src={imagePreview || account.profilePictureUrl}
+										alt="Profile"
+										width={80}
+										height={80}
+										className="object-cover"
+										onLoad={() => {
+											console.log('Image loaded successfully:', imagePreview || account.profilePictureUrl)
+											setImageLoadError(false)
+										}}
+										onError={() => {
+											console.error('Image failed to load:', imagePreview || account.profilePictureUrl)
+											setImageLoadError(true)
+										}}
+										unoptimized
+									/>
+								</div>
+							) : (
+								<div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center border-2 border-gray-300 group-hover:border-blue-500 transition-colors">
+									{/* User initials when no photo */}
+									<span className="text-2xl font-bold text-white">
+										{account.firstName && account.lastName
+											? `${account.firstName.charAt(0).toUpperCase()}${account.lastName.charAt(0).toUpperCase()}`
+											: 'U'}
+									</span>
+								</div>
+							)}
+							{uploadingImage && (
+								<div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center z-20">
+									<div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+								</div>
+							)}
 						</div>
+						<p className="text-xs text-gray-500 mt-1 text-center">Foto de Perfil</p>
+					</div>
 
+					{/* All form fields to the right */}
+					<div className="flex-1 space-y-3">
 						{/* Name fields */}
-						<div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3">
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
 							<div>
 								<label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
 								<input
 									type="text"
 									value={account.firstName}
 									onChange={(e) => handleInputChange('firstName', e.target.value)}
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+									className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
 								/>
 							</div>
 							<div>
@@ -651,9 +654,62 @@ const AccountPage = () => {
 									type="text"
 									value={account.lastName}
 									onChange={(e) => handleInputChange('lastName', e.target.value)}
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+									className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
 								/>
 							</div>
+						</div>
+
+						{/* Date of Birth and Phone */}
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+							<div>
+								<label className="block text-sm font-medium text-gray-700 mb-1">Fecha de Nacimiento</label>
+								<input
+									type="date"
+									value={account.dateOfBirth || ''}
+									onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
+									className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+									max={new Date().toISOString().split('T')[0]}
+								/>
+							</div>
+							<div>
+								<label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+								<input
+									type="tel"
+									value={account.phone || ''}
+									onChange={(e) => handleInputChange('phone', e.target.value)}
+									className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+								/>
+							</div>
+						</div>
+
+						{/* Email */}
+						<div>
+							<label className="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
+							<input
+								type="email"
+								value={account.email}
+								disabled
+								className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-gray-50 text-gray-500"
+							/>
+							<p className="text-xs text-gray-500 mt-0.5">El correo electrónico no se puede cambiar</p>
+						</div>
+
+						{/* Location */}
+						<div>
+							<label className="block text-sm font-medium text-gray-700 mb-1">Ubicación</label>
+							<LocationSelector
+								value={account.location || ''}
+								onChange={(locationData) => {
+									if (locationData) {
+										const locationString = locationData.city + (locationData.state ? `, ${locationData.state}` : '')
+										handleInputChange('location', locationString)
+									} else {
+										handleInputChange('location', '')
+									}
+								}}
+								placeholder="Selecciona tu ciudad"
+								className="w-full"
+							/>
 						</div>
 					</div>
 				</div>
@@ -667,49 +723,11 @@ const AccountPage = () => {
 					className="hidden"
 					id="profile-picture-upload"
 				/>
-
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-					<div>
-						<label className="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
-						<input
-							type="email"
-							value={account.email}
-							disabled
-							className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
-						/>
-						<p className="text-xs text-gray-500 mt-1">El correo electrónico no se puede cambiar</p>
-					</div>
-					<div>
-						<label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
-						<input
-							type="tel"
-							value={account.phone || ''}
-							onChange={(e) => handleInputChange('phone', e.target.value)}
-							className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-						/>
-					</div>
-					<div className="md:col-span-2">
-						<label className="block text-sm font-medium text-gray-700 mb-1">Ubicación</label>
-						<LocationSelector
-							value={account.location || ''}
-							onChange={(locationData) => {
-								if (locationData) {
-									const locationString = locationData.city + (locationData.state ? `, ${locationData.state}` : '')
-									handleInputChange('location', locationString)
-								} else {
-									handleInputChange('location', '')
-								}
-							}}
-							placeholder="Selecciona tu ciudad"
-							className="w-full"
-						/>
-					</div>
-				</div>
 			</div>
 
 			{/* Security */}
-			<div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-				<h2 className="text-xl font-semibold text-gray-900 mb-3">Seguridad</h2>
+			<div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+				<h2 className="text-lg font-semibold text-gray-900 mb-3">Seguridad</h2>
 
 				{!showPasswordForm ? (
 					<div className="flex items-center justify-between">
@@ -778,8 +796,8 @@ const AccountPage = () => {
 			</div>
 
 			{/* Preferences */}
-			<div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-				<h2 className="text-xl font-semibold text-gray-900 mb-3">Preferencias de Notificación</h2>
+			<div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+				<h2 className="text-lg font-semibold text-gray-900 mb-3">Preferencias de Notificación</h2>
 				<div className="space-y-4">
 					<div className="flex items-center justify-between">
 						<div>
@@ -830,8 +848,8 @@ const AccountPage = () => {
 			</div>
 
 			{/* Privacy */}
-			<div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-				<h2 className="text-xl font-semibold text-gray-900 mb-3">Configuración de Privacidad</h2>
+			<div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+				<h2 className="text-lg font-semibold text-gray-900 mb-3">Configuración de Privacidad</h2>
 				<div>
 					<label className="block text-sm font-medium text-gray-700 mb-2">Visibilidad del Perfil</label>
 					<select
@@ -850,11 +868,11 @@ const AccountPage = () => {
 			</div>
 
 			{/* Save Button */}
-			<div className="flex justify-end">
+			<div className="flex justify-end pb-4">
 				<button
 					onClick={handleSave}
 					disabled={saving}
-					className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400"
+					className="px-5 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400"
 				>
 					{saving ? 'Guardando...' : 'Guardar Cambios'}
 				</button>

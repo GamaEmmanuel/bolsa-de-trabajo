@@ -52,11 +52,11 @@ const FullPricingSection: React.FC<FullPricingSectionProps> = ({
 		},
 		{
 			name: "Empresa",
-			price: "$300",
+			price: "$1000 mx",
 			period: "/mes",
 			description: "Perfecto para empresas en crecimiento",
 			features: [
-				"Hasta 20 publicaciones de empleo activas",
+				"Publicaciones ilimitadas",
 				"ATS avanzado",
 				"Evaluación y filtrado de currículums",
 				"Notificaciones",
@@ -69,7 +69,7 @@ const FullPricingSection: React.FC<FullPricingSectionProps> = ({
 			popular: true,
 			buttonStyle: "primary",
 			planId: "startup",
-			amount: 30000
+			amount: 100000
 		},
 		{
 			name: "Enterprise",
@@ -104,7 +104,7 @@ const FullPricingSection: React.FC<FullPricingSectionProps> = ({
 		},
 		{
 			question: "¿Qué incluye el plan Empresa?",
-			answer: "El plan Empresa incluye hasta 20 publicaciones activas, ATS avanzado, evaluación automática de currículums, dashboard de análisis, notificaciones y hasta 100 candidatos por publicación de empleo."
+			answer: "El plan Empresa incluye publicaciones ilimitadas, ATS avanzado, evaluación automática de currículums, dashboard de análisis, notificaciones y hasta 100 candidatos por publicación de empleo."
 		},
 		{
 			question: "¿Ofrecen periodo de prueba?",
@@ -124,7 +124,7 @@ const FullPricingSection: React.FC<FullPricingSectionProps> = ({
 		},
 		{
 			question: "¿Qué diferencia al plan Enterprise del plan Empresa?",
-			answer: "El plan Enterprise ofrece publicaciones ilimitadas, integraciones personalizadas, API completa, gerente de cuenta dedicado, soporte 24/7 y capacitación personalizada para tu equipo."
+			answer: "El plan Enterprise ofrece integraciones personalizadas, API completa, gerente de cuenta dedicado, soporte 24/7 premium y capacitación personalizada para tu equipo. Ambos planes incluyen publicaciones ilimitadas."
 		},
 		{
 			question: "¿Ofrecen capacitación para usar la plataforma?",

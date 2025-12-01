@@ -23,6 +23,7 @@ const CandidateLayout = ({ children }: { children: React.ReactNode }) => {
 	const navigation = [
 		{ name: 'Empleos', href: '/candidate/jobs', icon: '🔍' },
 		{ name: 'Aplicaciones', href: '/candidate/my-applications', icon: '📋' },
+		{ name: 'Mensajes', href: '/candidate/inbox', icon: '💬' },
 		{ name: 'Currículum', href: '/candidate/resume', icon: '📄' },
 		{ name: 'Cuenta', href: '/candidate/account', icon: '👤' },
 	]
@@ -70,15 +71,6 @@ const CandidateLayout = ({ children }: { children: React.ReactNode }) => {
 
 						{/* User Menu */}
 						<div className="flex items-center space-x-4">
-							{/* Profile Dropdown */}
-							<div className="relative">
-								<button className="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-									<div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-										<span className="text-white font-medium text-sm">U</span>
-									</div>
-								</button>
-							</div>
-
 							{/* Sign Out Button */}
 							<button
 								onClick={handleSignOut}
