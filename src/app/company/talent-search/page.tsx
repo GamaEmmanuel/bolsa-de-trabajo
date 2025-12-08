@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from 'react'
 import { db, auth } from '../../../lib/firebase'
-import { collection, query, onSnapshot, where } from 'firebase/firestore'
+import { collection, query, onSnapshot, where, doc, getDoc } from 'firebase/firestore'
 import { onAuthStateChanged } from 'firebase/auth'
 import LocationSelector from '../../../components/ui/LocationSelector'
 import Link from 'next/link'
+import Image from 'next/image'
 
 // Extended CandidateProfile interface for display
 interface CandidateProfile {
@@ -26,6 +27,7 @@ interface CandidateProfile {
 	languages?: Record<string, string>
 	email?: string
 	phone?: string
+	profilePictureUrl?: string
 }
 
 const TalentSearchPage = () => {
@@ -54,16 +56,38 @@ const TalentSearchPage = () => {
 			const candidatesQuery = query(collection(db, 'candidateProfiles'))
 
 			const unsubscribe = onSnapshot(candidatesQuery,
-				(querySnapshot) => {
+				async (querySnapshot) => {
 					const candidatesData: CandidateProfile[] = []
-					querySnapshot.forEach(doc => {
-						const data = doc.data()
+
+					// Process each candidate profile
+					const promises = querySnapshot.docs.map(async (docSnapshot) => {
+						const data = docSnapshot.data()
+
+						// Fetch additional user data from userAccounts for up-to-date info
+						let userAccountData = null
+						if (data.userId) {
+							try {
+								const userAccountRef = doc(db, 'userAccounts', data.userId)
+								const userAccountDoc = await getDoc(userAccountRef)
+								if (userAccountDoc.exists()) {
+									userAccountData = userAccountDoc.data()
+								}
+							} catch (error) {
+								console.error('Error fetching user account:', error)
+							}
+						}
+
+						// Prioritize userAccounts data for names and profile picture
+						const firstName = userAccountData?.firstName || data.firstName || ''
+						const lastName = userAccountData?.lastName || data.lastName || ''
+						const profilePictureUrl = userAccountData?.profilePictureUrl || data.profilePictureUrl || ''
+
 						const candidate: CandidateProfile = {
-							profileId: doc.id,
+							profileId: docSnapshot.id,
 							userId: data.userId || '',
-							firstName: data.firstName || '',
-							lastName: data.lastName || '',
-							fullName: data.firstName && data.lastName ? `${data.firstName} ${data.lastName}` : (data.fullName || 'Unknown'),
+							firstName,
+							lastName,
+							fullName: firstName && lastName ? `${firstName} ${lastName}` : (data.fullName || 'Unknown'),
 							headline: data.summary || 'Professional seeking opportunities',
 							skills: data.skills || [],
 							location: data.location || '',
@@ -76,9 +100,12 @@ const TalentSearchPage = () => {
 							languages: data.languages,
 							email: data.email,
 							phone: data.phone,
+							profilePictureUrl,
 						}
 						candidatesData.push(candidate)
 					})
+
+					await Promise.all(promises)
 					setAllCandidates(candidatesData)
 					setResults(candidatesData) // Initially show all candidates
 					setLoading(false)
@@ -269,7 +296,26 @@ const TalentSearchPage = () => {
 							className="bg-card p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
 							onClick={() => handleViewProfile(candidate)}
 						>
-							<div className="flex justify-between items-start">
+							<div className="flex justify-between items-start gap-4">
+								{/* Profile Picture */}
+								{candidate.profilePictureUrl ? (
+									<div className="flex-shrink-0">
+										<Image
+											src={candidate.profilePictureUrl}
+											alt={candidate.fullName || 'Candidate'}
+											width={64}
+											height={64}
+											className="rounded-full object-cover border-2 border-gray-200"
+										/>
+									</div>
+								) : (
+									<div className="flex-shrink-0 w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center border-2 border-gray-200">
+										<span className="text-2xl font-bold text-pink-600">
+											{candidate.fullName?.charAt(0).toUpperCase() || '?'}
+										</span>
+									</div>
+								)}
+
 								<div className="flex-grow">
 									<div className="flex items-center justify-between mb-2">
 										<h2 className="text-xl font-bold text-foreground">{candidate.fullName}</h2>
@@ -313,16 +359,35 @@ const TalentSearchPage = () => {
 					<div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
 						{/* Modal Header */}
 						<div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex justify-between items-start">
-							<div className="flex-grow">
-								<h2 className="text-3xl font-bold text-gray-900 mb-1">{selectedCandidate.fullName}</h2>
-								<p className="text-lg text-gray-600">{selectedCandidate.headline}</p>
-								{selectedCandidate.location && (
-									<p className="text-sm text-gray-500 mt-1">📍 {selectedCandidate.location}</p>
+							<div className="flex items-start gap-4 flex-grow">
+								{/* Profile Picture */}
+								{selectedCandidate.profilePictureUrl ? (
+									<Image
+										src={selectedCandidate.profilePictureUrl}
+										alt={selectedCandidate.fullName || 'Candidate'}
+										width={80}
+										height={80}
+										className="rounded-full object-cover border-2 border-gray-200"
+									/>
+								) : (
+									<div className="w-20 h-20 rounded-full bg-pink-100 flex items-center justify-center border-2 border-gray-200">
+										<span className="text-3xl font-bold text-pink-600">
+											{selectedCandidate.fullName?.charAt(0).toUpperCase() || '?'}
+										</span>
+									</div>
 								)}
+
+								<div className="flex-grow">
+									<h2 className="text-3xl font-bold text-gray-900 mb-1">{selectedCandidate.fullName}</h2>
+									<p className="text-lg text-gray-600">{selectedCandidate.headline}</p>
+									{selectedCandidate.location && (
+										<p className="text-sm text-gray-500 mt-1">📍 {selectedCandidate.location}</p>
+									)}
+								</div>
 							</div>
 							<button
 								onClick={handleCloseModal}
-								className="text-gray-400 hover:text-gray-600 text-2xl font-bold ml-4"
+								className="text-gray-400 hover:text-gray-600 text-2xl font-bold ml-4 flex-shrink-0"
 							>
 								×
 							</button>
@@ -456,7 +521,7 @@ const TalentSearchPage = () => {
 							</button>
 							<Link
 								href={`/company/inbox?candidateId=${selectedCandidate.userId}&candidateName=${encodeURIComponent(selectedCandidate.fullName || 'Candidato')}`}
-								className="px-6 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-200"
+								className="px-6 py-2 text-white bg-pink-600 rounded-lg hover:bg-pink-700 transition-all duration-200"
 							>
 								Contactar
 							</Link>

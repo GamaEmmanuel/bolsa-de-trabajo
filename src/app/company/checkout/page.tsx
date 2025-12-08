@@ -89,7 +89,7 @@ const CheckoutForm = ({ selectedTier }: { selectedTier: JobTier }) => {
 			<button
 				type="submit"
 				disabled={!stripe || loading}
-				className="w-full px-6 py-3 text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-gray-400"
+				className="w-full px-6 py-3 text-white bg-pink-600 rounded-md hover:bg-pink-700 disabled:bg-gray-400"
 			>
 				{loading ? 'Processing...' : `Pay $${tierPrices[selectedTier]} MXN`}
 			</button>

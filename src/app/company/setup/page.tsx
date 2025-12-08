@@ -120,7 +120,7 @@ const CompanySetupPage = () => {
 		return (
 			<div className="flex items-center justify-center min-h-screen bg-gray-50">
 				<div className="text-center">
-					<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+					<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
 					<p className="mt-2 text-gray-600">Loading...</p>
 				</div>
 			</div>
@@ -220,7 +220,7 @@ const CompanySetupPage = () => {
 					<div className="flex-grow"></div>
 					<button
 						onClick={handleNext}
-						className="px-6 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
+						className="px-6 py-2 text-white bg-pink-600 rounded-md hover:bg-pink-700"
 					>
 						{currentStep === steps.length - 1 ? 'Finish Setup' : 'Next'}
 					</button>

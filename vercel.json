@@ -1,0 +1,9 @@
+{
+  "crons": [
+    {
+      "path": "/api/subscriptions/verify",
+      "schedule": "0 3 * * *"
+    }
+  ]
+}
+

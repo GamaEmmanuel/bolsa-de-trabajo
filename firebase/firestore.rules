@@ -105,6 +105,17 @@ service cloud.firestore {
       allow delete: if false; // Prevent deletion
     }
 
+    // Subscriptions: read-only access for company admins, no client writes (only via webhooks)
+    match /subscriptions/{subscriptionId} {
+      // Allow company admins to read their own subscription
+      allow read: if isSignedIn() && resource.data.companyId in [
+        request.auth.uid,
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.companyId
+      ];
+      // No client writes - only server via webhooks
+      allow write: if false;
+    }
+
     // Conversations: users can access conversations where they are a participant
     match /conversations/{conversationId} {
       // Allow reading if user is in the participants array

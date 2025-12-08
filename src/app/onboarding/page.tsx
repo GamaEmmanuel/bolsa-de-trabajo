@@ -76,6 +76,28 @@ const OnboardingPage = () => {
 					{ merge: true }
 				)
 
+				// Send welcome email (async, don't block)
+				try {
+					const userName = user.displayName || user.email?.split('@')[0] || 'Usuario'
+					const dashboardLink = accountType === 'personal'
+						? `${window.location.origin}/candidate/dashboard`
+						: `${window.location.origin}/company/setup`
+
+					fetch('/api/notifications/welcome', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({
+							userId: user.uid,
+							userEmail: user.email,
+							userName,
+							accountType,
+							dashboardLink,
+						}),
+					}).catch(err => console.error('Error sending welcome email:', err))
+				} catch (emailError) {
+					console.error('Error sending welcome email:', emailError)
+				}
+
 				// Redirect to the appropriate dashboard or setup page
 				const preferences = {
 					accountType: accountType,
@@ -99,7 +121,7 @@ const OnboardingPage = () => {
 		return (
 			<div className="flex items-center justify-center min-h-screen bg-gray-50">
 				<div className="text-center">
-					<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+					<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
 					<p className="mt-2 text-gray-600">Loading your preferences...</p>
 				</div>
 			</div>
@@ -145,7 +167,7 @@ const OnboardingPage = () => {
 					<button
 						onClick={handleContinue}
 						disabled={!accountType || loading}
-						className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-gray-400"
+						className="w-full px-4 py-2 text-white bg-pink-600 rounded-md hover:bg-pink-700 disabled:bg-gray-400"
 					>
 						{loading ? 'Saving...' : 'Continue'}
 					</button>

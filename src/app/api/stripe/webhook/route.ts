@@ -4,6 +4,13 @@ import Stripe from 'stripe'
 import { stripe, STRIPE_CONFIG } from '@/lib/stripe'
 import { adminDb, isAdminInitialized } from '@/lib/firebase-admin'
 import { FieldValue } from 'firebase-admin/firestore'
+import {
+	sendSubscriptionActivatedEmail,
+	sendPaymentSuccessfulEmail,
+	sendPaymentFailedEmail,
+	sendSubscriptionCanceledEmail,
+	getCompanyEmail
+} from '@/lib/emailNotifications'
 
 // Disable body parsing for webhook
 export const runtime = 'nodejs'
@@ -124,7 +131,50 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     credits: FieldValue.increment(STRIPE_CONFIG.creditsPerMonth),
   }, { merge: true })
 
+  // Also store in dedicated subscriptions collection for easier querying
+  const subscriptionRef = adminDb.collection('subscriptions').doc(subscription.id)
+  await subscriptionRef.set({
+    companyId,
+    stripeCustomerId: customerId,
+    stripeSubscriptionId: subscription.id,
+    stripePriceId: subscription.items.data[0].price.id,
+    status: subscription.status,
+    planId: 'startup', // Based on your pricing
+    planName: 'Empresa',
+    amount: 10000, // $100 MXN in centavos
+    currency: 'mxn',
+    currentPeriodStart: new Date(subscription.current_period_start * 1000),
+    currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+    cancelAtPeriodEnd: subscription.cancel_at_period_end,
+    canceledAt: subscription.canceled_at ? new Date(subscription.canceled_at * 1000) : null,
+    createdAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp(),
+  })
+
   console.log('Company subscription created:', companyId)
+
+  // Send subscription activated email
+  try {
+    const companyEmail = await getCompanyEmail(companyId)
+    const companyDoc = await adminDb.collection('companies').doc(companyId).get()
+    const companyName = companyDoc.exists ? companyDoc.data()?.companyName || 'Empresa' : 'Empresa'
+
+    if (companyEmail) {
+      await sendSubscriptionActivatedEmail(
+        {
+          companyEmail,
+          companyName,
+          status: 'activated',
+          billingPortalLink: process.env.NEXT_PUBLIC_APP_URL
+            ? `${process.env.NEXT_PUBLIC_APP_URL}/company/subscription/checkout`
+            : 'http://localhost:3000/company/subscription/checkout',
+        },
+        companyId
+      )
+    }
+  } catch (emailError) {
+    console.error('Error sending subscription activated email:', emailError)
+  }
 }
 
 // Handle subscription update
@@ -152,6 +202,17 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
       cancelAtPeriodEnd: subscription.cancel_at_period_end,
       updatedAt: FieldValue.serverTimestamp(),
     },
+  }, { merge: true })
+
+  // Update subscriptions collection
+  const subscriptionRef = adminDb.collection('subscriptions').doc(subscription.id)
+  await subscriptionRef.set({
+    status: subscription.status,
+    currentPeriodStart: new Date(subscription.current_period_start * 1000),
+    currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+    cancelAtPeriodEnd: subscription.cancel_at_period_end,
+    canceledAt: subscription.canceled_at ? new Date(subscription.canceled_at * 1000) : null,
+    updatedAt: FieldValue.serverTimestamp(),
   }, { merge: true })
 
   console.log('Company subscription updated:', companyId)
@@ -182,7 +243,39 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
     },
   }, { merge: true })
 
+  // Update subscriptions collection
+  const subscriptionRef = adminDb.collection('subscriptions').doc(subscription.id)
+  await subscriptionRef.set({
+    status: 'canceled',
+    cancelAtPeriodEnd: false,
+    canceledAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp(),
+  }, { merge: true })
+
   console.log('Company subscription canceled:', companyId)
+
+  // Send subscription canceled email
+  try {
+    const companyEmail = await getCompanyEmail(companyId)
+    const companyDoc = await adminDb.collection('companies').doc(companyId).get()
+    const companyName = companyDoc.exists ? companyDoc.data()?.companyName || 'Empresa' : 'Empresa'
+
+    if (companyEmail) {
+      await sendSubscriptionCanceledEmail(
+        {
+          companyEmail,
+          companyName,
+          status: 'canceled',
+          billingPortalLink: process.env.NEXT_PUBLIC_APP_URL
+            ? `${process.env.NEXT_PUBLIC_APP_URL}/company/subscription/checkout`
+            : 'http://localhost:3000/company/subscription/checkout',
+        },
+        companyId
+      )
+    }
+  } catch (emailError) {
+    console.error('Error sending subscription canceled email:', emailError)
+  }
 }
 
 // Handle invoice paid (recurring payments)
@@ -221,6 +314,38 @@ async function handleInvoicePaid(invoice: Stripe.Invoice) {
   }, { merge: true })
 
   console.log('Credits awarded to company:', companyId, STRIPE_CONFIG.creditsPerMonth)
+
+  // Send payment successful email
+  try {
+    const companyEmail = await getCompanyEmail(companyId)
+    const companyDoc = await adminDb.collection('companies').doc(companyId).get()
+    const companyName = companyDoc.exists ? companyDoc.data()?.companyName || 'Empresa' : 'Empresa'
+
+    if (companyEmail) {
+      const amount = invoice.amount_paid ? (invoice.amount_paid / 100).toFixed(2) : '100.00'
+      const nextBilling = subscription.current_period_end
+        ? new Date(subscription.current_period_end * 1000).toISOString()
+        : undefined
+
+      await sendPaymentSuccessfulEmail(
+        {
+          companyEmail,
+          companyName,
+          status: 'success',
+          amount,
+          currency: 'MXN',
+          nextBillingDate: nextBilling,
+          creditsAwarded: STRIPE_CONFIG.creditsPerMonth,
+          billingPortalLink: process.env.NEXT_PUBLIC_APP_URL
+            ? `${process.env.NEXT_PUBLIC_APP_URL}/company/subscription/checkout`
+            : 'http://localhost:3000/company/subscription/checkout',
+        },
+        companyId
+      )
+    }
+  } catch (emailError) {
+    console.error('Error sending payment successful email:', emailError)
+  }
 }
 
 // Handle invoice payment failed
@@ -259,6 +384,27 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
 
   console.log('Company subscription marked as past_due:', companyId)
 
-  // TODO: Send email notification to company admin
+  // Send payment failed email
+  try {
+    const companyEmail = await getCompanyEmail(companyId)
+    const companyDoc = await adminDb.collection('companies').doc(companyId).get()
+    const companyName = companyDoc.exists ? companyDoc.data()?.companyName || 'Empresa' : 'Empresa'
+
+    if (companyEmail) {
+      await sendPaymentFailedEmail(
+        {
+          companyEmail,
+          companyName,
+          status: 'failed',
+          billingPortalLink: process.env.NEXT_PUBLIC_APP_URL
+            ? `${process.env.NEXT_PUBLIC_APP_URL}/company/subscription/checkout`
+            : 'http://localhost:3000/company/subscription/checkout',
+        },
+        companyId
+      )
+    }
+  } catch (emailError) {
+    console.error('Error sending payment failed email:', emailError)
+  }
 }
 

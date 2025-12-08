@@ -495,7 +495,7 @@ const ResumePage = () => {
 	if (loading) {
 		return (
 			<div className="flex items-center justify-center py-12">
-				<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+				<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
 				<p className="ml-2 text-gray-600">Cargando perfil...</p>
 			</div>
 		)
@@ -512,7 +512,7 @@ const ResumePage = () => {
 				<button
 					onClick={handleSave}
 					disabled={saving}
-					className="px-5 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400"
+					className="px-5 py-1.5 bg-pink-600 text-white rounded-md hover:bg-pink-700 disabled:bg-blue-400"
 				>
 					{saving ? 'Guardando...' : 'Guardar Cambios'}
 				</button>
@@ -555,7 +555,7 @@ const ResumePage = () => {
 						<div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
 							<p className="text-sm text-blue-700">
 								<strong>Nota:</strong> Para cambiar tu nombre, apellido, correo electrónico o teléfono,
-								ve a la página de <a href="/candidate/account" className="text-blue-600 hover:text-blue-800 underline">Configuración de Cuenta</a>.
+								ve a la página de <a href="/candidate/account" className="text-pink-600 hover:text-blue-800 underline">Configuración de Cuenta</a>.
 							</p>
 						</div>
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -628,7 +628,7 @@ const ResumePage = () => {
 								id="willingToRelocate"
 								checked={profile.willingToRelocate || false}
 								onChange={(e) => handleInputChange('willingToRelocate', e.target.checked)}
-								className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+								className="h-4 w-4 text-pink-600 focus:ring-blue-500 border-gray-300 rounded"
 							/>
 							<label htmlFor="willingToRelocate" className="ml-2 text-sm text-gray-700">
 								Dispuesto a reubicación
@@ -671,7 +671,7 @@ const ResumePage = () => {
 					</button>
 					<button
 						onClick={addExperience}
-						className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+						className="px-3 py-1.5 text-sm bg-pink-600 text-white rounded-md hover:bg-pink-700"
 					>
 						Agregar Experiencia
 					</button>
@@ -762,7 +762,7 @@ const ResumePage = () => {
 									id={`current-${exp.id}`}
 									checked={exp.current}
 									onChange={(e) => updateExperience(exp.id, 'current', e.target.checked)}
-									className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+									className="h-4 w-4 text-pink-600 focus:ring-blue-500 border-gray-300 rounded"
 								/>
 								<label htmlFor={`current-${exp.id}`} className="ml-2 text-sm text-gray-700">
 									Trabajo actualmente aquí
@@ -813,7 +813,7 @@ const ResumePage = () => {
 					</button>
 					<button
 						onClick={addEducation}
-						className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+						className="px-3 py-1.5 text-sm bg-pink-600 text-white rounded-md hover:bg-pink-700"
 					>
 						Agregar Educación
 					</button>
@@ -892,7 +892,7 @@ const ResumePage = () => {
 									id={`current-edu-${edu.id}`}
 									checked={edu.current}
 									onChange={(e) => updateEducation(edu.id, 'current', e.target.checked)}
-									className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+									className="h-4 w-4 text-pink-600 focus:ring-blue-500 border-gray-300 rounded"
 								/>
 								<label htmlFor={`current-edu-${edu.id}`} className="ml-2 text-sm text-gray-700">
 									Estudiando actualmente
@@ -1020,7 +1020,7 @@ const ResumePage = () => {
 					<button
 						onClick={addSkill}
 							disabled={!skillSearch.trim()}
-							className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+							className="px-4 py-2 text-sm bg-pink-600 text-white rounded-md hover:bg-pink-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
 					>
 							Agregar
 					</button>
@@ -1045,7 +1045,7 @@ const ResumePage = () => {
 							{skill}
 							<button
 								onClick={() => removeSkill(index)}
-								className="ml-2 text-blue-600 hover:text-blue-800"
+								className="ml-2 text-pink-600 hover:text-blue-800"
 							>
 								×
 							</button>

@@ -1,10 +1,10 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { db, auth } from '../../../../lib/firebase'
-import { collection, addDoc } from 'firebase/firestore'
-import { JobTier, JobStatus, JobType, EmploymentType, ExperienceLevel, EducationLevel, JobCategory, JobLevel, StartDate, UrgencyLevel, ApplicationProcess, InterviewRounds } from '../../../../../types'
+import { collection, addDoc, doc, getDoc } from 'firebase/firestore'
+import { JobTier, JobStatus, JobType, EmploymentType, ExperienceLevel, EducationLevel, JobCategory, JobLevel, StartDate, UrgencyLevel, ApplicationProcess, InterviewRounds, Company } from '../../../../../types'
 import {
 	JOB_TYPE_OPTIONS,
 	EMPLOYMENT_TYPE_OPTIONS,
@@ -16,11 +16,12 @@ import {
 	START_DATE_OPTIONS,
 	URGENCY_LEVEL_OPTIONS,
 	APPLICATION_PROCESS_OPTIONS,
-	INTERVIEW_ROUNDS_OPTIONS,
-	EXTERNAL_JOB_BOARDS
+	INTERVIEW_ROUNDS_OPTIONS
 } from '../../../../lib/constants'
 import LocationSelector from '../../../../components/ui/LocationSelector'
 import { formatNumberWithCommas, parseFormattedNumber } from '../../../../lib/utils'
+import { canCreateJobPosting } from '../../../../lib/subscriptionGuard'
+import Link from 'next/link'
 
 const NewJobPostingPage = () => {
 	// Basic Information
@@ -38,10 +39,41 @@ const NewJobPostingPage = () => {
 
 	// Phase 2 Fields
 	const [educationLevel, setEducationLevel] = useState<EducationLevel>('bachelor')
-	const [requiredSkills, setRequiredSkills] = useState('')
-	const [preferredSkills, setPreferredSkills] = useState('')
+	const [requiredSkills, setRequiredSkills] = useState<string[]>([])
+	const [customRequiredSkill, setCustomRequiredSkill] = useState('')
+	const [preferredSkills, setPreferredSkills] = useState<string[]>([])
+	const [customPreferredSkill, setCustomPreferredSkill] = useState('')
 	const [jobCategory, setJobCategory] = useState<JobCategory>('engineering')
 	const [jobLevel, setJobLevel] = useState<JobLevel>('mid-level')
+
+	// Predefined hospitality skills
+	const HOSPITALITY_SKILLS = [
+		'Atención al cliente',
+		'Servicio de mesas',
+		'Manejo de POS/TPV',
+		'Trabajo en equipo',
+		'Comunicación efectiva',
+		'Mixología',
+		'Preparación de alimentos',
+		'Cocina profesional',
+		'Conocimiento de vinos',
+		'Servicio de banquetes',
+		'Limpieza y sanitización',
+		'Manejo de efectivo',
+		'Inglés conversacional',
+		'Gestión de reservaciones',
+		'Organización de eventos',
+		'Barista',
+		'Pastelería y repostería',
+		'Cocina internacional',
+		'Hostess/Host',
+		'Administración hotelera',
+		'Manejo de quejas',
+		'Cocina mexicana',
+		'Preparación de bebidas',
+		'Servicio a la habitación',
+		'Limpieza de habitaciones'
+	]
 
 	// Phase 3 Fields
 	const [applicationDeadline, setApplicationDeadline] = useState('')
@@ -52,18 +84,78 @@ const NewJobPostingPage = () => {
 	const [applicationQuestions, setApplicationQuestions] = useState('')
 	const [requiredDocuments, setRequiredDocuments] = useState('')
 	const [internalNotes, setInternalNotes] = useState('')
-	const [selectedJobBoards, setSelectedJobBoards] = useState<string[]>([])
 
 	// Tier and Status
 	const [selectedTier, setSelectedTier] = useState<JobTier>('clasica')
 	const [loading, setLoading] = useState(false)
+	const [loadingSubscription, setLoadingSubscription] = useState(true)
+	const [company, setCompany] = useState<Company | null>(null)
+	const [subscriptionError, setSubscriptionError] = useState<string | null>(null)
 	const router = useRouter()
+
+	// Check subscription status on mount
+	useEffect(() => {
+		async function checkSubscription() {
+			if (!auth.currentUser) {
+				setLoadingSubscription(false)
+				return
+			}
+
+			try {
+				// Get user document to find companyId
+				const userRef = doc(db, 'users', auth.currentUser.uid)
+				const userDoc = await getDoc(userRef)
+
+				if (userDoc.exists()) {
+					const userData = userDoc.data()
+					const companyId = userData.companyId
+
+					if (companyId) {
+						// Get company document
+						const companyRef = doc(db, 'companies', companyId)
+						const companyDoc = await getDoc(companyRef)
+
+						if (companyDoc.exists()) {
+							const companyData = {
+								companyId,
+								...companyDoc.data()
+							} as Company
+							setCompany(companyData)
+
+							// Check if can create job posting
+							const canCreate = canCreateJobPosting(companyData)
+							if (!canCreate.allowed) {
+								setSubscriptionError(canCreate.reason || 'No autorizado')
+							}
+						}
+					}
+				}
+			} catch (error) {
+				console.error('Error checking subscription:', error)
+				setSubscriptionError('Error al verificar la suscripción')
+			} finally {
+				setLoadingSubscription(false)
+			}
+		}
+
+		checkSubscription()
+	}, [])
 
 	const handleSave = async (status: JobStatus) => {
 		if (!auth.currentUser) {
 			alert('Debes iniciar sesión para crear una publicación de empleo.')
 			return
 		}
+
+		// Check subscription before allowing save
+		if (company) {
+			const canCreate = canCreateJobPosting(company)
+			if (!canCreate.allowed) {
+				alert(canCreate.reason || 'No tienes permisos para crear publicaciones de empleo')
+				return
+			}
+		}
+
 		setLoading(true)
 
 		try {
@@ -77,8 +169,8 @@ const NewJobPostingPage = () => {
 				employmentType,
 				yearsOfExperience,
 				educationLevel,
-				requiredSkills: requiredSkills.split(',').map(skill => skill.trim()).filter(skill => skill),
-				preferredSkills: preferredSkills.split(',').map(skill => skill.trim()).filter(skill => skill),
+				requiredSkills,
+				preferredSkills,
 				jobCategory,
 				jobLevel,
 				location,
@@ -94,7 +186,6 @@ const NewJobPostingPage = () => {
 				applicationQuestions: applicationQuestions.split('\n').filter(q => q.trim()),
 				requiredDocuments: requiredDocuments.split(',').map(doc => doc.trim()).filter(doc => doc),
 				...(internalNotes && { internalNotes }),
-				externalJobBoards: selectedJobBoards,
 				tier: selectedTier,
 				status,
 				createdByUserId: auth.currentUser.uid,
@@ -111,6 +202,53 @@ const NewJobPostingPage = () => {
 			alert('Error al crear la publicación de empleo. Por favor, inténtalo de nuevo.')
 			setLoading(false)
 		}
+	}
+
+	// Show loading state while checking subscription
+	if (loadingSubscription) {
+		return (
+			<div className="min-h-screen bg-gray-50 p-8">
+				<div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
+					<div className="text-center py-12">
+						<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
+						<p className="mt-2 text-gray-600">Verificando suscripción...</p>
+					</div>
+				</div>
+			</div>
+		)
+	}
+
+	// Show subscription error if not subscribed
+	if (subscriptionError) {
+		return (
+			<div className="min-h-screen bg-gray-50 p-8">
+				<div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
+					<div className="text-center py-12">
+						<div className="mb-4">
+							<svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+							</svg>
+						</div>
+						<h2 className="text-2xl font-bold text-gray-900 mb-4">Suscripción Requerida</h2>
+						<p className="text-gray-600 mb-6">{subscriptionError}</p>
+						<div className="flex gap-4 justify-center">
+							<Link
+								href="/company/subscription/checkout?plan=startup"
+								className="px-6 py-3 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 transition-colors"
+							>
+								Suscribirse Ahora - $100 MXN/mes
+							</Link>
+							<Link
+								href="/company/job-postings"
+								className="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-colors"
+							>
+								Volver
+							</Link>
+						</div>
+					</div>
+				</div>
+			</div>
+		)
 	}
 
 	return (
@@ -134,7 +272,7 @@ const NewJobPostingPage = () => {
 							onChange={e => setJobTitle(e.target.value)}
 							required
 									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-									placeholder="ej., Ingeniero de Software Senior"
+									placeholder="ej., Mesero/a, Chef de Cocina, Bartender"
 						/>
 					</div>
 							<div>
@@ -166,7 +304,7 @@ const NewJobPostingPage = () => {
 							required
 								rows={6}
 								className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-								placeholder="Describe el rol, responsabilidades y qué hace especial esta oportunidad..."
+								placeholder="Describe el puesto, horarios, turnos, responsabilidades del día a día en el restaurante/hotel y qué hace especial esta oportunidad..."
 							/>
 						</div>
 					</div>
@@ -270,147 +408,109 @@ const NewJobPostingPage = () => {
 					<div className="bg-green-50 p-6 rounded-lg">
 						<h2 className="text-xl font-semibold mb-4">Información Salarial</h2>
 						<div className="space-y-6">
-							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-4">
-									Rango Salarial (MXN)
-								</label>
-
-								{/* Dual Range Slider Container */}
-								<div className="relative h-8 flex items-center">
-									{/* Background Track */}
-									<div className="absolute w-full h-2 bg-gray-200 rounded-lg"></div>
-
-									{/* Active Range */}
-									<div
-										className="absolute h-2 bg-gradient-to-r from-blue-500 to-green-500 rounded-lg"
-										style={{
-											left: `${(parseInt(salaryMin || '0') / 200000) * 100}%`,
-											width: `${((parseInt(salaryMax || '0') - parseInt(salaryMin || '0')) / 200000) * 100}%`
-										}}
-									></div>
-
-									{/* Min Slider */}
-									<input
-										type="range"
-										min="0"
-										max="200000"
-										step="5000"
-										value={salaryMin}
-										onChange={e => {
-											const min = parseInt(e.target.value)
-											const max = parseInt(salaryMax || '0')
-											if (min <= max) {
-												setSalaryMin(e.target.value)
-											}
-										}}
-										className="salary-min-slider absolute w-full h-2 bg-transparent appearance-none cursor-pointer z-10"
-										style={{
-											background: 'transparent'
-										}}
-									/>
-
-									{/* Max Slider */}
-									<input
-										type="range"
-										min="0"
-										max="200000"
-										step="5000"
-										value={salaryMax}
-										onChange={e => {
-											const min = parseInt(salaryMin || '0')
-											const max = parseInt(e.target.value)
-											if (max >= min) {
-												setSalaryMax(e.target.value)
-											}
-										}}
-										className="salary-max-slider absolute w-full h-2 bg-transparent appearance-none cursor-pointer z-20"
-										style={{
-											background: 'transparent'
-										}}
-									/>
-								</div>
-
-								{/* Salary Range Display */}
-								<div className="flex justify-between mt-6">
-									<div className="text-center">
-										<div className="text-lg font-semibold text-blue-600">
-											${formatNumberWithCommas(parseInt(salaryMin || '0'))}
-										</div>
-										<div className="text-sm text-gray-500">Mínimo</div>
-									</div>
-									<div className="text-center">
-										<div className="text-lg font-semibold text-green-600">
-											${formatNumberWithCommas(parseInt(salaryMax || '0'))}
-										</div>
-										<div className="text-sm text-gray-500">Máximo</div>
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+								<div>
+									<label htmlFor="salaryMin" className="block text-sm font-medium text-gray-700 mb-2">
+										Salario Mínimo (MXN) *
+									</label>
+									<div className="relative">
+										<span className="absolute left-3 top-2.5 text-gray-500">$</span>
+										<input
+											id="salaryMin"
+											type="number"
+											value={salaryMin}
+											onChange={e => setSalaryMin(e.target.value)}
+											className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+											placeholder="25000"
+											min="0"
+											step="1000"
+										/>
 									</div>
 								</div>
-
-								{/* Quick Salary Presets */}
-								<div className="mt-6">
-									<div className="text-sm text-gray-600 mb-3">Configuraciones rápidas:</div>
-									<div className="flex flex-wrap gap-2">
-										<button
-											type="button"
-											onClick={() => {
-												setSalaryMin('15000')
-												setSalaryMax('25000')
-											}}
-											className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
-										>
-											$15k - $25k
-										</button>
-										<button
-											type="button"
-											onClick={() => {
-												setSalaryMin('25000')
-												setSalaryMax('40000')
-											}}
-											className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
-										>
-											$25k - $40k
-										</button>
-										<button
-											type="button"
-											onClick={() => {
-												setSalaryMin('40000')
-												setSalaryMax('60000')
-											}}
-											className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
-										>
-											$40k - $60k
-										</button>
-										<button
-											type="button"
-											onClick={() => {
-												setSalaryMin('60000')
-												setSalaryMax('100000')
-											}}
-											className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
-										>
-											$60k - $100k
-										</button>
-										<button
-											type="button"
-											onClick={() => {
-												setSalaryMin('100000')
-												setSalaryMax('200000')
-											}}
-											className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
-										>
-											$100k+
-										</button>
+								<div>
+									<label htmlFor="salaryMax" className="block text-sm font-medium text-gray-700 mb-2">
+										Salario Máximo (MXN) *
+									</label>
+									<div className="relative">
+										<span className="absolute left-3 top-2.5 text-gray-500">$</span>
+										<input
+											id="salaryMax"
+											type="number"
+											value={salaryMax}
+											onChange={e => setSalaryMax(e.target.value)}
+											className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+											placeholder="50000"
+											min="0"
+											step="1000"
+										/>
 									</div>
 								</div>
 							</div>
 
-							<div className="flex items-center justify-center">
+							{/* Quick Salary Presets */}
+							<div>
+								<div className="text-sm text-gray-600 mb-3">Configuraciones rápidas:</div>
+								<div className="flex flex-wrap gap-2">
+									<button
+										type="button"
+										onClick={() => {
+											setSalaryMin('15000')
+											setSalaryMax('25000')
+										}}
+										className="px-3 py-1.5 text-sm bg-white border border-gray-300 hover:bg-gray-50 rounded-md transition-colors"
+									>
+										$15k - $25k
+									</button>
+									<button
+										type="button"
+										onClick={() => {
+											setSalaryMin('25000')
+											setSalaryMax('40000')
+										}}
+										className="px-3 py-1.5 text-sm bg-white border border-gray-300 hover:bg-gray-50 rounded-md transition-colors"
+									>
+										$25k - $40k
+									</button>
+									<button
+										type="button"
+										onClick={() => {
+											setSalaryMin('40000')
+											setSalaryMax('60000')
+										}}
+										className="px-3 py-1.5 text-sm bg-white border border-gray-300 hover:bg-gray-50 rounded-md transition-colors"
+									>
+										$40k - $60k
+									</button>
+									<button
+										type="button"
+										onClick={() => {
+											setSalaryMin('60000')
+											setSalaryMax('100000')
+										}}
+										className="px-3 py-1.5 text-sm bg-white border border-gray-300 hover:bg-gray-50 rounded-md transition-colors"
+									>
+										$60k - $100k
+									</button>
+									<button
+										type="button"
+										onClick={() => {
+											setSalaryMin('100000')
+											setSalaryMax('200000')
+										}}
+										className="px-3 py-1.5 text-sm bg-white border border-gray-300 hover:bg-gray-50 rounded-md transition-colors"
+									>
+										$100k+
+									</button>
+								</div>
+							</div>
+
+							<div className="flex items-center">
 								<label className="flex items-center">
 									<input
 										type="checkbox"
 										checked={isSalaryHidden}
 										onChange={e => setIsSalaryHidden(e.target.checked)}
-										className="mr-2"
+										className="mr-2 rounded border-gray-300 text-pink-600 focus:ring-pink-500"
 									/>
 									<span className="text-sm text-gray-700">Ocultar salario del público</span>
 								</label>
@@ -421,50 +521,174 @@ const NewJobPostingPage = () => {
 					{/* Phase 2: Additional Requirements */}
 					<div className="bg-yellow-50 p-6 rounded-lg">
 						<h2 className="text-xl font-semibold mb-4">Requisitos y Habilidades</h2>
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-							<div>
-								<label htmlFor="educationLevel" className="block text-sm font-medium text-gray-700 mb-2">
-									Nivel de Educación *
-								</label>
-								<select
-									id="educationLevel"
-									value={educationLevel}
-									onChange={e => setEducationLevel(e.target.value as EducationLevel)}
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-								>
-									{EDUCATION_LEVEL_OPTIONS.map(option => (
-										<option key={option.value} value={option.value}>
-											{option.label}
-										</option>
-									))}
-								</select>
-							</div>
-							<div>
-								<label htmlFor="requiredSkills" className="block text-sm font-medium text-gray-700 mb-2">
-									Habilidades Requeridas
-								</label>
-								<input
-									id="requiredSkills"
-									type="text"
-									value={requiredSkills}
-									onChange={e => setRequiredSkills(e.target.value)}
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-									placeholder="JavaScript, React, Node.js (separadas por comas)"
-								/>
-							</div>
-						</div>
-						<div className="mt-6">
-							<label htmlFor="preferredSkills" className="block text-sm font-medium text-gray-700 mb-2">
-								Habilidades Preferidas
+
+						{/* Education Level */}
+						<div className="mb-6">
+							<label htmlFor="educationLevel" className="block text-sm font-medium text-gray-700 mb-2">
+								Nivel de Educación *
 							</label>
-							<input
-								id="preferredSkills"
-								type="text"
-								value={preferredSkills}
-								onChange={e => setPreferredSkills(e.target.value)}
-								className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-								placeholder="TypeScript, AWS, Docker (separadas por comas)"
-							/>
+							<select
+								id="educationLevel"
+								value={educationLevel}
+								onChange={e => setEducationLevel(e.target.value as EducationLevel)}
+								className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+							>
+								{EDUCATION_LEVEL_OPTIONS.map(option => (
+									<option key={option.value} value={option.value}>
+										{option.label}
+									</option>
+								))}
+							</select>
+						</div>
+
+						{/* Required Skills */}
+						<div className="mb-6">
+							<label className="block text-sm font-medium text-gray-700 mb-3">
+								Habilidades Requeridas
+							</label>
+							<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-4">
+								{HOSPITALITY_SKILLS.map(skill => (
+									<label key={skill} className="flex items-center space-x-2 text-sm">
+										<input
+											type="checkbox"
+											checked={requiredSkills.includes(skill)}
+											onChange={(e) => {
+												if (e.target.checked) {
+													setRequiredSkills([...requiredSkills, skill])
+												} else {
+													setRequiredSkills(requiredSkills.filter(s => s !== skill))
+												}
+											}}
+											className="rounded border-gray-300 text-pink-600 focus:ring-pink-500"
+										/>
+										<span className="text-gray-700">{skill}</span>
+									</label>
+								))}
+							</div>
+							<div className="flex gap-2">
+								<input
+									type="text"
+									value={customRequiredSkill}
+									onChange={e => setCustomRequiredSkill(e.target.value)}
+									placeholder="Agregar habilidad personalizada"
+									className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm"
+									onKeyPress={(e) => {
+										if (e.key === 'Enter' && customRequiredSkill.trim()) {
+											e.preventDefault()
+											if (!requiredSkills.includes(customRequiredSkill.trim())) {
+												setRequiredSkills([...requiredSkills, customRequiredSkill.trim()])
+											}
+											setCustomRequiredSkill('')
+										}
+									}}
+								/>
+								<button
+									type="button"
+									onClick={() => {
+										if (customRequiredSkill.trim() && !requiredSkills.includes(customRequiredSkill.trim())) {
+											setRequiredSkills([...requiredSkills, customRequiredSkill.trim()])
+											setCustomRequiredSkill('')
+										}
+									}}
+									className="px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition-colors text-sm font-medium"
+								>
+									Agregar
+								</button>
+							</div>
+							{requiredSkills.length > 0 && (
+								<div className="mt-3 flex flex-wrap gap-2">
+									{requiredSkills.map(skill => (
+										<span
+											key={skill}
+											className="inline-flex items-center gap-1 px-3 py-1 bg-pink-100 text-pink-800 rounded-full text-sm"
+										>
+											{skill}
+											<button
+												type="button"
+												onClick={() => setRequiredSkills(requiredSkills.filter(s => s !== skill))}
+												className="hover:text-pink-900 ml-1 font-bold"
+											>
+												×
+											</button>
+										</span>
+									))}
+								</div>
+							)}
+						</div>
+
+						{/* Preferred Skills */}
+						<div>
+							<label className="block text-sm font-medium text-gray-700 mb-3">
+								Habilidades Preferidas (Opcional)
+							</label>
+							<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-4">
+								{HOSPITALITY_SKILLS.map(skill => (
+									<label key={skill} className="flex items-center space-x-2 text-sm">
+										<input
+											type="checkbox"
+											checked={preferredSkills.includes(skill)}
+											onChange={(e) => {
+												if (e.target.checked) {
+													setPreferredSkills([...preferredSkills, skill])
+												} else {
+													setPreferredSkills(preferredSkills.filter(s => s !== skill))
+												}
+											}}
+											className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+										/>
+										<span className="text-gray-700">{skill}</span>
+									</label>
+								))}
+							</div>
+							<div className="flex gap-2">
+								<input
+									type="text"
+									value={customPreferredSkill}
+									onChange={e => setCustomPreferredSkill(e.target.value)}
+									placeholder="Agregar habilidad personalizada"
+									className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+									onKeyPress={(e) => {
+										if (e.key === 'Enter' && customPreferredSkill.trim()) {
+											e.preventDefault()
+											if (!preferredSkills.includes(customPreferredSkill.trim())) {
+												setPreferredSkills([...preferredSkills, customPreferredSkill.trim()])
+											}
+											setCustomPreferredSkill('')
+										}
+									}}
+								/>
+								<button
+									type="button"
+									onClick={() => {
+										if (customPreferredSkill.trim() && !preferredSkills.includes(customPreferredSkill.trim())) {
+											setPreferredSkills([...preferredSkills, customPreferredSkill.trim()])
+											setCustomPreferredSkill('')
+										}
+									}}
+									className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+								>
+									Agregar
+								</button>
+							</div>
+							{preferredSkills.length > 0 && (
+								<div className="mt-3 flex flex-wrap gap-2">
+									{preferredSkills.map(skill => (
+										<span
+											key={skill}
+											className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+										>
+											{skill}
+											<button
+												type="button"
+												onClick={() => setPreferredSkills(preferredSkills.filter(s => s !== skill))}
+												className="hover:text-blue-900 ml-1 font-bold"
+											>
+												×
+											</button>
+										</span>
+									))}
+								</div>
+							)}
 						</div>
 					</div>
 
@@ -570,7 +794,7 @@ const NewJobPostingPage = () => {
 								onChange={e => setApplicationQuestions(e.target.value)}
 								rows={4}
 								className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-								placeholder="¿Por qué quieres trabajar en nuestra empresa?&#10;¿Cuál es tu experiencia con React?"
+								placeholder="¿Por qué quieres trabajar en nuestro restaurante/hotel?&#10;¿Tienes experiencia previa en servicio al cliente?&#10;¿Puedes trabajar en horarios nocturnos y fines de semana?"
 							/>
 							<p className="text-xs text-gray-500 mt-1">Una pregunta por línea</p>
 						</div>
@@ -584,38 +808,8 @@ const NewJobPostingPage = () => {
 								value={requiredDocuments}
 								onChange={e => setRequiredDocuments(e.target.value)}
 								className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-								placeholder="CV, Portafolio, Carta de presentación (separados por comas)"
+								placeholder="CV, Referencias laborales, Certificado de salud (separados por comas)"
 							/>
-						</div>
-					</div>
-
-
-					{/* External Job Boards */}
-					<div className="bg-cyan-50 p-6 rounded-lg">
-						<h2 className="text-xl font-semibold mb-4">Plataformas de Empleo Externas</h2>
-						<div>
-							<label className="block text-sm font-medium text-gray-700 mb-2">
-								Publicar en Plataformas de Empleo Externas (Selecciona todas las que apliquen)
-							</label>
-							<div className="grid grid-cols-2 md:grid-cols-4 gap-2 border border-gray-300 rounded-md p-3">
-								{EXTERNAL_JOB_BOARDS.map(board => (
-									<label key={board.value} className="flex items-center text-sm">
-										<input
-											type="checkbox"
-											checked={selectedJobBoards.includes(board.value)}
-											onChange={e => {
-												if (e.target.checked) {
-													setSelectedJobBoards([...selectedJobBoards, board.value])
-												} else {
-													setSelectedJobBoards(selectedJobBoards.filter(b => b !== board.value))
-												}
-											}}
-											className="mr-2"
-										/>
-										{board.label}
-									</label>
-								))}
-							</div>
 						</div>
 					</div>
 

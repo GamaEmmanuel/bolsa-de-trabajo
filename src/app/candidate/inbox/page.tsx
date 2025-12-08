@@ -486,7 +486,7 @@ const CandidateInboxPage = () => {
 							onClick={() => setShowArchived(!showArchived)}
 							className={`text-xs px-3 py-1 rounded-full transition-colors ${
 								showArchived
-									? 'bg-blue-600 text-white'
+									? 'bg-pink-600 text-white'
 									: 'bg-gray-200 text-gray-700 hover:bg-gray-300'
 							}`}
 						>
@@ -542,7 +542,7 @@ const CandidateInboxPage = () => {
 											<h3 className="font-semibold text-foreground">{companyInfo.name}</h3>
 										</div>
 										{unreadCount > 0 && (
-											<span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
+											<span className="bg-pink-600 text-white text-xs px-2 py-1 rounded-full">
 												{unreadCount}
 											</span>
 										)}
@@ -624,7 +624,7 @@ const CandidateInboxPage = () => {
 												onClick={() => handleMessageClick(message.messageId, isSent, canModify)}
 												className={`rounded-lg px-4 py-2 ${
 													isSent
-														? 'bg-blue-600 text-white'
+														? 'bg-pink-600 text-white'
 														: 'bg-white text-foreground border border-gray-200'
 												} ${isSent && canModify && !isDeleted && !isEditing ? 'cursor-pointer hover:opacity-90' : ''}`}
 											>
@@ -649,7 +649,7 @@ const CandidateInboxPage = () => {
 															<button
 																onClick={() => handleSaveEdit(message.messageId, message.read)}
 																disabled={!editingContent.trim()}
-																className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+																className="px-2 py-1 text-xs bg-pink-600 text-white rounded hover:bg-pink-700 disabled:opacity-50"
 															>
 																Guardar
 															</button>
@@ -674,7 +674,7 @@ const CandidateInboxPage = () => {
 																target="_blank"
 																rel="noopener noreferrer"
 																className={`text-xs underline block ${
-																	isSent ? 'text-blue-100' : 'text-blue-600'
+																	isSent ? 'text-blue-100' : 'text-pink-600'
 																}`}
 															>
 																📎 {attachment.name} ({Math.round(attachment.size / 1024)} KB)
@@ -767,7 +767,7 @@ const CandidateInboxPage = () => {
 								<button
 									type="submit"
 									disabled={!newMessage.trim()}
-									className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+									className="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
 								>
 									Enviar
 								</button>

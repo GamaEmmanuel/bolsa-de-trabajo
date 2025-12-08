@@ -2,10 +2,52 @@ import { Company, SubscriptionStatus } from '@/types'
 
 /**
  * Check if a company has an active subscription
+ * Also verifies the subscription hasn't expired
  */
 export function hasActiveSubscription(company: Company): boolean {
-  const status = company.subscription?.status
-  return status === 'active' || status === 'trialing'
+  const subscription = company.subscription
+  if (!subscription) return false
+
+  const status = subscription.status
+  const hasActiveStatus = status === 'active' || status === 'trialing'
+
+  // Also check if subscription period hasn't ended
+  if (subscription.currentPeriodEnd) {
+    const periodEnd = subscription.currentPeriodEnd.toDate ?
+      subscription.currentPeriodEnd.toDate() :
+      new Date(subscription.currentPeriodEnd)
+
+    const now = new Date()
+    const isNotExpired = periodEnd > now
+
+    return hasActiveStatus && isNotExpired
+  }
+
+  return hasActiveStatus
+}
+
+/**
+ * Check if subscription payment is current (not past due and within billing period)
+ */
+export function isPaymentCurrent(company: Company): boolean {
+  const subscription = company.subscription
+  if (!subscription) return false
+
+  // Check status
+  if (subscription.status === 'past_due' || subscription.status === 'unpaid') {
+    return false
+  }
+
+  // Check if within current billing period
+  if (subscription.currentPeriodEnd) {
+    const periodEnd = subscription.currentPeriodEnd.toDate ?
+      subscription.currentPeriodEnd.toDate() :
+      new Date(subscription.currentPeriodEnd)
+
+    return periodEnd > new Date()
+  }
+
+  return subscription.status === 'active' || subscription.status === 'trialing'
 }
 
 /**

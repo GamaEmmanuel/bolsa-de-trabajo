@@ -7,6 +7,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { onAuthStateChanged, updateProfile, reauthenticateWithCredential, EmailAuthProvider, updatePassword, updateEmail } from 'firebase/auth'
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage'
 import LocationSelector from '../../../components/ui/LocationSelector'
+import EmailPreferences from '../../../components/EmailPreferences'
 
 interface UserAccount {
 	userId: string
@@ -558,7 +559,7 @@ const AccountPage = () => {
 	if (loading) {
 		return (
 			<div className="flex items-center justify-center py-12">
-				<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+				<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
 				<p className="ml-2 text-gray-600">Cargando cuenta...</p>
 			</div>
 		)
@@ -737,7 +738,7 @@ const AccountPage = () => {
 						</div>
 						<button
 							onClick={() => setShowPasswordForm(true)}
-							className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+							className="px-4 py-2 text-sm bg-pink-600 text-white rounded-md hover:bg-pink-700"
 						>
 							Cambiar Contraseña
 						</button>
@@ -776,7 +777,7 @@ const AccountPage = () => {
 							<button
 								onClick={handlePasswordChange}
 								disabled={saving}
-								className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400"
+								className="px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 disabled:bg-blue-400"
 							>
 								{saving ? 'Actualizando...' : 'Actualizar Contraseña'}
 							</button>
@@ -811,7 +812,7 @@ const AccountPage = () => {
 								onChange={(e) => handlePreferenceChange('emailNotifications', e.target.checked)}
 								className="sr-only peer"
 							/>
-							<div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+							<div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
 						</label>
 					</div>
 					<div className="flex items-center justify-between">
@@ -826,7 +827,7 @@ const AccountPage = () => {
 								onChange={(e) => handlePreferenceChange('smsNotifications', e.target.checked)}
 								className="sr-only peer"
 							/>
-							<div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+							<div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
 						</label>
 					</div>
 					<div className="flex items-center justify-between">
@@ -841,7 +842,7 @@ const AccountPage = () => {
 								onChange={(e) => handlePreferenceChange('jobAlerts', e.target.checked)}
 								className="sr-only peer"
 							/>
-							<div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+							<div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
 						</label>
 					</div>
 				</div>
@@ -872,7 +873,7 @@ const AccountPage = () => {
 				<button
 					onClick={handleSave}
 					disabled={saving}
-					className="px-5 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400"
+					className="px-5 py-2 text-sm bg-pink-600 text-white rounded-md hover:bg-pink-700 disabled:bg-blue-400"
 				>
 					{saving ? 'Guardando...' : 'Guardar Cambios'}
 				</button>
@@ -927,7 +928,7 @@ const AccountPage = () => {
 									setShowUploadModal(false)
 									startCamera()
 								}}
-								className="flex-1 ml-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+								className="flex-1 ml-2 px-6 py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors font-medium"
 							>
 								📷 Tomar Foto
 							</button>
@@ -971,7 +972,7 @@ const AccountPage = () => {
 							<div className="flex space-x-3">
 								<button
 									onClick={capturePhoto}
-									className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+									className="flex-1 px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition-colors"
 								>
 									📷 Capturar
 								</button>
@@ -1024,6 +1025,14 @@ const AccountPage = () => {
 						</div>
 					</div>
 				</div>
+			)}
+
+			{/* Email Preferences Section */}
+			{user && (
+				<EmailPreferences
+					userId={user.uid}
+					userType="candidate"
+				/>
 			)}
 		</div>
 	)

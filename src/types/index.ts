@@ -7,6 +7,29 @@ export type UserRole =
 	| 'company_admin'
 	| 'super_admin'
 
+export interface EmailPreferences {
+	// Application notifications
+	applicationSubmitted?: boolean
+	applicationStatusChanged?: boolean
+	applicationRejected?: boolean
+
+	// Communication notifications
+	newMessages?: boolean
+
+	// Subscription/Payment notifications (companies only)
+	paymentNotifications?: boolean
+	subscriptionUpdates?: boolean
+	creditsAwarded?: boolean
+
+	// Job notifications (companies only)
+	newApplications?: boolean
+	jobStatusUpdates?: boolean
+
+	// General
+	weeklyDigest?: boolean
+	marketingEmails?: boolean
+}
+
 export interface User {
 	userId: UUID
 	emailAddress: string
@@ -18,6 +41,7 @@ export interface User {
 	lastLogin?: string
 	accountType?: 'personal' | 'enterprise'
 	role?: 'candidate' | 'recruiter'
+	emailPreferences?: EmailPreferences
 }
 
 export interface CandidateProfile {
@@ -64,6 +88,7 @@ export interface Company {
 	createdAt: string
 	subscription?: Subscription
 	credits?: number // AI credits
+	emailPreferences?: EmailPreferences
 }
 
 export type JobStatus =

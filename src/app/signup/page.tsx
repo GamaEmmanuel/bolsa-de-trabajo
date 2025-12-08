@@ -70,14 +70,14 @@ const SignUpPage = () => {
 		<div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-4">
 			{/* Background decorative elements */}
 			<div className="absolute inset-0 overflow-hidden">
-				<div className="absolute -top-40 -right-40 w-80 h-80 bg-orange-100 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-pulse"></div>
-				<div className="absolute -bottom-40 -left-40 w-80 h-80 bg-orange-200 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-pulse"></div>
-				<div className="absolute top-40 left-1/2 w-60 h-60 bg-orange-50 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
+				<div className="absolute -top-40 -right-40 w-80 h-80 bg-pink-100 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-pulse"></div>
+				<div className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-pulse"></div>
+				<div className="absolute top-40 left-1/2 w-60 h-60 bg-pink-50 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
 			</div>
 			<div className="relative w-full max-w-md">
 				<div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 p-8 space-y-8">
 					<div className="text-center space-y-2">
-						<div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl mx-auto flex items-center justify-center shadow-lg">
+						<div className="w-16 h-16 bg-gradient-to-r from-pink-500 to-pink-600 rounded-2xl mx-auto flex items-center justify-center shadow-lg">
 							<User className="w-8 h-8 text-white" />
 						</div>
 						<h1 className="text-3xl font-bold text-gray-900">
@@ -98,7 +98,7 @@ const SignUpPage = () => {
 									value={email}
 									onChange={e => setEmail(e.target.value)}
 									required
-									className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
+									className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
 								/>
 							</div>
 						</div>
@@ -112,7 +112,7 @@ const SignUpPage = () => {
 									value={password}
 									onChange={e => setPassword(e.target.value)}
 									required
-									className="w-full pl-10 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
+									className="w-full pl-10 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
 								/>
 								<button
 									type="button"
@@ -131,7 +131,7 @@ const SignUpPage = () => {
 						<button
 							type="submit"
 							disabled={isLoading}
-							className="w-full bg-gradient-to-r from-orange-600 to-orange-700 text-white py-3 px-4 rounded-xl font-medium hover:from-orange-700 hover:to-orange-800 focus:ring-4 focus:ring-orange-200 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+							className="w-full bg-gradient-to-r from-pink-600 to-pink-700 text-white py-3 px-4 rounded-xl font-medium hover:from-pink-700 hover:to-pink-800 focus:ring-4 focus:ring-pink-200 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
 						>
 							{isLoading ? (
 								<>
@@ -178,7 +178,7 @@ const SignUpPage = () => {
 					</button>
 					<p className="text-center text-gray-600">
 						¿Ya tienes una cuenta?{' '}
-						<Link href="/signin" className="font-semibold text-orange-600 hover:text-orange-700 transition-colors">
+						<Link href="/signin" className="font-semibold text-pink-600 hover:text-pink-700 transition-colors">
 							Iniciar sesión aquí
 						</Link>
 					</p>

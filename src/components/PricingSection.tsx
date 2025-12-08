@@ -51,7 +51,7 @@ const PricingSection: React.FC<PricingSectionProps> = ({
 		},
 		{
 			name: "Empresa",
-			price: "$1000 mx",
+			price: "$100 mx",
 			period: "/mes",
 			description: "Perfecto para empresas en crecimiento",
 			features: [
@@ -68,7 +68,7 @@ const PricingSection: React.FC<PricingSectionProps> = ({
 			popular: true,
 			buttonStyle: "primary",
 			planId: "startup",
-			amount: 100000
+			amount: 10000
 		}
 	]
 
@@ -77,13 +77,13 @@ const PricingSection: React.FC<PricingSectionProps> = ({
 
 		switch (plan.buttonStyle) {
 			case 'primary':
-				return `${baseClasses} bg-orange-600 text-white hover:bg-orange-700`
+				return `${baseClasses} bg-pink-600 text-white hover:bg-pink-700`
 			case 'secondary':
 				return `${baseClasses} bg-gray-900 text-white hover:bg-gray-800`
 			case 'outline':
-				return `${baseClasses} border-2 border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white`
+				return `${baseClasses} border-2 border-pink-600 text-pink-600 hover:bg-pink-600 hover:text-white`
 			default:
-				return `${baseClasses} bg-orange-600 text-white hover:bg-orange-700`
+				return `${baseClasses} bg-pink-600 text-white hover:bg-pink-700`
 		}
 	}
 
@@ -105,13 +105,13 @@ const PricingSection: React.FC<PricingSectionProps> = ({
 							key={index}
 							className={`bg-white rounded-2xl p-8 border-2 flex flex-col h-full ${
 								plan.popular
-									? 'border-orange-500 relative transform scale-105 shadow-lg'
-									: 'border-gray-100 hover:border-orange-200'
+									? 'border-pink-500 relative transform scale-105 shadow-lg'
+									: 'border-gray-100 hover:border-pink-200'
 							} transition-all duration-300`}
 						>
 							{plan.popular && (
 								<div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-									<span className="bg-orange-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+									<span className="bg-pink-500 text-white px-4 py-1 rounded-full text-sm font-medium">
 										Más Popular
 									</span>
 								</div>
@@ -152,7 +152,7 @@ const PricingSection: React.FC<PricingSectionProps> = ({
 					<div className="text-center mt-12">
 						<Link
 							href={viewAllPlansLink}
-							className="text-orange-600 hover:text-orange-700 font-semibold"
+							className="text-pink-600 hover:text-pink-700 font-semibold"
 						>
 							Ver todos los planes de precios →
 						</Link>

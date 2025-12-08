@@ -85,7 +85,7 @@ const CvWizardPage = () => {
 						<button
 							onClick={handleGenerateSuggestions}
 							disabled={loading}
-							className="px-4 py-2 text-white bg-blue-600 rounded-r-md hover:bg-blue-700 disabled:bg-gray-400"
+							className="px-4 py-2 text-white bg-pink-600 rounded-r-md hover:bg-pink-700 disabled:bg-gray-400"
 						>
 							{loading ? 'Generating...' : 'Get Suggestions'}
 						</button>

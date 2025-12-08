@@ -12,8 +12,8 @@ const db = getFirestore(app)
 const subscriptionPlans = {
 	startup: {
 		name: 'Empresa',
-		price: '$1000 mx',
-		amount: 100000,
+		price: '$100 mx',
+		amount: 10000,
 		description: 'Perfecto para empresas en crecimiento'
 	}
 }
@@ -83,7 +83,7 @@ const CheckoutForm = ({ selectedPlan }: { selectedPlan: keyof typeof subscriptio
 	if (loadingCompany) {
 		return (
 			<div className="text-center py-8">
-				<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
+				<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto"></div>
 				<p className="mt-4 text-gray-600">Cargando información...</p>
 			</div>
 		)
@@ -93,7 +93,7 @@ const CheckoutForm = ({ selectedPlan }: { selectedPlan: keyof typeof subscriptio
 		return (
 			<div className="text-center py-8">
 				<p className="text-red-500 mb-4">Debes iniciar sesión para suscribirte</p>
-				<a href="/signin" className="text-orange-600 hover:underline">
+				<a href="/signin" className="text-pink-600 hover:underline">
 					Iniciar sesión
 				</a>
 			</div>
@@ -104,7 +104,7 @@ const CheckoutForm = ({ selectedPlan }: { selectedPlan: keyof typeof subscriptio
 		return (
 			<div className="text-center py-8">
 				<p className="text-red-500 mb-4">No se encontró información de la empresa</p>
-				<a href="/company/setup" className="text-orange-600 hover:underline">
+				<a href="/company/setup" className="text-pink-600 hover:underline">
 					Configurar empresa
 				</a>
 			</div>
@@ -139,7 +139,7 @@ const CheckoutForm = ({ selectedPlan }: { selectedPlan: keyof typeof subscriptio
 			<button
 				type="submit"
 				disabled={loading}
-				className="w-full px-6 py-3 text-white bg-orange-600 rounded-lg hover:bg-orange-700 disabled:bg-gray-400 transition-colors font-semibold"
+				className="w-full px-6 py-3 text-white bg-pink-600 rounded-lg hover:bg-pink-700 disabled:bg-gray-400 transition-colors font-semibold"
 			>
 				{loading ? 'Redirigiendo a checkout...' : `Continuar al pago - ${plan.price}/mes`}
 			</button>
@@ -164,14 +164,14 @@ const CheckoutPageContent = () => {
 			<div className="text-center mb-8">
 				<h2 className="text-3xl font-bold mb-2">Finalizar Suscripción</h2>
 				<p className="text-gray-600 mb-6">
-					Plan <span className="font-semibold text-orange-600">{selectedPlan.name}</span>
+					Plan <span className="font-semibold text-pink-600">{selectedPlan.name}</span>
 				</p>
 
 				{/* Plan Summary */}
-				<div className="bg-orange-50 border border-orange-200 rounded-lg p-6 mb-8 max-w-md mx-auto">
-					<h3 className="text-xl font-semibold text-orange-900 mb-2">{selectedPlan.name}</h3>
-					<p className="text-orange-700 mb-4">{selectedPlan.description}</p>
-					<div className="text-3xl font-bold text-orange-600">
+				<div className="bg-pink-50 border border-pink-200 rounded-lg p-6 mb-8 max-w-md mx-auto">
+					<h3 className="text-xl font-semibold text-pink-900 mb-2">{selectedPlan.name}</h3>
+					<p className="text-pink-700 mb-4">{selectedPlan.description}</p>
+					<div className="text-3xl font-bold text-pink-600">
 						{selectedPlan.price}
 						<span className="text-lg text-gray-500">/mes</span>
 					</div>

@@ -161,7 +161,7 @@ const MyApplicationsPage = () => {
 						onClick={() => setViewMode('kanban')}
 						className={`px-4 py-2 rounded-md text-sm font-medium ${
 							viewMode === 'kanban'
-								? 'bg-blue-600 text-white'
+								? 'bg-pink-600 text-white'
 								: 'bg-white text-gray-700 border border-gray-300'
 						}`}
 					>
@@ -171,7 +171,7 @@ const MyApplicationsPage = () => {
 						onClick={() => setViewMode('table')}
 						className={`px-4 py-2 rounded-md text-sm font-medium ${
 							viewMode === 'table'
-								? 'bg-blue-600 text-white'
+								? 'bg-pink-600 text-white'
 								: 'bg-white text-gray-700 border border-gray-300'
 						}`}
 					>

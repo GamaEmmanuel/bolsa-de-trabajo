@@ -166,6 +166,35 @@ const JobDetailPage = () => {
 			setApplied(true)
 			setApplicationId(applicationRef.id)
 			alert('¡Solicitud enviada exitosamente!')
+
+			// Send email notifications (async, don't block UI)
+			try {
+				const { sendEmailFromBrowser } = await import('@/lib/emailClient')
+				const { buildApplicationSubmittedTemplate } = await import('@/lib/emailTemplates')
+
+				// Send email to candidate
+				if (user.email) {
+					const templateData = buildApplicationSubmittedTemplate({
+						candidateEmail: user.email,
+						candidateName: candidateName,
+						jobTitle: job.jobTitle,
+						companyName: companyData?.companyName || job.companyName || 'La Empresa',
+						applicationDate: new Date().toISOString(),
+						dashboardLink: `${window.location.origin}/candidate/my-applications`,
+					})
+
+					sendEmailFromBrowser({
+						...templateData,
+						to_email: user.email,
+						to_name: candidateName,
+						notification_type: 'application_submitted',
+						company_name: 'HR Portal',
+					} as any).catch(err => console.error('Email error:', err))
+				}
+			} catch (emailError) {
+				console.error('Error sending application emails:', emailError)
+				// Don't show error to user - email is secondary
+			}
 		} catch (error) {
 			console.error('Error applying for job:', error)
 			alert('Error al enviar la solicitud. Por favor, inténtalo de nuevo.')
@@ -441,7 +470,7 @@ const JobDetailPage = () => {
 										</button>
 										<button
 											onClick={() => router.push(`/company/job-postings/${jobId}/edit`)}
-											className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-500/80 text-white hover:bg-blue-600/80 transition-all duration-200"
+											className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-500/80 text-white hover:bg-pink-600/80 transition-all duration-200"
 										>
 											<div className="flex items-center justify-center">
 												<svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -552,7 +581,7 @@ const JobDetailPage = () => {
 												? 'bg-gray-100 text-gray-500 cursor-not-allowed'
 												: !user
 												? 'bg-orange-50 text-orange-700 border border-orange-200'
-												: 'bg-blue-500/80 text-white hover:bg-blue-600/80'
+												: 'bg-blue-500/80 text-white hover:bg-pink-600/80'
 										}`}
 									>
 										{applying ? (
@@ -571,10 +600,26 @@ const JobDetailPage = () => {
 						</div>
 					</div>
 
-					<hr className="my-6 border-border" />
+				<hr className="my-6 border-border" />
 
-					{/* Job Details Section */}
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+				{/* Job Description Section - Moved to Top */}
+				<div className="prose prose-lg max-w-none text-foreground mb-8">
+					<h2 className="text-2xl font-semibold mb-4">Descripción del Empleo</h2>
+					<p>{job.jobDescription}</p>
+
+					{job.requirements && (
+						<>
+							<h2 className="text-2xl font-semibold mt-6 mb-4">Requisitos</h2>
+							{typeof job.requirements === 'string'
+								? <div dangerouslySetInnerHTML={{ __html: job.requirements }} />
+								: <div className="whitespace-pre-wrap">{String(job.requirements as any)}</div>
+							}
+						</>
+					)}
+				</div>
+
+				{/* Job Details Section */}
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
 						{job.yearsOfExperience && (
 							<div className="bg-gray-50 p-4 rounded-lg">
 								<h3 className="font-semibold text-gray-700 mb-2">Experiencia Requerida</h3>
@@ -829,25 +874,10 @@ const JobDetailPage = () => {
 									</div>
 								)}
 							</div>
-						</div>
-					)}
-
-					<div className="prose prose-lg max-w-none text-foreground">
-						<h2 className="text-2xl font-semibold mb-4">Descripción del Empleo</h2>
-						<p>{job.jobDescription}</p>
-
-						{job.requirements && (
-							<>
-								<h2 className="text-2xl font-semibold mt-6 mb-4">Requisitos</h2>
-								{typeof job.requirements === 'string'
-									? <div dangerouslySetInnerHTML={{ __html: job.requirements }} />
-									: <div className="whitespace-pre-wrap">{String(job.requirements as any)}</div>
-								}
-							</>
-						)}
 					</div>
+				)}
 
-					{/* Delete Button for Job Owners */}
+				{/* Delete Button for Job Owners */}
 					{isJobOwner && (
 						<div className="mt-8 pt-6 border-t border-border">
 							<button
@@ -883,7 +913,7 @@ const JobDetailPage = () => {
 							/>
 							<button
 								onClick={copyJobLink}
-								className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+								className="px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition-colors"
 							>
 								Copiar
 							</button>
@@ -931,7 +961,7 @@ const JobDetailPage = () => {
 							<div className="flex gap-2">
 								<button
 									onClick={() => shareCompanyJobsToSocial('linkedin')}
-									className="flex-1 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm flex items-center justify-center gap-1"
+									className="flex-1 px-3 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition-colors text-sm flex items-center justify-center gap-1"
 								>
 									<svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
 										<path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>

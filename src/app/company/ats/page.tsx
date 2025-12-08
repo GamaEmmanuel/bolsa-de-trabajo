@@ -527,6 +527,27 @@ const AtsPage = () => {
 							: app
 					)
 				)
+
+				// Send email notification for status change (async, don't block UI)
+				try {
+					const job = jobPostings.find(j => j.jobId === activeApplicant.jobId)
+					if (job) {
+						fetch('/api/notifications/status-changed', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify({
+								candidateId: activeApplicant.candidateId,
+								candidateName: activeApplicant.candidateName,
+								jobTitle: job.jobTitle,
+								companyId: user?.uid,
+								oldStatus: activeApplicant.pipelineStatus,
+								newStatus: statusToSave,
+							}),
+						}).catch(err => console.error('Error sending status change email:', err))
+					}
+				} catch (emailError) {
+					console.error('Error sending status change notification:', emailError)
+				}
 			} catch (error) {
 				console.error('Error updating application status:', error)
 			}

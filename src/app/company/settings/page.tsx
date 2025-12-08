@@ -8,6 +8,7 @@ import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage
 import { CompanySize, Industry } from '../../../../types'
 import { COMPANY_SIZE_OPTIONS, INDUSTRY_OPTIONS, BENEFITS_OPTIONS, COMPANY_CULTURE_OPTIONS } from '../../../lib/constants'
 import SubscriptionStatus from '../../../components/SubscriptionStatus'
+import EmailPreferences from '../../../components/EmailPreferences'
 
 interface CompanyData {
 	companyName: string
@@ -324,7 +325,7 @@ const CompanySettingsPage = () => {
 										type="file"
 										accept="image/*"
 										onChange={handleLogoChange}
-										className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+										className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-pink-600 file:text-white hover:file:bg-blue-700"
 									/>
 									<p className="mt-1 text-sm text-gray-500">
 										PNG, JPG, GIF hasta 10MB. Tamaño recomendado: 200x200px
@@ -620,6 +621,14 @@ const CompanySettingsPage = () => {
 							</button>
 						</div>
 					</form>
+				</div>
+
+				{/* Email Preferences Section */}
+				<div className="mt-6">
+					<EmailPreferences
+						userId={auth.currentUser?.uid || ''}
+						userType="company"
+					/>
 				</div>
 			</div>
 		</div>

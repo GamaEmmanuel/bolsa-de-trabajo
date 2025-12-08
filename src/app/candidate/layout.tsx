@@ -39,15 +39,11 @@ const CandidateLayout = ({ children }: { children: React.ReactNode }) => {
 						{/* Logo */}
 						<div className="flex items-center">
 							<Link href="/candidate/dashboard" className="flex items-center">
-								<div className="w-10 h-10 bg-orange-500 rounded-full mr-3 flex items-center justify-center">
-									<svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-										<path d="M13 2L3 14h6v8l10-12h-6V2z"/>
-									</svg>
-								</div>
-								<div className="flex flex-col">
-									<span className="text-xl font-bold text-gray-900">TalentFlow</span>
-									<span className="text-xs text-orange-500 font-semibold uppercase tracking-wide">CONTRATA, MÁS RÁPIDO</span>
-								</div>
+								<img
+									src="/logo.png"
+									alt="Meserea Logo"
+									className="h-12 w-auto"
+								/>
 							</Link>
 						</div>
 
@@ -59,7 +55,7 @@ const CandidateLayout = ({ children }: { children: React.ReactNode }) => {
 									href={item.href}
 									className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
 										isActive(item.href)
-											? 'bg-blue-100 text-blue-700'
+											? 'bg-pink-100 text-pink-700'
 											: 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
 									}`}
 								>
@@ -76,7 +72,7 @@ const CandidateLayout = ({ children }: { children: React.ReactNode }) => {
 								onClick={handleSignOut}
 								className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded-md hover:bg-gray-50"
 							>
-								Sign Out
+								Cerrar Sesión
 							</button>
 
 							{/* Mobile menu button */}
@@ -102,7 +98,7 @@ const CandidateLayout = ({ children }: { children: React.ReactNode }) => {
 									href={item.href}
 									className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
 										isActive(item.href)
-											? 'bg-blue-100 text-blue-700'
+											? 'bg-pink-100 text-pink-700'
 											: 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
 									}`}
 									onClick={() => setIsMobileMenuOpen(false)}

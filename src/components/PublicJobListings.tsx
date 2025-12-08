@@ -118,7 +118,7 @@ const PublicJobListings: React.FC<PublicJobListingsProps> = ({ showTotalCount = 
 					onClick={() => handlePageChange(i)}
 					className={`px-4 py-2 rounded-lg font-medium ${
 						currentPage === i
-							? 'bg-orange-600 text-white'
+							? 'bg-pink-600 text-white'
 							: 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
 					}`}
 				>
@@ -173,7 +173,7 @@ const PublicJobListings: React.FC<PublicJobListingsProps> = ({ showTotalCount = 
 	if (loading) {
 		return (
 			<div className="flex items-center justify-center py-12">
-				<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
+				<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
 				<p className="ml-2 text-gray-600">Cargando empleos...</p>
 			</div>
 		)
@@ -202,7 +202,7 @@ const PublicJobListings: React.FC<PublicJobListingsProps> = ({ showTotalCount = 
 			{/* Total Count Highlight */}
 			{showTotalCount && allJobs.length > 0 && (
 				<div className="mb-8 text-center">
-					<div className="inline-flex items-center gap-3 bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-4 rounded-2xl shadow-lg">
+					<div className="inline-flex items-center gap-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white px-8 py-4 rounded-2xl shadow-lg">
 						<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
 						</svg>
@@ -219,7 +219,7 @@ const PublicJobListings: React.FC<PublicJobListingsProps> = ({ showTotalCount = 
 				{currentJobs.map(job => (
 					<div
 						key={job.jobId}
-						className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-orange-300 transition-all duration-200"
+						className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-pink-300 transition-all duration-200"
 					>
 						<div className="flex justify-between items-center gap-4">
 							<div className="flex-1 min-w-0">
@@ -250,7 +250,7 @@ const PublicJobListings: React.FC<PublicJobListingsProps> = ({ showTotalCount = 
 
 								<div className="flex items-center gap-2 flex-wrap">
 									{job.jobType && (
-										<span className="inline-block px-2 py-0.5 text-xs font-medium bg-orange-100 text-orange-800 rounded-full">
+										<span className="inline-block px-2 py-0.5 text-xs font-medium bg-pink-100 text-pink-800 rounded-full">
 											{job.jobType === 'full-time' && 'Tiempo Completo'}
 											{job.jobType === 'part-time' && 'Medio Tiempo'}
 											{job.jobType === 'contract' && 'Contrato'}
@@ -269,7 +269,7 @@ const PublicJobListings: React.FC<PublicJobListingsProps> = ({ showTotalCount = 
 							<div className="flex-shrink-0">
 								<Link
 									href="/signin"
-									className="inline-block px-5 py-2 bg-orange-600 text-white text-sm font-semibold rounded-lg hover:bg-orange-700 transition-colors whitespace-nowrap"
+									className="inline-block px-5 py-2 bg-pink-600 text-white text-sm font-semibold rounded-lg hover:bg-pink-700 transition-colors whitespace-nowrap"
 								>
 									Inicia sesión para aplicar
 								</Link>

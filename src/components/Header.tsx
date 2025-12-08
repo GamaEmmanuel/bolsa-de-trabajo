@@ -61,15 +61,11 @@ const Header = () => {
 				<div className="flex justify-between items-center py-4">
 					<div className="flex items-center">
 						<Link href="/" className="flex items-center">
-							<div className="w-10 h-10 bg-orange-500 rounded-full mr-3 flex items-center justify-center">
-								<svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-									<path d="M13 2L3 14h6v8l10-12h-6V2z"/>
-								</svg>
-							</div>
-							<div className="flex flex-col">
-								<span className="text-xl font-bold text-gray-900">TalentFlow</span>
-								<span className="text-xs text-orange-500 font-semibold uppercase tracking-wide">CONTRATA, MÁS RÁPIDO</span>
-							</div>
+							<img
+								src="/logo.png"
+								alt="Meserea Logo"
+								className="h-12 w-auto"
+							/>
 						</Link>
 					</div>
 					<div className="hidden md:flex items-center space-x-8">
@@ -127,7 +123,7 @@ const Header = () => {
 								</Link>
 								<Link
 									href="/signup"
-									className="px-5 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+								className="px-5 py-2.5 bg-pink-600 text-white font-medium rounded-lg hover:bg-pink-700 transition-colors"
 								>
 									Comenzar
 								</Link>

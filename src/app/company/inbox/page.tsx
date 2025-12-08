@@ -773,7 +773,7 @@ const CompanyInboxPage = () => {
 	if (loading) {
 		return (
 			<div className="h-screen flex items-center justify-center">
-				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
 			</div>
 		)
 	}
@@ -878,7 +878,7 @@ const CompanyInboxPage = () => {
 							onClick={() => setShowArchived(!showArchived)}
 							className={`text-xs px-3 py-1 rounded-full transition-colors ${
 								showArchived
-									? 'bg-blue-600 text-white'
+									? 'bg-pink-600 text-white'
 									: 'bg-gray-200 text-gray-700 hover:bg-gray-300'
 							}`}
 						>
@@ -918,7 +918,7 @@ const CompanyInboxPage = () => {
 									<div className="flex justify-between items-start mb-1">
 										<h3 className="font-semibold text-foreground">{conv.candidateName}</h3>
 										{unreadCount > 0 && (
-											<span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
+											<span className="bg-pink-600 text-white text-xs px-2 py-1 rounded-full">
 												{unreadCount}
 											</span>
 										)}
@@ -1006,7 +1006,7 @@ const CompanyInboxPage = () => {
 												onClick={() => handleMessageClick(message.messageId, isSent, canModify)}
 												className={`rounded-lg px-4 py-2 ${
 													isSent
-														? 'bg-blue-600 text-white'
+														? 'bg-pink-600 text-white'
 														: 'bg-white text-foreground border border-gray-200'
 												} ${isSent && canModify && !isDeleted && !isEditing ? 'cursor-pointer hover:opacity-90' : ''}`}
 											>
@@ -1031,7 +1031,7 @@ const CompanyInboxPage = () => {
 															<button
 																onClick={() => handleSaveEdit(message.messageId, message.read)}
 																disabled={!editingContent.trim()}
-																className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+																className="px-2 py-1 text-xs bg-pink-600 text-white rounded hover:bg-pink-700 disabled:opacity-50"
 															>
 																Guardar
 															</button>
@@ -1056,7 +1056,7 @@ const CompanyInboxPage = () => {
 																target="_blank"
 																rel="noopener noreferrer"
 																className={`text-xs underline block ${
-																	isSent ? 'text-blue-100' : 'text-blue-600'
+																	isSent ? 'text-blue-100' : 'text-pink-600'
 																}`}
 															>
 																📎 {attachment.name} ({Math.round(attachment.size / 1024)} KB)
@@ -1149,7 +1149,7 @@ const CompanyInboxPage = () => {
 								<button
 									type="submit"
 									disabled={!newMessage.trim()}
-									className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+									className="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
 								>
 									Enviar
 								</button>

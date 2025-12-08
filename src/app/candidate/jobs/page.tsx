@@ -297,7 +297,7 @@ const JobsPage = () => {
 	if (loading) {
 		return (
 			<div className="flex items-center justify-center py-12">
-				<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+				<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
 				<p className="ml-2 text-gray-600">Cargando empleos...</p>
 			</div>
 		)
@@ -359,7 +359,7 @@ const JobsPage = () => {
 					<select
 						value={sortBy}
 						onChange={(e) => setSortBy(e.target.value as 'date' | 'salary' | 'relevance')}
-						className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+						className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-blue-500"
 					>
 						<option value="date">Fecha de Publicación</option>
 						<option value="salary">Salario</option>
@@ -382,7 +382,7 @@ const JobsPage = () => {
 							<h2 className="text-lg font-semibold text-gray-900">Filtros</h2>
 							<button
 								onClick={clearFilters}
-								className="text-sm text-blue-600 hover:text-blue-800"
+								className="text-sm text-pink-600 hover:text-pink-800"
 							>
 								Limpiar Todo
 							</button>
@@ -399,7 +399,7 @@ const JobsPage = () => {
 									placeholder="Título del empleo, empresa, habilidades..."
 									value={filters.keyword}
 									onChange={(e) => handleFilterChange('keyword', e.target.value)}
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-blue-500"
 								/>
 							</div>
 
@@ -413,7 +413,7 @@ const JobsPage = () => {
 									placeholder="Ciudad, estado, país..."
 									value={filters.location}
 									onChange={(e) => handleFilterChange('location', e.target.value)}
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-blue-500"
 								/>
 							</div>
 
@@ -424,7 +424,7 @@ const JobsPage = () => {
 									id="remote"
 									checked={filters.remote}
 									onChange={(e) => handleFilterChange('remote', e.target.checked)}
-									className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+									className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
 								/>
 								<label htmlFor="remote" className="ml-2 text-sm text-gray-700">
 									Solo remoto
@@ -439,7 +439,7 @@ const JobsPage = () => {
 								<select
 									value={filters.jobType}
 									onChange={(e) => handleFilterChange('jobType', e.target.value)}
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-blue-500"
 								>
 									<option value="">Todos los Tipos</option>
 									<option value="full-time">Tiempo Completo</option>
@@ -460,14 +460,14 @@ const JobsPage = () => {
 										placeholder="Mín"
 										value={filters.salaryMin}
 										onChange={(e) => handleFilterChange('salaryMin', e.target.value)}
-										className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+										className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-blue-500"
 									/>
 									<input
 										type="number"
 										placeholder="Máx"
 										value={filters.salaryMax}
 										onChange={(e) => handleFilterChange('salaryMax', e.target.value)}
-										className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+										className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-blue-500"
 									/>
 								</div>
 							</div>
@@ -510,7 +510,7 @@ const JobsPage = () => {
 												</div>
 
 												<div className="flex-1">
-													<h3 className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors">
+													<h3 className="text-xl font-semibold text-gray-900 hover:text-pink-600 transition-colors">
 														{job.jobTitle}
 													</h3>
 													<p className="text-gray-600 font-medium mt-1">
@@ -540,7 +540,7 @@ const JobsPage = () => {
 													Publicado {new Date(job.postedDate).toLocaleDateString()}
 												</p>
 											)}
-											<div className="mt-2 text-blue-600 text-sm font-medium">
+											<div className="mt-2 text-pink-600 text-sm font-medium">
 												Ver Detalles →
 											</div>
 										</div>

@@ -79,7 +79,7 @@ const AiGeneratorPage = () => {
 					<button
 						onClick={handleGenerate}
 						disabled={loading}
-						className="px-6 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-gray-400"
+						className="px-6 py-2 text-white bg-pink-600 rounded-md hover:bg-pink-700 disabled:bg-gray-400"
 					>
 						{loading ? 'Generating...' : 'Generate Description'}
 					</button>
