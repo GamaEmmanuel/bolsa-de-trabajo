@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { JobPosting } from '../../../types'
 import { db } from '../../../lib/firebase'
@@ -26,7 +26,7 @@ interface JobFilters {
 	remote: boolean
 }
 
-const JobsPage = () => {
+const JobsPageContent = () => {
 	const searchParams = useSearchParams()
 	const router = useRouter()
 	const companyIdParam = searchParams?.get('companyId')
@@ -552,6 +552,19 @@ const JobsPage = () => {
 				</div>
 			</div>
 		</div>
+	)
+}
+
+const JobsPage = () => {
+	return (
+		<Suspense fallback={
+			<div className="flex items-center justify-center py-12">
+				<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
+				<p className="ml-2 text-gray-600">Cargando empleos...</p>
+			</div>
+		}>
+			<JobsPageContent />
+		</Suspense>
 	)
 }
 
