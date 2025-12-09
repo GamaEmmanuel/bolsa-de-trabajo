@@ -15,8 +15,8 @@ const LandingPage = () => {
 		<div className="min-h-screen bg-white">
 			{/* Navigation */}
 			<nav className="fixed w-full top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
-				<div className="max-w-6xl mx-auto px-6">
-					<div className="flex justify-between items-center py-4">
+				<div className="max-w-6xl mx-auto px-4 sm:px-6">
+					<div className="flex justify-between items-center py-3 sm:py-4">
 						<button
 							onClick={() => setActiveTab('home')}
 							className="flex items-center hover:opacity-80 transition-opacity cursor-pointer"
@@ -26,7 +26,7 @@ const LandingPage = () => {
 							alt="Meserea Logo"
 							width={180}
 							height={60}
-							className="h-12 w-auto"
+							className="h-10 sm:h-12 w-auto"
 						/>
 						</button>
 						<div className="hidden md:flex items-center space-x-8">
@@ -51,16 +51,24 @@ const LandingPage = () => {
 								Empleos Disponibles
 							</button>
 						</div>
-						<div className="flex items-center space-x-3">
+						<div className="hidden sm:flex items-center space-x-2 sm:space-x-3">
 							<Link
 								href="/signin"
-								className="text-gray-700 hover:text-gray-900 font-medium px-4 py-2 transition-colors"
+								className="text-gray-700 hover:text-gray-900 font-medium px-3 sm:px-4 py-2 transition-colors text-sm sm:text-base"
 							>
 								Iniciar Sesión
 							</Link>
 							<Link
 								href="/signup"
-								className="px-5 py-2.5 bg-pink-600 text-white font-medium rounded-lg hover:bg-pink-700 transition-colors"
+								className="px-4 sm:px-5 py-2 sm:py-2.5 bg-pink-600 text-white font-medium rounded-lg hover:bg-pink-700 transition-colors text-sm sm:text-base"
+							>
+								Comenzar
+							</Link>
+						</div>
+						<div className="sm:hidden">
+							<Link
+								href="/signup"
+								className="px-4 py-2 bg-pink-600 text-white font-medium rounded-lg hover:bg-pink-700 transition-colors text-sm"
 							>
 								Comenzar
 							</Link>
@@ -72,7 +80,7 @@ const LandingPage = () => {
 					<div className="flex">
 						<button
 							onClick={() => setActiveTab('home')}
-							className={`flex-1 text-center py-3 font-medium transition-colors ${
+							className={`flex-1 text-center py-3 font-medium transition-colors text-sm sm:text-base ${
 								activeTab === 'home'
 									? 'text-pink-600 border-b-2 border-pink-600 bg-pink-50'
 									: 'text-gray-700'
@@ -82,7 +90,7 @@ const LandingPage = () => {
 						</button>
 						<button
 							onClick={() => setActiveTab('jobs')}
-							className={`flex-1 text-center py-3 font-medium transition-colors ${
+							className={`flex-1 text-center py-3 font-medium transition-colors text-sm sm:text-base ${
 								activeTab === 'jobs'
 									? 'text-pink-600 border-b-2 border-pink-600 bg-pink-50'
 									: 'text-gray-700'
@@ -96,11 +104,11 @@ const LandingPage = () => {
 
 			{/* Jobs Section */}
 			{activeTab === 'jobs' && (
-				<section className="relative pt-24 pb-16 bg-gray-50 min-h-screen overflow-hidden">
+				<section className="relative pt-20 sm:pt-24 pb-12 sm:pb-16 bg-gray-50 min-h-screen overflow-hidden">
 					{/* Container to constrain illustration positioning */}
 					<div className="absolute inset-0 max-w-[1600px] mx-auto pointer-events-none">
 					{/* Decorative Background Illustration - Top Right */}
-						<div className="absolute top-32 right-0 lg:right-4 xl:right-12 w-80 lg:w-96 h-80 lg:h-96 opacity-40">
+						<div className="hidden lg:block absolute top-32 right-0 lg:right-4 xl:right-12 w-80 lg:w-96 h-80 lg:h-96 opacity-40">
 						<Image
 							src="/illustrations/pizza, slice, food, cuisine, cartoon, illustration, character.png"
 							alt=""
@@ -110,12 +118,12 @@ const LandingPage = () => {
 						/>
 						</div>
 					</div>
-					<div className="max-w-7xl mx-auto px-6">
-						<div className="text-center mb-8">
-							<h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+					<div className="max-w-7xl mx-auto px-4 sm:px-6">
+						<div className="text-center mb-6 sm:mb-8">
+							<h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-3 sm:mb-4 px-2">
 								Empleos en Restaurantes y Hoteles
 							</h1>
-							<p className="text-xl text-gray-600 max-w-3xl mx-auto">
+							<p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto px-4">
 								Encuentra oportunidades como mesero, cocinero, chef, bartender, camarera y más en el sector de hospitalidad.
 							<Link href="/signup" className="text-pink-600 hover:text-pink-700 font-semibold"> Regístrate</Link> para aplicar.
 							</p>
@@ -128,11 +136,11 @@ const LandingPage = () => {
 			{/* Hero Section */}
 			{activeTab === 'home' && (
 			<>
-			<section className="relative pt-24 pb-16 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
+			<section className="relative pt-20 sm:pt-24 pb-12 sm:pb-16 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
 				{/* Container to constrain illustration positioning */}
 				<div className="absolute inset-0 max-w-[1600px] mx-auto pointer-events-none">
 				{/* Decorative Background Illustration - Top Right */}
-					<div className="absolute top-10 right-0 lg:right-4 xl:right-12 w-80 lg:w-96 h-80 lg:h-96 opacity-40">
+					<div className="hidden lg:block absolute top-10 right-0 lg:right-4 xl:right-12 w-80 lg:w-96 h-80 lg:h-96 opacity-40">
 					<Image
 						src="/illustrations/chef, cooking, meal preparation, food service, kitchen, Vector illustration.png"
 						alt=""
@@ -142,7 +150,7 @@ const LandingPage = () => {
 					/>
 				</div>
 				{/* Decorative Background Illustration - Left Side */}
-					<div className="absolute top-40 left-0 lg:left-4 xl:left-12 -translate-x-16 lg:-translate-x-12 w-64 lg:w-80 h-64 lg:h-80 opacity-40">
+					<div className="hidden lg:block absolute top-40 left-0 lg:left-4 xl:left-12 -translate-x-16 lg:-translate-x-12 w-64 lg:w-80 h-64 lg:h-80 opacity-40">
 					<Image
 						src="/illustrations/cooking, food preparation, kitchen, sandwich, Vector illustration.png"
 						alt=""
@@ -152,19 +160,19 @@ const LandingPage = () => {
 					/>
 					</div>
 				</div>
-				<div className="max-w-6xl mx-auto px-6 text-center">
+				<div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
 					<div className="max-w-4xl mx-auto">
-						<h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight mb-6">
+						<h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-4 sm:mb-6 px-2">
 							Encuentra el mejor talento para tu
 							<span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-pink-700"> restaurante u hotel</span>
 						</h1>
-						<p className="text-xl text-gray-600 leading-relaxed mb-10 max-w-2xl mx-auto">
+						<p className="text-base sm:text-lg md:text-xl text-gray-600 leading-relaxed mb-8 sm:mb-10 max-w-2xl mx-auto px-4">
 							Contrata meseros, cocineros, camareras, chefs, bartenders y más personal de servicio de manera rápida y eficiente. Plataforma especializada en el sector de hospitalidad.
 						</p>
-						<div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+						<div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-12 sm:mb-16 px-4">
 							<Link
 								href="/signup"
-								className="px-8 py-4 bg-pink-600 text-white text-lg font-semibold rounded-lg hover:bg-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+								className="px-6 sm:px-8 py-3 sm:py-4 bg-pink-600 text-white text-base sm:text-lg font-semibold rounded-lg hover:bg-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl"
 							>
 								Iniciar Prueba Gratuita
 							</Link>
@@ -172,44 +180,44 @@ const LandingPage = () => {
 					</div>
 
 					{/* Features Preview */}
-					<div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto mt-20">
-						<div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+					<div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto mt-12 sm:mt-20 px-4">
+						<div className="bg-white rounded-xl p-6 sm:p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
 							<div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
 								<svg className="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
 								</svg>
 							</div>
-							<h3 className="text-xl font-semibold text-gray-900 mb-3">Personal Calificado</h3>
-							<p className="text-gray-600">Encuentra meseros, cocineros, chefs, bartenders y personal de limpieza verificado y listo para trabajar.</p>
+							<h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">Personal Calificado</h3>
+							<p className="text-sm sm:text-base text-gray-600">Encuentra meseros, cocineros, chefs, bartenders y personal de limpieza verificado y listo para trabajar.</p>
 						</div>
-						<div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+						<div className="bg-white rounded-xl p-6 sm:p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
 							<div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
 								<svg className="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
 								</svg>
 							</div>
-							<h3 className="text-xl font-semibold text-gray-900 mb-3">Contratación Rápida</h3>
-							<p className="text-gray-600">Publica una vacante y recibe aplicaciones calificadas en minutos. Ideal para cubrir turnos urgentes.</p>
+							<h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">Contratación Rápida</h3>
+							<p className="text-sm sm:text-base text-gray-600">Publica una vacante y recibe aplicaciones calificadas en minutos. Ideal para cubrir turnos urgentes.</p>
 						</div>
-						<div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+						<div className="bg-white rounded-xl p-6 sm:p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
 							<div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
 								<svg className="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
 								</svg>
 							</div>
-							<h3 className="text-xl font-semibold text-gray-900 mb-3">Especializado en Hospitalidad</h3>
-							<p className="text-gray-600">Plataforma diseñada específicamente para restaurantes, hoteles, cafeterías y el sector de servicio.</p>
+							<h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">Especializado en Hospitalidad</h3>
+							<p className="text-sm sm:text-base text-gray-600">Plataforma diseñada específicamente para restaurantes, hoteles, cafeterías y el sector de servicio.</p>
 						</div>
 					</div>
 				</div>
 			</section>
 
 			{/* Value Proposition */}
-			<section className="relative py-20 bg-white overflow-hidden">
+			<section className="relative py-12 sm:py-16 md:py-20 bg-white overflow-hidden">
 				{/* Container to constrain illustration positioning */}
 				<div className="absolute inset-0 max-w-[1600px] mx-auto pointer-events-none">
 				{/* Decorative Background Illustration - Top Right */}
-					<div className="absolute top-20 right-0 lg:right-4 xl:right-12 w-80 lg:w-96 h-80 lg:h-96 opacity-35">
+					<div className="hidden lg:block absolute top-20 right-0 lg:right-4 xl:right-12 w-80 lg:w-96 h-80 lg:h-96 opacity-35">
 					<Image
 						src="/illustrations/cooking, tasting, chef, kitchen, culinary.png"
 						alt=""
@@ -219,7 +227,7 @@ const LandingPage = () => {
 					/>
 				</div>
 				{/* Decorative Background Illustration - Bottom Left */}
-					<div className="absolute bottom-32 left-0 lg:left-4 xl:left-12 -translate-x-12 lg:-translate-x-8 w-80 lg:w-96 h-80 lg:h-96 opacity-35">
+					<div className="hidden lg:block absolute bottom-32 left-0 lg:left-4 xl:left-12 -translate-x-12 lg:-translate-x-8 w-80 lg:w-96 h-80 lg:h-96 opacity-35">
 					<Image
 						src="/illustrations/frying-pan, egg, spatula, cooking, breakfast.png"
 						alt=""
@@ -229,105 +237,105 @@ const LandingPage = () => {
 					/>
 					</div>
 				</div>
-				<div className="max-w-6xl mx-auto px-6">
-					<div className="text-center mb-16">
-						<h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+				<div className="max-w-6xl mx-auto px-4 sm:px-6">
+					<div className="text-center mb-12 sm:mb-16">
+						<h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 px-2">
 							¿Por qué elegir Meserea?
 						</h2>
-						<p className="text-xl text-gray-600 max-w-3xl mx-auto">
+						<p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto px-4">
 							La plataforma #1 para restaurantes y hoteles que necesitan contratar personal de servicio calificado
 						</p>
 					</div>
 
-					<div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-20">
-						<div>
-							<h3 className="text-3xl font-bold text-gray-900 mb-6">
+					<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center mb-12 sm:mb-16 lg:mb-20">
+						<div className="px-4">
+							<h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6">
 								Contrata personal en horas, no en semanas
 							</h3>
-							<p className="text-lg text-gray-600 mb-8 leading-relaxed">
+							<p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 leading-relaxed">
 								Publicar una vacante para meseros, cocineros, chefs, bartenders o camareras nunca ha sido tan fácil. Recibe aplicaciones calificadas en minutos y contrata el mismo día.
 							</p>
-							<div className="space-y-4">
-								<div className="flex items-center">
-									<div className="w-2 h-2 bg-pink-600 rounded-full mr-3"></div>
-									<span className="text-gray-700">Candidatos verificados con experiencia en hospitalidad</span>
+							<div className="space-y-3 sm:space-y-4">
+								<div className="flex items-start sm:items-center">
+									<div className="w-2 h-2 bg-pink-600 rounded-full mr-3 mt-2 sm:mt-0 flex-shrink-0"></div>
+									<span className="text-sm sm:text-base text-gray-700">Candidatos verificados con experiencia en hospitalidad</span>
 								</div>
-								<div className="flex items-center">
-									<div className="w-2 h-2 bg-pink-600 rounded-full mr-3"></div>
-									<span className="text-gray-700">Disponibilidad inmediata para turnos urgentes</span>
+								<div className="flex items-start sm:items-center">
+									<div className="w-2 h-2 bg-pink-600 rounded-full mr-3 mt-2 sm:mt-0 flex-shrink-0"></div>
+									<span className="text-sm sm:text-base text-gray-700">Disponibilidad inmediata para turnos urgentes</span>
 								</div>
-								<div className="flex items-center">
-									<div className="w-2 h-2 bg-pink-600 rounded-full mr-3"></div>
-									<span className="text-gray-700">Contacto directo con aspirantes</span>
+								<div className="flex items-start sm:items-center">
+									<div className="w-2 h-2 bg-pink-600 rounded-full mr-3 mt-2 sm:mt-0 flex-shrink-0"></div>
+									<span className="text-sm sm:text-base text-gray-700">Contacto directo con aspirantes</span>
 								</div>
 							</div>
 						</div>
-						<div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl p-8 border border-gray-100">
-							<div className="bg-white rounded-xl p-6 shadow-sm">
-								<div className="flex items-center justify-between mb-4">
-									<span className="text-sm font-medium text-gray-500">PIPELINE DE CONTRATACIÓN</span>
-									<span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">En Vivo</span>
+						<div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl p-4 sm:p-6 lg:p-8 border border-gray-100 mx-4 sm:mx-0">
+							<div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm">
+								<div className="flex items-center justify-between mb-3 sm:mb-4">
+									<span className="text-xs sm:text-sm font-medium text-gray-500">PIPELINE DE CONTRATACIÓN</span>
+									<span className="text-xs text-purple-600 bg-purple-100 px-2 py-1 rounded-full">Demo</span>
 								</div>
-								<div className="space-y-3">
-									<div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-										<span className="font-medium text-gray-900">Aplicaciones</span>
-										<span className="text-2xl font-bold text-gray-900">127</span>
+								<div className="space-y-2 sm:space-y-3">
+									<div className="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded-lg">
+										<span className="text-sm sm:text-base font-medium text-gray-900">Aplicaciones</span>
+										<span className="text-xl sm:text-2xl font-bold text-gray-900">127</span>
 									</div>
-									<div className="flex items-center justify-between p-3 bg-pink-50 rounded-lg">
-										<span className="font-medium text-pink-900">Evaluación</span>
-										<span className="text-2xl font-bold text-pink-600">34</span>
+									<div className="flex items-center justify-between p-2 sm:p-3 bg-pink-50 rounded-lg">
+										<span className="text-sm sm:text-base font-medium text-pink-900">Evaluación</span>
+										<span className="text-xl sm:text-2xl font-bold text-pink-600">34</span>
 									</div>
-									<div className="flex items-center justify-between p-3 bg-pink-50 rounded-lg">
-										<span className="font-medium text-pink-900">Entrevistas</span>
-										<span className="text-2xl font-bold text-pink-600">12</span>
+									<div className="flex items-center justify-between p-2 sm:p-3 bg-pink-50 rounded-lg">
+										<span className="text-sm sm:text-base font-medium text-pink-900">Entrevistas</span>
+										<span className="text-xl sm:text-2xl font-bold text-pink-600">12</span>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 
-					<div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-						<div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl p-8 border border-gray-100 lg:order-2">
-							<div className="bg-white rounded-xl p-6 shadow-sm">
-								<div className="flex items-center mb-4">
-									<div className="w-8 h-8 bg-gradient-to-r from-pink-400 to-pink-600 rounded-full mr-3"></div>
-									<div>
-										<div className="font-semibold text-gray-900">Sarah Chen</div>
-										<div className="text-sm text-gray-600">Desarrolladora Senior</div>
+					<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
+						<div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl p-4 sm:p-6 lg:p-8 border border-gray-100 lg:order-2 mx-4 sm:mx-0">
+							<div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm">
+								<div className="flex items-start sm:items-center mb-3 sm:mb-4">
+									<div className="w-8 h-8 bg-gradient-to-r from-pink-400 to-pink-600 rounded-full mr-3 flex-shrink-0"></div>
+									<div className="flex-1 min-w-0">
+										<div className="text-sm sm:text-base font-semibold text-gray-900 truncate">Sarah Chen</div>
+										<div className="text-xs sm:text-sm text-gray-600">Desarrolladora Senior</div>
 									</div>
-									<div className="ml-auto">
-										<span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">95% Compatibilidad</span>
+									<div className="ml-2">
+										<span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full whitespace-nowrap">95% Match</span>
 									</div>
 								</div>
-								<div className="text-sm text-gray-600 mb-3">
+								<div className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3">
 									5+ años React, Node.js • Anteriormente: Google, Airbnb
 								</div>
-								<div className="flex space-x-2">
+								<div className="flex flex-wrap gap-2">
 									<span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">React</span>
 									<span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">TypeScript</span>
 									<span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Node.js</span>
 								</div>
 							</div>
 						</div>
-						<div className="lg:order-1">
-							<h3 className="text-3xl font-bold text-gray-900 mb-6">
+						<div className="lg:order-1 px-4">
+							<h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6">
 								Personal especializado para tu negocio
 							</h3>
-							<p className="text-lg text-gray-600 mb-8 leading-relaxed">
+							<p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 leading-relaxed">
 								Accede a una base de datos de profesionales de hospitalidad: meseros con experiencia, cocineros capacitados, chefs certificados, bartenders expertos, camareras de hotel y más.
 							</p>
-							<div className="space-y-4">
-								<div className="flex items-center">
-									<div className="w-2 h-2 bg-pink-600 rounded-full mr-3"></div>
-									<span className="text-gray-700">Experiencia comprobada en el sector</span>
+							<div className="space-y-3 sm:space-y-4">
+								<div className="flex items-start sm:items-center">
+									<div className="w-2 h-2 bg-pink-600 rounded-full mr-3 mt-2 sm:mt-0 flex-shrink-0"></div>
+									<span className="text-sm sm:text-base text-gray-700">Experiencia comprobada en el sector</span>
 								</div>
-								<div className="flex items-center">
-									<div className="w-2 h-2 bg-pink-600 rounded-full mr-3"></div>
-									<span className="text-gray-700">Referencias y certificaciones verificadas</span>
+								<div className="flex items-start sm:items-center">
+									<div className="w-2 h-2 bg-pink-600 rounded-full mr-3 mt-2 sm:mt-0 flex-shrink-0"></div>
+									<span className="text-sm sm:text-base text-gray-700">Referencias y certificaciones verificadas</span>
 								</div>
-								<div className="flex items-center">
-									<div className="w-2 h-2 bg-pink-600 rounded-full mr-3"></div>
-									<span className="text-gray-700">Perfiles completos con disponibilidad</span>
+								<div className="flex items-start sm:items-center">
+									<div className="w-2 h-2 bg-pink-600 rounded-full mr-3 mt-2 sm:mt-0 flex-shrink-0"></div>
+									<span className="text-sm sm:text-base text-gray-700">Perfiles completos con disponibilidad</span>
 								</div>
 							</div>
 						</div>
@@ -336,11 +344,11 @@ const LandingPage = () => {
 			</section>
 
 			{/* Social Proof */}
-			<section className="relative py-16 bg-gray-50 overflow-hidden">
+			<section className="relative py-12 sm:py-16 bg-gray-50 overflow-hidden">
 				{/* Container to constrain illustration positioning */}
 				<div className="absolute inset-0 max-w-[1600px] mx-auto pointer-events-none">
 				{/* Decorative Background Illustration - Right Side */}
-					<div className="absolute top-10 right-0 lg:right-4 xl:right-12 translate-x-8 lg:translate-x-4 w-80 lg:w-96 h-80 lg:h-96 opacity-35">
+					<div className="hidden lg:block absolute top-10 right-0 lg:right-4 xl:right-12 translate-x-8 lg:translate-x-4 w-80 lg:w-96 h-80 lg:h-96 opacity-35">
 					<Image
 						src="/illustrations/pizza, slice, food, cuisine, cartoon, illustration, character.png"
 						alt=""
@@ -350,7 +358,7 @@ const LandingPage = () => {
 					/>
 				</div>
 				{/* Decorative Background Illustration - Left Bottom */}
-					<div className="absolute bottom-10 left-0 lg:left-4 xl:left-12 -translate-x-8 lg:-translate-x-4 w-64 lg:w-80 h-64 lg:h-80 opacity-35">
+					<div className="hidden lg:block absolute bottom-10 left-0 lg:left-4 xl:left-12 -translate-x-8 lg:-translate-x-4 w-64 lg:w-80 h-64 lg:h-80 opacity-35">
 					<Image
 						src="/illustrations/chopsticks, dollar, steaming, currency, cuisine.png"
 						alt=""
@@ -360,28 +368,28 @@ const LandingPage = () => {
 					/>
 					</div>
 				</div>
-				<div className="max-w-6xl mx-auto px-6 text-center">
-					<h2 className="text-2xl font-bold text-gray-900 mb-12">Confiado por restaurantes y hoteles en toda Latinoamérica</h2>
-					<div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center opacity-60">
+				<div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+					<h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-8 sm:mb-12 px-2">Confiado por restaurantes y hoteles en toda Latinoamérica</h2>
+					<div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 items-center opacity-60 mb-8 sm:mb-12">
 						{['Restaurante El Buen Sabor', 'Hotel Plaza', 'Café Gourmet', 'Grupo Hotelero'].map((company, index) => (
-							<div key={index} className="text-xl font-bold text-gray-400">
+							<div key={index} className="text-sm sm:text-lg md:text-xl font-bold text-gray-400">
 								{company}
 							</div>
 						))}
 					</div>
-					<div className="mt-12 bg-white rounded-2xl p-8 max-w-4xl mx-auto shadow-sm border border-gray-100">
-						<div className="flex items-center justify-center mb-4">
+					<div className="bg-white rounded-2xl p-6 sm:p-8 max-w-4xl mx-auto shadow-sm border border-gray-100">
+						<div className="flex items-center justify-center mb-3 sm:mb-4">
 							{[...Array(5)].map((_, i) => (
-								<svg key={i} className="w-5 h-5 text-yellow-400 mr-1" fill="currentColor" viewBox="0 0 20 20">
+								<svg key={i} className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 mr-1" fill="currentColor" viewBox="0 0 20 20">
 									<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
 								</svg>
 							))}
 						</div>
-						<blockquote className="text-lg text-gray-700 mb-4">
+						<blockquote className="text-base sm:text-lg text-gray-700 mb-3 sm:mb-4 px-2">
 							&ldquo;Necesitábamos 3 meseros urgente para el fin de semana y Meserea nos ayudó a encontrarlos en menos de 24 horas. Personal calificado y con experiencia. ¡Increíble!&rdquo;
 						</blockquote>
-						<div className="font-semibold text-gray-900">Carlos Martínez</div>
-						<div className="text-gray-600">Gerente General, Restaurante La Hacienda</div>
+						<div className="text-sm sm:text-base font-semibold text-gray-900">Carlos Martínez</div>
+						<div className="text-xs sm:text-sm text-gray-600">Gerente General, Restaurante La Hacienda</div>
 					</div>
 				</div>
 			</section>
@@ -394,24 +402,24 @@ const LandingPage = () => {
 
 
 			{/* Final CTA Section */}
-			<section className="py-20 bg-gradient-to-r from-pink-500 to-pink-600">
-				<div className="max-w-4xl mx-auto px-6 text-center">
-					<h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+			<section className="py-12 sm:py-16 md:py-20 bg-gradient-to-r from-pink-500 to-pink-600">
+				<div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+					<h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6 px-2">
 						¿Necesitas personal para tu restaurante u hotel?
 					</h2>
-					<p className="text-xl text-pink-50 mb-8">
+					<p className="text-base sm:text-lg md:text-xl text-pink-50 mb-6 sm:mb-8 px-4">
 						Únete a cientos de restaurantes y hoteles que encuentran meseros, cocineros, chefs y personal de servicio en Meserea.
 					</p>
-					<div className="flex flex-col sm:flex-row gap-4 justify-center">
+					<div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
 						<Link
 							href="/signup?type=company"
-							className="px-8 py-4 bg-white text-pink-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors"
+							className="px-6 sm:px-8 py-3 sm:py-4 bg-white text-pink-600 text-sm sm:text-base font-semibold rounded-lg hover:bg-gray-100 transition-colors"
 						>
 							Publicar Vacante
 						</Link>
 						<Link
 							href="/signup?type=candidate"
-							className="px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-pink-600 transition-colors"
+							className="px-6 sm:px-8 py-3 sm:py-4 bg-transparent border-2 border-white text-white text-sm sm:text-base font-semibold rounded-lg hover:bg-white hover:text-pink-600 transition-colors"
 						>
 							Buscar Trabajo en Hospitalidad
 						</Link>
@@ -421,8 +429,8 @@ const LandingPage = () => {
 
 			{/* Footer */}
 			<footer className="bg-gray-900 text-white">
-				<div className="max-w-6xl mx-auto px-6 py-12">
-					<div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+				<div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-8">
 						<div className="md:col-span-1">
 							<div className="flex items-center mb-4">
 							<Image

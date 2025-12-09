@@ -66,21 +66,21 @@ const ApplicationCard = ({
 	const canWithdraw = app.pipelineStatus === 'applied' || app.pipelineStatus === 'reviewed'
 
 	return (
-		<div className="bg-white p-4 mb-3 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-			<div className="flex justify-between items-start mb-2">
-				<h3 className="font-semibold text-gray-900 text-sm">
+		<div className="bg-white p-3 sm:p-4 mb-2 sm:mb-3 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+			<div className="flex justify-between items-start mb-1.5 sm:mb-2 gap-2">
+				<h3 className="font-semibold text-gray-900 text-xs sm:text-sm break-words flex-1">
 					{app.jobTitle || 'Título del Empleo'}
 				</h3>
 				{canWithdraw && (
 					<button
 						onClick={() => onWithdraw(app.applicationId)}
-						className="text-xs text-red-600 hover:text-red-800 font-medium"
+						className="text-xs text-red-600 hover:text-red-800 font-medium whitespace-nowrap flex-shrink-0"
 					>
 						Retirar
 					</button>
 				)}
 			</div>
-			<p className="text-sm text-gray-600 mb-2">
+			<p className="text-xs sm:text-sm text-gray-600 mb-1.5 sm:mb-2 break-words">
 				{app.companyName || 'Nombre de la Empresa'}
 			</p>
 			<p className="text-xs text-gray-500">
@@ -88,7 +88,7 @@ const ApplicationCard = ({
 			</p>
 			{app.updatedAt && (
 				<p className="text-xs text-gray-400 mt-1">
-					Última actualización: {new Date(app.updatedAt).toLocaleDateString()}
+					Actualizado: {new Date(app.updatedAt).toLocaleDateString()}
 				</p>
 			)}
 		</div>
@@ -106,9 +106,9 @@ const PipelineColumn = ({
 	onWithdraw: (applicationId: string) => void
 }) => {
 	return (
-		<div className="flex-1 min-w-[200px] p-4 rounded-lg border border-gray-200 bg-gray-50">
-			<div className="flex items-center justify-between mb-4">
-				<h2 className={`text-lg font-semibold capitalize ${getStatusColor(status).split(' ')[1]}`}>
+		<div className="flex-1 min-w-[250px] sm:min-w-[280px] p-3 sm:p-4 rounded-lg border border-gray-200 bg-gray-50">
+			<div className="flex items-center justify-between mb-3 sm:mb-4">
+				<h2 className={`text-base sm:text-lg font-semibold capitalize ${getStatusColor(status).split(' ')[1]}`}>
 					{getStatusDisplayName(status)}
 				</h2>
 				<span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(status)}`}>
@@ -117,7 +117,7 @@ const PipelineColumn = ({
 			</div>
 			<div className="min-h-[200px]">
 				{applications.length === 0 ? (
-					<div className="text-center text-gray-500 text-sm py-8">
+					<div className="text-center text-gray-500 text-xs sm:text-sm py-6 sm:py-8">
 						No hay aplicaciones en esta etapa
 					</div>
 				) : (
@@ -189,14 +189,14 @@ const ApplicantKanban: React.FC<ApplicantKanbanProps> = ({
 
 	return (
 		<div className="w-full">
-			<div className="mb-6">
-				<h2 className="text-2xl font-bold text-gray-900 mb-2">Pipeline de Aplicaciones</h2>
-				<p className="text-gray-600">
-					Rastrea el progreso de tus aplicaciones de empleo. Puedes retirar aplicaciones que aún están en las primeras etapas.
+			<div className="mb-4 sm:mb-6">
+				<h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2">Pipeline de Aplicaciones</h2>
+				<p className="text-sm sm:text-base text-gray-600">
+					Rastrea el progreso de tus aplicaciones. Desliza horizontalmente para ver todas las etapas.
 				</p>
 			</div>
 
-			<div className="flex gap-4 overflow-x-auto pb-4">
+			<div className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0">
 				{columns.map(status => (
 					<PipelineColumn
 						key={status}

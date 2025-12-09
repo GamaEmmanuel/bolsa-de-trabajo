@@ -145,7 +145,7 @@ const FullPricingSection: React.FC<FullPricingSectionProps> = ({
 	]
 
 	const getButtonClasses = (plan: PricingPlan) => {
-		const baseClasses = "block w-full text-center py-3 px-6 rounded-lg font-semibold transition-colors"
+		const baseClasses = "block w-full text-center py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg text-sm sm:text-base font-semibold transition-colors"
 
 		switch (plan.buttonStyle) {
 			case 'primary':
@@ -162,53 +162,53 @@ const FullPricingSection: React.FC<FullPricingSectionProps> = ({
 	}
 
 	return (
-		<div className={`py-16 ${className}`}>
+		<div className={`py-8 sm:py-12 md:py-16 ${className}`}>
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				{/* Header */}
-				<div className="text-center mb-16">
-					<h1 className="text-4xl font-bold text-gray-900 sm:text-5xl">
+				<div className="text-center mb-8 sm:mb-12 md:mb-16">
+					<h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900">
 						{title}
 					</h1>
-					<p className="mt-4 text-xl text-gray-600 max-w-3xl mx-auto">
+					<p className="mt-3 sm:mt-4 text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto px-2">
 						{subtitle}
 					</p>
 				</div>
 
 				{/* Pricing Tiers */}
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
 					{pricingPlans.map((plan, index) => (
 						<div
 							key={index}
-							className={`bg-white rounded-2xl p-8 border-2 flex flex-col h-full ${
+							className={`bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 border-2 flex flex-col h-full ${
 								plan.popular
-									? 'border-pink-500 relative transform scale-105 shadow-lg'
+									? 'border-pink-500 relative sm:transform sm:scale-105 shadow-lg'
 									: 'border-gray-100 hover:border-pink-200'
 							} transition-all duration-300`}
 						>
 							{plan.popular && (
-								<div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-									<span className="bg-pink-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+								<div className="absolute -top-3 sm:-top-4 left-1/2 transform -translate-x-1/2">
+									<span className="bg-pink-500 text-white px-3 sm:px-4 py-1 rounded-full text-xs sm:text-sm font-medium">
 										Más Popular
 									</span>
 								</div>
 							)}
-							<div className="text-center mb-8">
-								<h3 className="text-2xl font-bold text-gray-900">{plan.name}</h3>
-								<div className="mt-4">
-									<span className={`font-bold text-gray-900 ${plan.price.length > 8 ? 'text-3xl' : 'text-4xl'}`}>{plan.price}</span>
+							<div className="text-center mb-6 sm:mb-8">
+								<h3 className="text-xl sm:text-2xl font-bold text-gray-900">{plan.name}</h3>
+								<div className="mt-3 sm:mt-4">
+									<span className={`font-bold text-gray-900 ${plan.price.length > 8 ? 'text-2xl sm:text-3xl' : 'text-3xl sm:text-4xl'}`}>{plan.price}</span>
 									{plan.period && (
-										<span className="text-gray-500">{plan.period}</span>
+										<span className="text-sm sm:text-base text-gray-500">{plan.period}</span>
 									)}
 								</div>
-								<p className="mt-2 text-gray-600 break-words">{plan.description}</p>
+								<p className="mt-2 text-sm sm:text-base text-gray-600 break-words">{plan.description}</p>
 							</div>
-							<ul className="space-y-4 mb-8 flex-grow">
+							<ul className="space-y-3 sm:space-y-4 mb-6 sm:mb-8 flex-grow">
 								{plan.features.map((feature, featureIndex) => (
 									<li key={featureIndex} className="flex items-start">
-										<svg className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+										<svg className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mr-2 sm:mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
 											<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
 										</svg>
-										<span className="text-gray-700 break-words">{feature}</span>
+										<span className="text-sm sm:text-base text-gray-700 break-words">{feature}</span>
 									</li>
 								))}
 							</ul>
@@ -226,18 +226,18 @@ const FullPricingSection: React.FC<FullPricingSectionProps> = ({
 
 				{/* FAQ Section */}
 				{showFAQ && (
-					<div className="mt-20">
-						<h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+					<div className="mt-12 sm:mt-16 md:mt-20">
+						<h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-8 sm:mb-12 px-4">
 							Preguntas Frecuentes
 						</h2>
 						<div className="max-w-4xl mx-auto">
-							<div className="space-y-6">
+							<div className="space-y-4 sm:space-y-6">
 								{faqItems.map((item, index) => (
-									<div key={index} className="border-b border-gray-200 pb-6 last:border-b-0">
-										<h3 className="text-lg font-semibold text-gray-900 mb-3">
+									<div key={index} className="border-b border-gray-200 pb-4 sm:pb-6 last:border-b-0">
+										<h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3">
 											{item.question}
 										</h3>
-										<p className="text-gray-600 leading-relaxed">
+										<p className="text-sm sm:text-base text-gray-600 leading-relaxed">
 											{item.answer}
 										</p>
 									</div>

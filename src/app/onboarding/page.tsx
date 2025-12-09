@@ -32,7 +32,7 @@ const OnboardingPage = () => {
 					setLoading(false)
 				} catch (error) {
 					console.error('Error checking user preferences:', error)
-					setError('Failed to load user preferences')
+					setError('Error al cargar las preferencias del usuario')
 					setCheckingPreferences(false)
 					setLoading(false)
 				}
@@ -51,7 +51,7 @@ const OnboardingPage = () => {
 
 	const handleContinue = async () => {
 		if (!accountType) {
-			setError('Please select an account type.')
+			setError('Por favor selecciona un tipo de cuenta.')
 			return
 		}
 
@@ -110,7 +110,7 @@ const OnboardingPage = () => {
 			}
 		} else {
 			// Handle the case where the user is not authenticated
-			setError('You must be signed in to continue.')
+			setError('Debes iniciar sesión para continuar.')
 			setLoading(false)
 			router.push('/signin')
 		}
@@ -122,54 +122,56 @@ const OnboardingPage = () => {
 			<div className="flex items-center justify-center min-h-screen bg-gray-50">
 				<div className="text-center">
 					<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
-					<p className="mt-2 text-gray-600">Loading your preferences...</p>
+					<p className="mt-2 text-gray-600">Cargando tus preferencias...</p>
 				</div>
 			</div>
 		)
 	}
 
 	return (
-		<div className="flex items-center justify-center min-h-screen bg-gray-50">
-			<div className="w-full max-w-lg p-8 space-y-8 bg-white rounded-lg shadow-md">
-				<h2 className="text-2xl font-bold text-center">
-					Choose Your Account Type
+		<div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
+			<div className="w-full max-w-lg p-6 sm:p-8 space-y-6 sm:space-y-8 bg-white rounded-lg shadow-md">
+				<h2 className="text-xl sm:text-2xl font-bold text-center">
+					Elige tu Tipo de Cuenta
 				</h2>
-				<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+				<div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
 					<div
 						onClick={() => handleSelection('personal')}
-						className={`p-6 border rounded-lg cursor-pointer text-center ${
+						className={`p-4 sm:p-6 border rounded-lg cursor-pointer text-center transition-all ${
 							accountType === 'personal'
-								? 'border-blue-500 bg-blue-50'
-								: 'border-gray-300'
+								? 'border-pink-500 bg-pink-50 ring-2 ring-pink-500'
+								: 'border-gray-300 hover:border-pink-300'
 						}`}
 					>
-						<h3 className="text-lg font-semibold">Personal</h3>
-						<p className="text-sm text-gray-600">
-							Find jobs and build your career.
+						<div className="text-4xl mb-3">👤</div>
+						<h3 className="text-base sm:text-lg font-semibold text-gray-900">Personal</h3>
+						<p className="text-xs sm:text-sm text-gray-600 mt-2">
+							Encuentra empleos y construye tu carrera.
 						</p>
 					</div>
 					<div
 						onClick={() => handleSelection('enterprise')}
-						className={`p-6 border rounded-lg cursor-pointer text-center ${
+						className={`p-4 sm:p-6 border rounded-lg cursor-pointer text-center transition-all ${
 							accountType === 'enterprise'
-								? 'border-blue-500 bg-blue-50'
-								: 'border-gray-300'
+								? 'border-pink-500 bg-pink-50 ring-2 ring-pink-500'
+								: 'border-gray-300 hover:border-pink-300'
 						}`}
 					>
-						<h3 className="text-lg font-semibold">Enterprise</h3>
-						<p className="text-sm text-gray-600">
-							Hire talent and manage your company.
+						<div className="text-4xl mb-3">🏢</div>
+						<h3 className="text-base sm:text-lg font-semibold text-gray-900">Empresa</h3>
+						<p className="text-xs sm:text-sm text-gray-600 mt-2">
+							Contrata talento y gestiona tu empresa.
 						</p>
 					</div>
 				</div>
-				{error && <p className="text-sm text-red-600 text-center">{error}</p>}
+				{error && <p className="text-xs sm:text-sm text-red-600 text-center">{error}</p>}
 				<div>
 					<button
 						onClick={handleContinue}
 						disabled={!accountType || loading}
-						className="w-full px-4 py-2 text-white bg-pink-600 rounded-md hover:bg-pink-700 disabled:bg-gray-400"
+						className="w-full px-4 py-2.5 sm:py-3 text-sm sm:text-base text-white bg-pink-600 rounded-lg hover:bg-pink-700 disabled:bg-gray-400 disabled:cursor-not-allowed font-medium transition-colors"
 					>
-						{loading ? 'Saving...' : 'Continue'}
+						{loading ? 'Guardando...' : 'Continuar'}
 					</button>
 				</div>
 			</div>

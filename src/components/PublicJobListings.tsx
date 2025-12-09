@@ -80,13 +80,14 @@ const PublicJobListings: React.FC<PublicJobListingsProps> = ({ showTotalCount = 
 				key="prev"
 				onClick={() => handlePageChange(currentPage - 1)}
 				disabled={currentPage === 1}
-				className={`px-3 py-2 rounded-lg font-medium ${
+				className={`px-2 sm:px-3 py-2 rounded-lg font-medium text-sm sm:text-base ${
 					currentPage === 1
 						? 'bg-gray-100 text-gray-400 cursor-not-allowed'
 						: 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
 				}`}
 			>
-				Anterior
+				<span className="hidden sm:inline">Anterior</span>
+				<span className="sm:hidden">‹</span>
 			</button>
 		)
 
@@ -96,14 +97,14 @@ const PublicJobListings: React.FC<PublicJobListingsProps> = ({ showTotalCount = 
 				<button
 					key={1}
 					onClick={() => handlePageChange(1)}
-					className="px-4 py-2 rounded-lg font-medium bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
+					className="px-3 sm:px-4 py-2 rounded-lg font-medium text-sm sm:text-base bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
 				>
 					1
 				</button>
 			)
 			if (startPage > 2) {
 				pages.push(
-					<span key="ellipsis1" className="px-2 text-gray-500">
+					<span key="ellipsis1" className="px-1 sm:px-2 text-gray-500 text-sm">
 						...
 					</span>
 				)
@@ -116,7 +117,7 @@ const PublicJobListings: React.FC<PublicJobListingsProps> = ({ showTotalCount = 
 				<button
 					key={i}
 					onClick={() => handlePageChange(i)}
-					className={`px-4 py-2 rounded-lg font-medium ${
+					className={`px-3 sm:px-4 py-2 rounded-lg font-medium text-sm sm:text-base ${
 						currentPage === i
 							? 'bg-pink-600 text-white'
 							: 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
@@ -131,7 +132,7 @@ const PublicJobListings: React.FC<PublicJobListingsProps> = ({ showTotalCount = 
 		if (endPage < totalPages) {
 			if (endPage < totalPages - 1) {
 				pages.push(
-					<span key="ellipsis2" className="px-2 text-gray-500">
+					<span key="ellipsis2" className="px-1 sm:px-2 text-gray-500 text-sm">
 						...
 					</span>
 				)
@@ -140,7 +141,7 @@ const PublicJobListings: React.FC<PublicJobListingsProps> = ({ showTotalCount = 
 				<button
 					key={totalPages}
 					onClick={() => handlePageChange(totalPages)}
-					className="px-4 py-2 rounded-lg font-medium bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
+					className="px-3 sm:px-4 py-2 rounded-lg font-medium text-sm sm:text-base bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
 				>
 					{totalPages}
 				</button>
@@ -153,18 +154,19 @@ const PublicJobListings: React.FC<PublicJobListingsProps> = ({ showTotalCount = 
 				key="next"
 				onClick={() => handlePageChange(currentPage + 1)}
 				disabled={currentPage === totalPages}
-				className={`px-3 py-2 rounded-lg font-medium ${
+				className={`px-2 sm:px-3 py-2 rounded-lg font-medium text-sm sm:text-base ${
 					currentPage === totalPages
 						? 'bg-gray-100 text-gray-400 cursor-not-allowed'
 						: 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
 				}`}
 			>
-				Siguiente
+				<span className="hidden sm:inline">Siguiente</span>
+				<span className="sm:hidden">›</span>
 			</button>
 		)
 
 		return (
-			<div className="flex items-center justify-center gap-2 mt-8">
+			<div className="flex items-center justify-center gap-1 sm:gap-2 mt-6 sm:mt-8 flex-wrap">
 				{pages}
 			</div>
 		)
@@ -201,45 +203,45 @@ const PublicJobListings: React.FC<PublicJobListingsProps> = ({ showTotalCount = 
 		<div>
 			{/* Total Count Highlight */}
 			{showTotalCount && allJobs.length > 0 && (
-				<div className="mb-8 text-center">
-					<div className="inline-flex items-center gap-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white px-8 py-4 rounded-2xl shadow-lg">
-						<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<div className="mb-6 sm:mb-8 text-center">
+					<div className="inline-flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white px-4 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl shadow-lg">
+						<svg className="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
 						</svg>
 						<div className="text-left">
-							<div className="text-3xl font-bold">{allJobs.length}</div>
-							<div className="text-sm font-medium opacity-90">Posiciones Abiertas</div>
+							<div className="text-2xl sm:text-3xl font-bold">{allJobs.length}</div>
+							<div className="text-xs sm:text-sm font-medium opacity-90">Posiciones Abiertas</div>
 						</div>
 					</div>
 				</div>
 			)}
 
 			{/* Jobs List */}
-			<div className="space-y-3">
+			<div className="space-y-3 sm:space-y-4">
 				{currentJobs.map(job => (
 					<div
 						key={job.jobId}
-						className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-pink-300 transition-all duration-200"
+						className="bg-white p-4 sm:p-5 rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-pink-300 transition-all duration-200"
 					>
-						<div className="flex justify-between items-center gap-4">
+						<div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 sm:gap-4">
 							<div className="flex-1 min-w-0">
-								<div className="flex items-start gap-3 mb-2">
+								<div className="flex items-start justify-between gap-2 sm:gap-3 mb-2">
 									<div className="flex-1 min-w-0">
-										<h3 className="text-lg font-semibold text-gray-900 truncate">
+										<h3 className="text-base sm:text-lg font-semibold text-gray-900 break-words">
 											{job.jobTitle}
 										</h3>
-										<div className="flex items-center gap-2 text-sm mt-1">
+										<div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-sm mt-1">
 											<span className="text-gray-600 font-medium">
 												{job.companyName || 'Empresa'}
 											</span>
-											<span className="text-gray-400">•</span>
-											<span className="text-gray-500 text-sm">
+											<span className="hidden sm:inline text-gray-400">•</span>
+											<span className="text-gray-500 text-xs sm:text-sm">
 												{job.location || 'Ubicación no especificada'}
 											</span>
 										</div>
 									</div>
 									{job.postedDate && (
-										<span className="text-xs text-gray-500 whitespace-nowrap">
+										<span className="text-xs text-gray-500 whitespace-nowrap flex-shrink-0">
 											{new Date(job.postedDate).toLocaleDateString('es-MX', {
 												month: 'short',
 												day: 'numeric'
@@ -248,7 +250,7 @@ const PublicJobListings: React.FC<PublicJobListingsProps> = ({ showTotalCount = 
 									)}
 								</div>
 
-								<div className="flex items-center gap-2 flex-wrap">
+								<div className="flex items-center gap-2 flex-wrap mb-3 sm:mb-0">
 									{job.jobType && (
 										<span className="inline-block px-2 py-0.5 text-xs font-medium bg-pink-100 text-pink-800 rounded-full">
 											{job.jobType === 'full-time' && 'Tiempo Completo'}
@@ -259,19 +261,20 @@ const PublicJobListings: React.FC<PublicJobListingsProps> = ({ showTotalCount = 
 										</span>
 									)}
 									{job.salaryMin && job.salaryMax && !job.isSalaryHidden && (
-										<span className="text-xs text-green-600 font-medium">
+										<span className="text-xs sm:text-sm text-green-600 font-medium">
 											${job.salaryMin.toLocaleString()} - ${job.salaryMax.toLocaleString()}
 										</span>
 									)}
 								</div>
 							</div>
 
-							<div className="flex-shrink-0">
+							<div className="flex-shrink-0 sm:self-start">
 								<Link
 									href="/signin"
-									className="inline-block px-5 py-2 bg-pink-600 text-white text-sm font-semibold rounded-lg hover:bg-pink-700 transition-colors whitespace-nowrap"
+									className="inline-block w-full sm:w-auto text-center px-4 sm:px-5 py-2.5 sm:py-2 bg-pink-600 text-white text-xs sm:text-sm font-semibold rounded-lg hover:bg-pink-700 transition-colors"
 								>
-									Inicia sesión para aplicar
+									<span className="sm:hidden">Aplicar</span>
+									<span className="hidden sm:inline">Inicia sesión para aplicar</span>
 								</Link>
 							</div>
 						</div>
@@ -284,7 +287,7 @@ const PublicJobListings: React.FC<PublicJobListingsProps> = ({ showTotalCount = 
 
 			{/* Results Info */}
 			{allJobs.length > 0 && (
-				<div className="text-center mt-6 text-sm text-gray-600">
+				<div className="text-center mt-4 sm:mt-6 text-xs sm:text-sm text-gray-600">
 					Mostrando {startIndex + 1}-{Math.min(endIndex, allJobs.length)} de {allJobs.length} empleos
 				</div>
 			)}

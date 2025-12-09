@@ -7,10 +7,10 @@ import { doc, updateDoc, getDoc } from 'firebase/firestore'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 
 const steps = [
-	'Welcome',
-	'Company Details',
-	'Fiscal Information',
-	'Upload Logo',
+	'Bienvenida',
+	'Detalles de la Empresa',
+	'Información Fiscal',
+	'Cargar Logo',
 ]
 
 const CompanySetupPage = () => {
@@ -121,108 +121,139 @@ const CompanySetupPage = () => {
 			<div className="flex items-center justify-center min-h-screen bg-gray-50">
 				<div className="text-center">
 					<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
-					<p className="mt-2 text-gray-600">Loading...</p>
+					<p className="mt-2 text-gray-600">Cargando...</p>
 				</div>
 			</div>
 		)
 	}
 
 	return (
-		<div className="min-h-screen flex items-center justify-center bg-gray-50 p-8">
-			<div className="w-full max-w-2xl bg-white p-8 rounded-lg shadow-md">
-				<h2 className="text-2xl font-bold mb-2 text-center">
-					Company Account Setup
+		<div className="min-h-screen flex items-center justify-center bg-gray-50 p-4 sm:p-8">
+			<div className="w-full max-w-2xl bg-white p-6 sm:p-8 rounded-lg shadow-md">
+				<h2 className="text-xl sm:text-2xl font-bold mb-2 text-center">
+					Configuración de Cuenta Empresarial
 				</h2>
-				<p className="text-center text-gray-500 mb-8">{`Step ${
+				<p className="text-center text-sm sm:text-base text-gray-500 mb-6 sm:mb-8">{`Paso ${
 					currentStep + 1
-				} of ${steps.length}: ${steps[currentStep]}`}</p>
+				} de ${steps.length}: ${steps[currentStep]}`}</p>
 
 				{/* Step Content */}
 				<div className="space-y-4">
 					{currentStep === 0 && (
-						<div className="text-center">
-							<h3 className="text-xl font-semibold">
-								Welcome to the HR Portal!
+						<div className="text-center py-4">
+							<div className="text-5xl sm:text-6xl mb-4">🏢</div>
+							<h3 className="text-lg sm:text-xl font-semibold">
+								¡Bienvenido a Meserea!
 							</h3>
-							<p className="mt-2 text-gray-600">
-								Let's get your company set up. This will only take a couple of
-								minutes.
+							<p className="mt-2 text-sm sm:text-base text-gray-600">
+								Configuremos tu empresa. Esto solo tomará un par de minutos.
 							</p>
 						</div>
 					)}
 					{currentStep === 1 && (
 						<>
-							<input
-								type="text"
-								placeholder="Company Name"
-								value={companyData.companyName}
-								onChange={(e) => setCompanyData({ ...companyData, companyName: e.target.value })}
-								className="w-full px-3 py-2 border rounded-md"
-							/>
-							<input
-								type="text"
-								placeholder="Industry (e.g., Technology)"
-								value={companyData.industry}
-								onChange={(e) => setCompanyData({ ...companyData, industry: e.target.value })}
-								className="w-full px-3 py-2 border rounded-md"
-							/>
-							<input
-								type="url"
-								placeholder="Website URL"
-								value={companyData.websiteUrl}
-								onChange={(e) => setCompanyData({ ...companyData, websiteUrl: e.target.value })}
-								className="w-full px-3 py-2 border rounded-md"
-							/>
+							<div>
+								<label className="block text-sm font-medium text-gray-700 mb-2">
+									Nombre de la Empresa *
+								</label>
+								<input
+									type="text"
+									placeholder="ej., Restaurante La Hacienda"
+									value={companyData.companyName}
+									onChange={(e) => setCompanyData({ ...companyData, companyName: e.target.value })}
+									className="w-full px-3 py-2.5 sm:py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+								/>
+							</div>
+							<div>
+								<label className="block text-sm font-medium text-gray-700 mb-2">
+									Industria *
+								</label>
+								<input
+									type="text"
+									placeholder="ej., Restaurante, Hotel, Café"
+									value={companyData.industry}
+									onChange={(e) => setCompanyData({ ...companyData, industry: e.target.value })}
+									className="w-full px-3 py-2.5 sm:py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+								/>
+							</div>
+							<div>
+								<label className="block text-sm font-medium text-gray-700 mb-2">
+									Sitio Web (Opcional)
+								</label>
+								<input
+									type="url"
+									placeholder="https://tu-restaurante.com"
+									value={companyData.websiteUrl}
+									onChange={(e) => setCompanyData({ ...companyData, websiteUrl: e.target.value })}
+									className="w-full px-3 py-2.5 sm:py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+								/>
+							</div>
 						</>
 					)}
 					{currentStep === 2 && (
 						<>
-							<input
-								type="text"
-								placeholder="Razón Social (Legal Name)"
-								value={companyData.razonSocial}
-								onChange={(e) => setCompanyData({ ...companyData, razonSocial: e.target.value })}
-								className="w-full px-3 py-2 border rounded-md"
-							/>
-							<input
-								type="text"
-								placeholder="RFC (Tax ID)"
-								value={companyData.rfc}
-								onChange={(e) => setCompanyData({ ...companyData, rfc: e.target.value })}
-								className="w-full px-3 py-2 border rounded-md"
-							/>
+							<div>
+								<label className="block text-sm font-medium text-gray-700 mb-2">
+									Razón Social *
+								</label>
+								<input
+									type="text"
+									placeholder="Nombre legal de la empresa"
+									value={companyData.razonSocial}
+									onChange={(e) => setCompanyData({ ...companyData, razonSocial: e.target.value })}
+									className="w-full px-3 py-2.5 sm:py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+								/>
+							</div>
+							<div>
+								<label className="block text-sm font-medium text-gray-700 mb-2">
+									RFC (Identificación Fiscal)
+								</label>
+								<input
+									type="text"
+									placeholder="RFC de la empresa"
+									value={companyData.rfc}
+									onChange={(e) => setCompanyData({ ...companyData, rfc: e.target.value })}
+									className="w-full px-3 py-2.5 sm:py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+								/>
+							</div>
 						</>
 					)}
 					{currentStep === 3 && (
 						<div>
 							<label className="block text-sm font-medium text-gray-700 mb-2">
-								Upload Company Logo
+								Cargar Logo de la Empresa (Opcional)
 							</label>
 							<input
 								type="file"
+								accept="image/*"
 								onChange={handleFileChange}
-								className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+								className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100"
 							/>
+							{companyData.logo && (
+								<p className="mt-2 text-xs sm:text-sm text-gray-600">
+									Archivo seleccionado: {(companyData.logo as any).name}
+								</p>
+							)}
 						</div>
 					)}
 				</div>
 
 				{/* Navigation */}
-				<div className="flex justify-between mt-8">
+				<div className="flex justify-between mt-6 sm:mt-8 gap-3">
 					{currentStep > 0 && (
 						<button
 							onClick={handleBack}
-							className="px-6 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
+							className="px-4 sm:px-6 py-2 text-sm sm:text-base text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
 						>
-							Back
+							Atrás
 						</button>
 					)}
 					<div className="flex-grow"></div>
 					<button
 						onClick={handleNext}
-						className="px-6 py-2 text-white bg-pink-600 rounded-md hover:bg-pink-700"
+						className="px-4 sm:px-6 py-2 text-sm sm:text-base text-white bg-pink-600 rounded-md hover:bg-pink-700 transition-colors font-medium"
 					>
-						{currentStep === steps.length - 1 ? 'Finish Setup' : 'Next'}
+						{currentStep === steps.length - 1 ? 'Finalizar Configuración' : 'Siguiente'}
 					</button>
 				</div>
 			</div>

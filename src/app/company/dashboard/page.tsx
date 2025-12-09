@@ -11,81 +11,16 @@ import {
 	YAxis,
 	Tooltip,
 	ResponsiveContainer,
-	PieChart,
-	Pie,
-	Cell,
 	LineChart,
 	Line,
 	CartesianGrid,
 } from 'recharts'
-
-const COLORS = ['#f97316', '#ef4444'] // Orange theme colors
-
-const RADIAN = Math.PI / 180
-const renderCustomizedLabel = ({
-	cx,
-	cy,
-	midAngle,
-	innerRadius,
-	outerRadius,
-	percent,
-}: any) => {
-	const radius = innerRadius + (outerRadius - innerRadius) * 0.5
-	const x = cx + radius * Math.cos(-midAngle * RADIAN)
-	const y = cy + radius * Math.sin(-midAngle * RADIAN)
-
-	return (
-		<text
-			x={x}
-			y={y}
-			fill="white"
-			textAnchor={x > cx ? 'start' : 'end'}
-			dominantBaseline="central"
-		>
-			{`${(percent * 100).toFixed(0)}%`}
-		</text>
-	)
-}
 
 const CompanyDashboard = () => {
 	const [user, loading] = useAuthState(auth)
 	const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null)
 	const [isLoading, setIsLoading] = useState(true)
 	const [error, setError] = useState<string | null>(null)
-
-	// Mock demographic data - in a real app, this would come from candidate profiles
-	const demographicData = {
-		gender: [
-			{ name: 'Masculino', value: 48, count: 24 },
-			{ name: 'Femenino', value: 52, count: 26 }
-		],
-		age: [
-			{ name: '18-22', value: 8, count: 4 },
-			{ name: '23-27', value: 24, count: 12 },
-			{ name: '28-32', value: 32, count: 16 },
-			{ name: '33-37', value: 20, count: 10 },
-			{ name: '38-42', value: 12, count: 6 },
-			{ name: '43+', value: 4, count: 2 }
-		],
-		education: [
-			{ name: 'Preparatoria', value: 12, count: 6 },
-			{ name: 'Licenciatura', value: 56, count: 28 },
-			{ name: 'Maestría', value: 28, count: 14 },
-			{ name: 'Doctorado', value: 4, count: 2 }
-		],
-		experience: [
-			{ name: '0-2 años', value: 20, count: 10 },
-			{ name: '3-5 años', value: 36, count: 18 },
-			{ name: '6-10 años', value: 32, count: 16 },
-			{ name: '10+ años', value: 12, count: 6 }
-		],
-		location: [
-			{ name: 'Ciudad de México', value: 40, count: 20 },
-			{ name: 'Guadalajara', value: 24, count: 12 },
-			{ name: 'Monterrey', value: 20, count: 10 },
-			{ name: 'Remoto', value: 16, count: 8 }
-		]
-	}
 
 	useEffect(() => {
 		const fetchAnalytics = async () => {
@@ -220,131 +155,48 @@ const CompanyDashboard = () => {
 					<h2 className="text-xl font-semibold mb-4 text-foreground">
 						Total de Aplicaciones en el Tiempo
 					</h2>
-					<ResponsiveContainer width="100%" height={300}>
-						<LineChart data={analyticsData.applicantsTimeSeriesData}>
-							<CartesianGrid strokeDasharray="3 3" />
-							<XAxis dataKey="name" />
-							<YAxis />
-							<Tooltip />
-							<Line
-								type="monotone"
-								dataKey="applicants"
-								stroke="#f97316"
-								strokeWidth={3}
-								dot={{ fill: '#f97316', strokeWidth: 2, r: 4 }}
-								activeDot={{ r: 6, stroke: '#f97316', strokeWidth: 2 }}
-							/>
-						</LineChart>
-					</ResponsiveContainer>
+					{analyticsData.applicantsTimeSeriesData.length > 0 ? (
+						<ResponsiveContainer width="100%" height={300}>
+							<LineChart data={analyticsData.applicantsTimeSeriesData}>
+								<CartesianGrid strokeDasharray="3 3" />
+								<XAxis dataKey="name" />
+								<YAxis />
+								<Tooltip />
+								<Line
+									type="monotone"
+									dataKey="applicants"
+									stroke="#f97316"
+									strokeWidth={3}
+									dot={{ fill: '#f97316', strokeWidth: 2, r: 4 }}
+									activeDot={{ r: 6, stroke: '#f97316', strokeWidth: 2 }}
+								/>
+							</LineChart>
+						</ResponsiveContainer>
+					) : (
+						<div className="flex items-center justify-center h-[300px]">
+							<div className="text-center">
+								<div className="text-6xl mb-4">📊</div>
+								<p className="text-muted-foreground text-sm">
+									Sin datos aún. Las aplicaciones aparecerán aquí cuando comiences a recibir candidatos.
+								</p>
+							</div>
+						</div>
+					)}
 				</div>
 
-				{/* Gender Demographics */}
-				<div className="bg-card p-6 rounded-xl shadow-sm">
-					<h3 className="text-xl font-semibold mb-4 text-foreground">Género</h3>
-					<ResponsiveContainer width="100%" height={300}>
-						<PieChart>
-							<Pie
-								data={demographicData.gender}
-								cx="50%"
-								cy="50%"
-								labelLine={false}
-								label={renderCustomizedLabel}
-								outerRadius={100}
-								fill="#f97316"
-								dataKey="value"
-							>
-								{demographicData.gender.map((entry, index) => (
-									<Cell
-										key={`cell-${index}`}
-										fill={COLORS[index % COLORS.length]}
-									/>
-								))}
-							</Pie>
-							<Tooltip formatter={(value, name, props) => [`${value}%`, name]} />
-						</PieChart>
-					</ResponsiveContainer>
-					<div className="mt-4 text-center text-sm text-muted-foreground">
-						Total de candidatos: {demographicData.gender.reduce((sum, item) => sum + item.count, 0)}
-					</div>
-				</div>
-
-				{/* Age Demographics */}
-				<div className="bg-card p-6 rounded-xl shadow-sm">
-					<h3 className="text-xl font-semibold mb-4 text-foreground">Edad</h3>
-					<ResponsiveContainer width="100%" height={300}>
-						<BarChart data={demographicData.age}>
-							<XAxis dataKey="name" />
-							<YAxis />
-							<Tooltip formatter={(value, name, props) => [`${value}%`, name]} />
-							<Bar dataKey="value" fill="#f97316" />
-						</BarChart>
-					</ResponsiveContainer>
-					<div className="mt-4 text-center text-sm text-muted-foreground">
-						Total de candidatos: {demographicData.age.reduce((sum, item) => sum + item.count, 0)}
-					</div>
-				</div>
-
-				{/* Education Demographics */}
-				<div className="bg-card p-6 rounded-xl shadow-sm">
-					<h3 className="text-xl font-semibold mb-4 text-foreground">Educación</h3>
-					<ResponsiveContainer width="100%" height={300}>
-						<BarChart data={demographicData.education}>
-							<XAxis dataKey="name" />
-							<YAxis />
-							<Tooltip formatter={(value, name, props) => [`${value}%`, name]} />
-							<Bar dataKey="value" fill="#f97316" />
-						</BarChart>
-					</ResponsiveContainer>
-					<div className="mt-4 text-center text-sm text-muted-foreground">
-						Total de candidatos: {demographicData.education.reduce((sum, item) => sum + item.count, 0)}
-					</div>
-				</div>
-
-				{/* Experience Demographics */}
-				<div className="bg-card p-6 rounded-xl shadow-sm">
-					<h3 className="text-xl font-semibold mb-4 text-foreground">Experiencia</h3>
-					<ResponsiveContainer width="100%" height={300}>
-						<BarChart data={demographicData.experience}>
-							<XAxis dataKey="name" />
-							<YAxis />
-							<Tooltip formatter={(value, name, props) => [`${value}%`, name]} />
-							<Bar dataKey="value" fill="#f97316" />
-						</BarChart>
-					</ResponsiveContainer>
-					<div className="mt-4 text-center text-sm text-muted-foreground">
-						Total de candidatos: {demographicData.experience.reduce((sum, item) => sum + item.count, 0)}
-					</div>
-				</div>
-
-				{/* Location Demographics */}
-				<div className="bg-card p-6 rounded-xl shadow-sm">
-					<h3 className="text-xl font-semibold mb-4 text-foreground">Ubicación</h3>
-					<ResponsiveContainer width="100%" height={300}>
-						<BarChart data={demographicData.location}>
-							<XAxis dataKey="name" />
-							<YAxis />
-							<Tooltip formatter={(value, name, props) => [`${value}%`, name]} />
-							<Bar dataKey="value" fill="#f97316" />
-						</BarChart>
-					</ResponsiveContainer>
-					<div className="mt-4 text-center text-sm text-muted-foreground">
-						Total de candidatos: {demographicData.location.reduce((sum, item) => sum + item.count, 0)}
-					</div>
-				</div>
-
-				{/* AI Interviews */}
+				{/* Recruitment Progress */}
 				<div className="bg-card p-6 rounded-xl shadow-sm">
 					<h2 className="text-xl font-semibold mb-4 text-foreground">
-						Entrevistas con IA
+						Progreso de Reclutamiento
 					</h2>
 					<div className="flex items-center justify-center h-[300px]">
 						<div className="text-center">
 							<div className="text-6xl mb-4">
-								🤖
+								🎯
 							</div>
-							<h3 className="text-lg font-medium text-foreground mb-2">Entrevistas con IA</h3>
-							<p className="text-muted-foreground text-sm">
-								Análisis de entrevistas impulsado por IA próximamente
+							<h3 className="text-lg font-medium text-foreground mb-2">Comienza a Reclutar</h3>
+							<p className="text-muted-foreground text-sm max-w-md">
+								Publica tu primera vacante para comenzar a recibir aplicaciones y ver análisis detallados de tus candidatos.
 							</p>
 						</div>
 					</div>

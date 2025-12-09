@@ -252,15 +252,15 @@ const NewJobPostingPage = () => {
 	}
 
 	return (
-		<div className="min-h-screen bg-gray-50 p-8">
-			<div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
-				<h1 className="text-3xl font-bold mb-6">Crear Nueva Publicación de Empleo</h1>
+		<div className="min-h-screen bg-gray-50 p-3 sm:p-6 md:p-8">
+			<div className="max-w-4xl mx-auto bg-white p-4 sm:p-6 md:p-8 rounded-lg shadow-md">
+				<h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">Crear Nueva Publicación de Empleo</h1>
 
-				<div className="space-y-8">
+				<div className="space-y-6 sm:space-y-8">
 					{/* Basic Information */}
-					<div className="bg-gray-50 p-6 rounded-lg">
-						<h2 className="text-xl font-semibold mb-4">Información Básica</h2>
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+					<div className="bg-gray-50 p-4 sm:p-6 rounded-lg">
+						<h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Información Básica</h2>
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
 							<div>
 								<label htmlFor="jobTitle" className="block text-sm font-medium text-gray-700 mb-2">
 									Título del Empleo *
@@ -271,8 +271,8 @@ const NewJobPostingPage = () => {
 							value={jobTitle}
 							onChange={e => setJobTitle(e.target.value)}
 							required
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-									placeholder="ej., Mesero/a, Chef de Cocina, Bartender"
+									className="w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+									placeholder="ej., Mesero/a, Chef de Cocina"
 						/>
 					</div>
 							<div>
@@ -283,7 +283,7 @@ const NewJobPostingPage = () => {
 									id="jobCategory"
 									value={jobCategory}
 									onChange={e => setJobCategory(e.target.value as JobCategory)}
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+									className="w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 								>
 									{JOB_CATEGORY_OPTIONS.map(option => (
 										<option key={option.value} value={option.value}>
@@ -293,7 +293,7 @@ const NewJobPostingPage = () => {
 								</select>
 							</div>
 						</div>
-						<div className="mt-6">
+						<div className="mt-4 sm:mt-6">
 							<label htmlFor="jobDescription" className="block text-sm font-medium text-gray-700 mb-2">
 								Descripción del Empleo *
 						</label>
@@ -303,16 +303,16 @@ const NewJobPostingPage = () => {
 							onChange={e => setJobDescription(e.target.value)}
 							required
 								rows={6}
-								className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-								placeholder="Describe el puesto, horarios, turnos, responsabilidades del día a día en el restaurante/hotel y qué hace especial esta oportunidad..."
+								className="w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+								placeholder="Describe el puesto, horarios, turnos, responsabilidades..."
 							/>
 						</div>
 					</div>
 
 					{/* Phase 1: Essential Fields */}
-					<div className="bg-blue-50 p-6 rounded-lg">
-						<h2 className="text-xl font-semibold mb-4">Detalles del Empleo</h2>
-						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+					<div className="bg-blue-50 p-4 sm:p-6 rounded-lg">
+						<h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Detalles del Empleo</h2>
+						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
 							<div>
 								<label htmlFor="jobType" className="block text-sm font-medium text-gray-700 mb-2">
 									Tipo de Empleo *
@@ -321,7 +321,7 @@ const NewJobPostingPage = () => {
 									id="jobType"
 									value={jobType}
 									onChange={e => setJobType(e.target.value as JobType)}
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+									className="w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 								>
 									{JOB_TYPE_OPTIONS.map(option => (
 										<option key={option.value} value={option.value}>
@@ -338,7 +338,7 @@ const NewJobPostingPage = () => {
 									id="employmentType"
 									value={employmentType}
 									onChange={e => setEmploymentType(e.target.value as EmploymentType)}
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+									className="w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 								>
 									{EMPLOYMENT_TYPE_OPTIONS.map(option => (
 										<option key={option.value} value={option.value}>
@@ -355,7 +355,7 @@ const NewJobPostingPage = () => {
 									id="jobLevel"
 									value={jobLevel}
 									onChange={e => setJobLevel(e.target.value as JobLevel)}
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+									className="w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 								>
 									{JOB_LEVEL_OPTIONS.map(option => (
 										<option key={option.value} value={option.value}>
@@ -365,7 +365,7 @@ const NewJobPostingPage = () => {
 								</select>
 							</div>
 						</div>
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-6">
 							<div>
 								<label htmlFor="yearsOfExperience" className="block text-sm font-medium text-gray-700 mb-2">
 									Años de Experiencia *
@@ -374,7 +374,7 @@ const NewJobPostingPage = () => {
 									id="yearsOfExperience"
 									value={yearsOfExperience}
 									onChange={e => setYearsOfExperience(e.target.value as ExperienceLevel)}
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+									className="w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 								>
 									{EXPERIENCE_LEVEL_OPTIONS.map(option => (
 										<option key={option.value} value={option.value}>
@@ -405,10 +405,10 @@ const NewJobPostingPage = () => {
 					</div>
 
 					{/* Salary Information */}
-					<div className="bg-green-50 p-6 rounded-lg">
-						<h2 className="text-xl font-semibold mb-4">Información Salarial</h2>
-						<div className="space-y-6">
-							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+					<div className="bg-green-50 p-4 sm:p-6 rounded-lg">
+						<h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Información Salarial</h2>
+						<div className="space-y-4 sm:space-y-6">
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
 								<div>
 									<label htmlFor="salaryMin" className="block text-sm font-medium text-gray-700 mb-2">
 										Salario Mínimo (MXN) *
@@ -420,7 +420,7 @@ const NewJobPostingPage = () => {
 											type="number"
 											value={salaryMin}
 											onChange={e => setSalaryMin(e.target.value)}
-											className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+											className="w-full pl-7 pr-3 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-transparent"
 											placeholder="25000"
 											min="0"
 											step="1000"
@@ -438,7 +438,7 @@ const NewJobPostingPage = () => {
 											type="number"
 											value={salaryMax}
 											onChange={e => setSalaryMax(e.target.value)}
-											className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+											className="w-full pl-7 pr-3 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-transparent"
 											placeholder="50000"
 											min="0"
 											step="1000"
@@ -449,15 +449,15 @@ const NewJobPostingPage = () => {
 
 							{/* Quick Salary Presets */}
 							<div>
-								<div className="text-sm text-gray-600 mb-3">Configuraciones rápidas:</div>
-								<div className="flex flex-wrap gap-2">
+								<div className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3">Configuraciones rápidas:</div>
+								<div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
 									<button
 										type="button"
 										onClick={() => {
 											setSalaryMin('15000')
 											setSalaryMax('25000')
 										}}
-										className="px-3 py-1.5 text-sm bg-white border border-gray-300 hover:bg-gray-50 rounded-md transition-colors"
+										className="px-2 sm:px-3 py-1.5 text-xs sm:text-sm bg-white border border-gray-300 hover:bg-gray-50 rounded-md transition-colors"
 									>
 										$15k - $25k
 									</button>
@@ -467,7 +467,7 @@ const NewJobPostingPage = () => {
 											setSalaryMin('25000')
 											setSalaryMax('40000')
 										}}
-										className="px-3 py-1.5 text-sm bg-white border border-gray-300 hover:bg-gray-50 rounded-md transition-colors"
+										className="px-2 sm:px-3 py-1.5 text-xs sm:text-sm bg-white border border-gray-300 hover:bg-gray-50 rounded-md transition-colors"
 									>
 										$25k - $40k
 									</button>
@@ -477,7 +477,7 @@ const NewJobPostingPage = () => {
 											setSalaryMin('40000')
 											setSalaryMax('60000')
 										}}
-										className="px-3 py-1.5 text-sm bg-white border border-gray-300 hover:bg-gray-50 rounded-md transition-colors"
+										className="px-2 sm:px-3 py-1.5 text-xs sm:text-sm bg-white border border-gray-300 hover:bg-gray-50 rounded-md transition-colors"
 									>
 										$40k - $60k
 									</button>
@@ -487,7 +487,7 @@ const NewJobPostingPage = () => {
 											setSalaryMin('60000')
 											setSalaryMax('100000')
 										}}
-										className="px-3 py-1.5 text-sm bg-white border border-gray-300 hover:bg-gray-50 rounded-md transition-colors"
+										className="px-2 sm:px-3 py-1.5 text-xs sm:text-sm bg-white border border-gray-300 hover:bg-gray-50 rounded-md transition-colors"
 									>
 										$60k - $100k
 									</button>
@@ -497,7 +497,7 @@ const NewJobPostingPage = () => {
 											setSalaryMin('100000')
 											setSalaryMax('200000')
 										}}
-										className="px-3 py-1.5 text-sm bg-white border border-gray-300 hover:bg-gray-50 rounded-md transition-colors"
+										className="px-2 sm:px-3 py-1.5 text-xs sm:text-sm bg-white border border-gray-300 hover:bg-gray-50 rounded-md transition-colors"
 									>
 										$100k+
 									</button>
@@ -519,8 +519,8 @@ const NewJobPostingPage = () => {
 					</div>
 
 					{/* Phase 2: Additional Requirements */}
-					<div className="bg-yellow-50 p-6 rounded-lg">
-						<h2 className="text-xl font-semibold mb-4">Requisitos y Habilidades</h2>
+					<div className="bg-yellow-50 p-4 sm:p-6 rounded-lg">
+						<h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Requisitos y Habilidades</h2>
 
 						{/* Education Level */}
 						<div className="mb-6">
@@ -542,11 +542,11 @@ const NewJobPostingPage = () => {
 						</div>
 
 						{/* Required Skills */}
-						<div className="mb-6">
-							<label className="block text-sm font-medium text-gray-700 mb-3">
+						<div className="mb-4 sm:mb-6">
+							<label className="block text-sm font-medium text-gray-700 mb-2 sm:mb-3">
 								Habilidades Requeridas
 							</label>
-							<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-4">
+							<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 mb-3 sm:mb-4">
 								{HOSPITALITY_SKILLS.map(skill => (
 									<label key={skill} className="flex items-center space-x-2 text-sm">
 										<input
@@ -565,13 +565,13 @@ const NewJobPostingPage = () => {
 									</label>
 								))}
 							</div>
-							<div className="flex gap-2">
+							<div className="flex flex-col sm:flex-row gap-2">
 								<input
 									type="text"
 									value={customRequiredSkill}
 									onChange={e => setCustomRequiredSkill(e.target.value)}
 									placeholder="Agregar habilidad personalizada"
-									className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm"
+									className="flex-1 px-3 py-2.5 sm:py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm"
 									onKeyPress={(e) => {
 										if (e.key === 'Enter' && customRequiredSkill.trim()) {
 											e.preventDefault()
@@ -590,7 +590,7 @@ const NewJobPostingPage = () => {
 											setCustomRequiredSkill('')
 										}
 									}}
-									className="px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition-colors text-sm font-medium"
+									className="px-4 py-2.5 sm:py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition-colors text-sm font-medium whitespace-nowrap"
 								>
 									Agregar
 								</button>
@@ -693,9 +693,9 @@ const NewJobPostingPage = () => {
 					</div>
 
 					{/* Phase 3: Advanced Features */}
-					<div className="bg-indigo-50 p-6 rounded-lg">
-						<h2 className="text-xl font-semibold mb-4">Información del Proceso</h2>
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+					<div className="bg-indigo-50 p-4 sm:p-6 rounded-lg">
+						<h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Información del Proceso</h2>
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
 							<div>
 								<label htmlFor="urgencyLevel" className="block text-sm font-medium text-gray-700 mb-2">
 									Nivel de Urgencia
@@ -704,7 +704,7 @@ const NewJobPostingPage = () => {
 									id="urgencyLevel"
 									value={urgencyLevel}
 									onChange={e => setUrgencyLevel(e.target.value as UrgencyLevel)}
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+									className="w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 								>
 									{URGENCY_LEVEL_OPTIONS.map(option => (
 										<option key={option.value} value={option.value}>
@@ -721,7 +721,7 @@ const NewJobPostingPage = () => {
 									id="startDate"
 									value={startDate}
 									onChange={e => setStartDate(e.target.value as StartDate)}
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+									className="w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 								>
 									{START_DATE_OPTIONS.map(option => (
 										<option key={option.value} value={option.value}>
@@ -740,7 +740,7 @@ const NewJobPostingPage = () => {
 									type="date"
 									value={applicationDeadline}
 									onChange={e => setApplicationDeadline(e.target.value)}
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+									className="w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 								/>
 						</div>
 					</div>
@@ -757,7 +757,7 @@ const NewJobPostingPage = () => {
 									id="applicationProcess"
 									value={applicationProcess}
 									onChange={e => setApplicationProcess(e.target.value as ApplicationProcess)}
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+									className="w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 								>
 									{APPLICATION_PROCESS_OPTIONS.map(option => (
 										<option key={option.value} value={option.value}>
@@ -774,7 +774,7 @@ const NewJobPostingPage = () => {
 									id="interviewRounds"
 									value={interviewRounds}
 									onChange={e => setInterviewRounds(e.target.value as InterviewRounds)}
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+									className="w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 								>
 									{INTERVIEW_ROUNDS_OPTIONS.map(option => (
 										<option key={option.value} value={option.value}>
@@ -832,55 +832,55 @@ const NewJobPostingPage = () => {
 					</div>
 
 					{/* Tier Selection */}
-					<div className="bg-purple-50 p-6 rounded-lg">
-						<h2 className="text-xl font-semibold mb-4">Elige un Nivel de Publicación</h2>
-						<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+					<div className="bg-purple-50 p-4 sm:p-6 rounded-lg">
+						<h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Elige un Nivel de Publicación</h2>
+						<div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6">
 							<div
 								onClick={() => setSelectedTier('clasica')}
-								className={`p-6 border rounded-lg cursor-pointer text-center transition-all ${
+								className={`p-4 sm:p-6 border rounded-lg cursor-pointer text-center transition-all ${
 									selectedTier === 'clasica'
 										? 'border-blue-500 bg-blue-50 ring-2 ring-blue-500'
 										: 'border-gray-300 hover:border-blue-300'
 								}`}
 							>
-								<h3 className="text-lg font-bold">Clásica</h3>
-								<p className="text-gray-600 text-sm">Visibilidad básica</p>
-								<p className="text-xs text-gray-500 mt-2">Publicación estándar</p>
+								<h3 className="text-base sm:text-lg font-bold">Clásica</h3>
+								<p className="text-gray-600 text-xs sm:text-sm">Visibilidad básica</p>
+								<p className="text-xs text-gray-500 mt-1 sm:mt-2">Publicación estándar</p>
 							</div>
 							<div
 								onClick={() => setSelectedTier('destacada')}
-								className={`p-6 border rounded-lg cursor-pointer text-center transition-all ${
+								className={`p-4 sm:p-6 border rounded-lg cursor-pointer text-center transition-all ${
 									selectedTier === 'destacada'
 										? 'border-blue-500 bg-blue-50 ring-2 ring-blue-500'
 										: 'border-gray-300 hover:border-blue-300'
 								}`}
 							>
-								<h3 className="text-lg font-bold">Destacada</h3>
-								<p className="text-gray-600 text-sm">Mayor posicionamiento en búsquedas</p>
-								<p className="text-xs text-gray-500 mt-2">Destacada en resultados de búsqueda</p>
+								<h3 className="text-base sm:text-lg font-bold">Destacada</h3>
+								<p className="text-gray-600 text-xs sm:text-sm">Mayor posicionamiento</p>
+								<p className="text-xs text-gray-500 mt-1 sm:mt-2">Destacada en búsquedas</p>
 							</div>
 							<div
 								onClick={() => setSelectedTier('premium')}
-								className={`p-6 border rounded-lg cursor-pointer text-center transition-all ${
+								className={`p-4 sm:p-6 border rounded-lg cursor-pointer text-center transition-all ${
 									selectedTier === 'premium'
 										? 'border-blue-500 bg-blue-50 ring-2 ring-blue-500'
 										: 'border-gray-300 hover:border-blue-300'
 								}`}
 							>
-								<h3 className="text-lg font-bold">Premium</h3>
-								<p className="text-gray-600 text-sm">Posicionamiento superior y funciones de IA</p>
-								<p className="text-xs text-gray-500 mt-2">Máxima visibilidad</p>
+								<h3 className="text-base sm:text-lg font-bold">Premium</h3>
+								<p className="text-gray-600 text-xs sm:text-sm">Superior + IA</p>
+								<p className="text-xs text-gray-500 mt-1 sm:mt-2">Máxima visibilidad</p>
 							</div>
 						</div>
 					</div>
 
 					{/* Submission */}
-					<div className="flex justify-end gap-4">
+					<div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
 						<button
 							type="button"
 							onClick={() => handleSave('draft')}
 							disabled={loading}
-							className="px-8 py-3 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 disabled:bg-gray-400 font-semibold text-lg"
+							className="px-6 sm:px-8 py-3 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 disabled:bg-gray-400 font-semibold text-base sm:text-lg order-2 sm:order-1"
 						>
 							{loading ? 'Guardando...' : 'Guardar'}
 						</button>
@@ -888,7 +888,7 @@ const NewJobPostingPage = () => {
 							type="button"
 							onClick={() => handleSave('published')}
 							disabled={loading}
-							className="px-8 py-3 text-white bg-green-600 rounded-md hover:bg-green-700 disabled:bg-gray-400 font-semibold text-lg"
+							className="px-6 sm:px-8 py-3 text-white bg-green-600 rounded-md hover:bg-green-700 disabled:bg-gray-400 font-semibold text-base sm:text-lg order-1 sm:order-2"
 						>
 							{loading ? 'Publicando...' : 'Publicar'}
 						</button>
