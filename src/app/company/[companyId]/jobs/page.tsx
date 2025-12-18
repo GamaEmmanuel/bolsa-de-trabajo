@@ -217,7 +217,7 @@ const CompanyJobsPage = () => {
 					onClick={() => handlePageChange(i)}
 					className={`px-4 py-2 rounded-lg font-medium ${
 						currentPage === i
-							? 'bg-orange-600 text-white'
+							? 'bg-pink-600 text-white'
 							: 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
 					}`}
 				>
@@ -267,7 +267,7 @@ const CompanyJobsPage = () => {
 		return (
 			<div className="min-h-screen bg-gray-50 flex items-center justify-center">
 				<div className="text-center">
-					<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
+					<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
 					<p className="ml-2 text-gray-600 mt-4">Cargando empleos...</p>
 				</div>
 			</div>
@@ -315,7 +315,11 @@ const CompanyJobsPage = () => {
 								<img
 									src={companyData.logoUrl}
 									alt={`${companyData.companyName} logo`}
-									className="w-20 h-20 rounded-lg object-cover border border-gray-200"
+									className="w-20 h-20 rounded-lg object-contain border border-gray-200 bg-gray-50 p-1"
+									onError={(e) => {
+										console.error('Failed to load company logo:', companyData.logoUrl)
+										e.currentTarget.style.display = 'none'
+									}}
 								/>
 							)}
 							<div>
@@ -330,15 +334,15 @@ const CompanyJobsPage = () => {
 								)}
 							</div>
 						</div>
-						<button
-							onClick={handleShare}
-							className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors flex items-center gap-2"
-						>
-							<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-							</svg>
-							Compartir
-						</button>
+					<button
+						onClick={handleShare}
+						className="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors flex items-center gap-2"
+					>
+						<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+						</svg>
+						Compartir
+					</button>
 					</div>
 
 					{companyData?.description && (
@@ -347,40 +351,40 @@ const CompanyJobsPage = () => {
 						</div>
 					)}
 
-					{companyData?.website && (
-						<div className="mt-4">
-							<a
-								href={companyData.website}
-								target="_blank"
-								rel="noopener noreferrer"
-								className="text-orange-600 hover:text-orange-700 flex items-center gap-1"
-							>
-								<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-								</svg>
-								{companyData.website}
-							</a>
-						</div>
-					)}
+				{companyData?.website && (
+					<div className="mt-4">
+						<a
+							href={companyData.website}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="text-pink-600 hover:text-pink-700 flex items-center gap-1"
+						>
+							<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+							</svg>
+							{companyData.website}
+						</a>
+					</div>
+				)}
 				</div>
 			</div>
 
 			{/* Jobs Section */}
 			<div className="max-w-7xl mx-auto px-6 py-8">
-				{/* Total Count */}
-				{jobs.length > 0 && (
-					<div className="mb-8 text-center">
-						<div className="inline-flex items-center gap-3 bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-4 rounded-2xl shadow-lg">
-							<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-							</svg>
-							<div className="text-left">
-								<div className="text-3xl font-bold">{jobs.length}</div>
-								<div className="text-sm font-medium opacity-90">Posiciones Abiertas</div>
-							</div>
+			{/* Total Count */}
+			{jobs.length > 0 && (
+				<div className="mb-8 text-center">
+					<div className="inline-flex items-center gap-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white px-8 py-4 rounded-2xl shadow-lg">
+						<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+						</svg>
+						<div className="text-left">
+							<div className="text-3xl font-bold">{jobs.length}</div>
+							<div className="text-sm font-medium opacity-90">Posiciones Abiertas</div>
 						</div>
 					</div>
-				)}
+				</div>
+			)}
 
 				{jobs.length === 0 ? (
 					<div className="text-center py-12">
@@ -392,11 +396,11 @@ const CompanyJobsPage = () => {
 					<>
 						{/* Jobs List */}
 						<div className="space-y-3">
-							{currentJobs.map(job => (
-								<div
-									key={job.jobId}
-									className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-orange-300 transition-all duration-200"
-								>
+						{currentJobs.map(job => (
+							<div
+								key={job.jobId}
+								className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-pink-300 transition-all duration-200"
+							>
 									<div className="flex justify-between items-center gap-4">
 										<div className="flex-1 min-w-0">
 											<div className="flex items-start gap-3 mb-2">
@@ -424,15 +428,15 @@ const CompanyJobsPage = () => {
 												)}
 											</div>
 
-											<div className="flex items-center gap-2 flex-wrap">
-												{job.jobType && (
-													<span className="inline-block px-3 py-1 text-xs font-medium bg-orange-100 text-orange-800 rounded-full">
-														{job.jobType === 'full-time' && 'Tiempo Completo'}
-														{job.jobType === 'part-time' && 'Medio Tiempo'}
-														{job.jobType === 'contract' && 'Contrato'}
-														{job.jobType === 'internship' && 'Prácticas'}
-													</span>
-												)}
+										<div className="flex items-center gap-2 flex-wrap">
+											{job.jobType && (
+												<span className="inline-block px-3 py-1 text-xs font-medium bg-pink-100 text-pink-800 rounded-full">
+													{job.jobType === 'full-time' && 'Tiempo Completo'}
+													{job.jobType === 'part-time' && 'Medio Tiempo'}
+													{job.jobType === 'contract' && 'Contrato'}
+													{job.jobType === 'internship' && 'Prácticas'}
+												</span>
+											)}
 												{job.salaryMin && job.salaryMax && !job.isSalaryHidden && (
 													<span className="text-sm text-green-600 font-medium">
 														${job.salaryMin.toLocaleString()} - ${job.salaryMax.toLocaleString()}
@@ -441,14 +445,14 @@ const CompanyJobsPage = () => {
 											</div>
 										</div>
 
-										<div className="flex-shrink-0">
-											<Link
-												href="/signin"
-												className="inline-block px-5 py-2 bg-orange-600 text-white text-sm font-semibold rounded-lg hover:bg-orange-700 transition-colors whitespace-nowrap"
-											>
-												Inicia sesión para aplicar
-											</Link>
-										</div>
+									<div className="flex-shrink-0">
+										<Link
+											href="/signin"
+											className="inline-block px-5 py-2 bg-pink-600 text-white text-sm font-semibold rounded-lg hover:bg-pink-700 transition-colors whitespace-nowrap"
+										>
+											Inicia sesión para aplicar
+										</Link>
+									</div>
 									</div>
 								</div>
 							))}
@@ -484,12 +488,12 @@ const CompanyJobsPage = () => {
 								readOnly
 								className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-sm"
 							/>
-							<button
-								onClick={copyJobLink}
-								className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors"
-							>
-								Copiar
-							</button>
+					<button
+						onClick={copyJobLink}
+						className="px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition-colors"
+					>
+						Copiar
+					</button>
 						</div>
 
 						{/* Social Media Buttons */}

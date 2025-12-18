@@ -37,6 +37,9 @@ const JobsPageContent = () => {
 	const [companyName, setCompanyName] = useState<string | null>(null)
 	const [companyLogoUrl, setCompanyLogoUrl] = useState<string | null>(null)
 	const [companyLogos, setCompanyLogos] = useState<Record<string, string>>({})
+	const [imageLoadingStates, setImageLoadingStates] = useState<Record<string, boolean>>({})
+	const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({})
+	const [imageRetries, setImageRetries] = useState<Record<string, number>>({})
 	const [filters, setFilters] = useState<JobFilters>({
 		keyword: '',
 		location: '',
@@ -84,7 +87,38 @@ const JobsPageContent = () => {
 		fetchCompanyName()
 	}, [companyIdParam])
 
-	// Fetch company logos for all jobs
+	// Helper function to get cached logo from localStorage
+	const getCachedLogo = (companyId: string): string | null => {
+		try {
+			const cached = localStorage.getItem(`logo_${companyId}`)
+			if (cached) {
+				const { url, timestamp } = JSON.parse(cached)
+				// Cache valid for 24 hours
+				const cacheAge = Date.now() - timestamp
+				const cacheMaxAge = 24 * 60 * 60 * 1000 // 24 hours
+				if (cacheAge < cacheMaxAge) {
+					return url
+				}
+			}
+		} catch (err) {
+			console.warn('Error reading logo cache:', err)
+		}
+		return null
+	}
+
+	// Helper function to cache logo in localStorage
+	const cacheLogo = (companyId: string, url: string) => {
+		try {
+			localStorage.setItem(`logo_${companyId}`, JSON.stringify({
+				url,
+				timestamp: Date.now()
+			}))
+		} catch (err) {
+			console.warn('Error caching logo:', err)
+		}
+	}
+
+	// Fetch company logos for all jobs with caching and validation
 	useEffect(() => {
 		const fetchCompanyLogos = async () => {
 			if (jobs.length === 0) return
@@ -98,11 +132,23 @@ const JobsPageContent = () => {
 			console.log('🏢 Fetching logos for', uniqueCompanyIds.length, 'companies')
 
 			const logos: Record<string, string> = {}
+			let cacheHits = 0
+			let cacheMisses = 0
 
 			// Fetch each company's logo
 			await Promise.all(
 				uniqueCompanyIds.map(async (companyId) => {
 					try {
+						// First check cache
+						const cachedUrl = getCachedLogo(companyId as string)
+						if (cachedUrl) {
+							logos[companyId as string] = cachedUrl
+							cacheHits++
+							return
+						}
+
+						cacheMisses++
+
 						// First try to get companyId from users collection
 						const userDoc = await getDoc(doc(db, 'users', companyId as string))
 						if (userDoc.exists()) {
@@ -114,20 +160,25 @@ const JobsPageContent = () => {
 							if (companyDoc.exists()) {
 								const companyData = companyDoc.data()
 								if (companyData.logoUrl) {
-									logos[companyId as string] = companyData.logoUrl
+									const logoUrl = companyData.logoUrl
+									logos[companyId as string] = logoUrl
+									// Cache the logo URL
+									cacheLogo(companyId as string, logoUrl)
+								} else {
+									console.log(`⚠️ No logoUrl found for company: ${companyId}`)
 								}
 							}
 						}
 					} catch (err: any) {
 						// Silently skip permission errors for mock or invalid companies
 						if (err?.code !== 'permission-denied') {
-							console.error('Error fetching logo for company:', companyId, err)
+							console.error('❌ Error fetching logo for company:', companyId, err)
 						}
 					}
 				})
 			)
 
-			console.log('✅ Logos fetched:', Object.keys(logos).length)
+			console.log(`✅ Logos fetched: ${Object.keys(logos).length} total (${cacheHits} from cache, ${cacheMisses} from database)`)
 			setCompanyLogos(logos)
 		}
 
@@ -294,6 +345,42 @@ const JobsPageContent = () => {
 		router.push('/candidate/jobs')
 	}
 
+	// Handle image load success
+	const handleImageLoad = (companyId: string) => {
+		setImageLoadingStates(prev => ({ ...prev, [companyId]: false }))
+		setImageErrors(prev => ({ ...prev, [companyId]: false }))
+		console.log(`✅ Logo loaded successfully for: ${companyId}`)
+	}
+
+	// Handle image load error with retry logic
+	const handleImageError = (companyId: string, companyName: string) => {
+		const retries = imageRetries[companyId] || 0
+		const maxRetries = 2
+
+		console.error(`❌ Failed to load logo for ${companyName} (${companyId}), retry: ${retries}/${maxRetries}`)
+
+		if (retries < maxRetries) {
+			// Attempt retry after a short delay
+			setTimeout(() => {
+				setImageRetries(prev => ({ ...prev, [companyId]: retries + 1 }))
+				// Force image reload by updating the key
+				setCompanyLogos(prev => ({ ...prev }))
+			}, 1000 * (retries + 1)) // Progressive delay: 1s, 2s
+		} else {
+			// Max retries reached, mark as error
+			setImageLoadingStates(prev => ({ ...prev, [companyId]: false }))
+			setImageErrors(prev => ({ ...prev, [companyId]: true }))
+			console.error(`❌ Max retries reached for logo: ${companyId}`)
+
+			// Remove from cache if it's there
+			try {
+				localStorage.removeItem(`logo_${companyId}`)
+			} catch (err) {
+				console.warn('Error removing from cache:', err)
+			}
+		}
+	}
+
 	if (loading) {
 		return (
 			<div className="flex items-center justify-center py-12">
@@ -312,12 +399,20 @@ const JobsPageContent = () => {
 						<div className="flex items-center gap-3">
 							{/* Company Logo */}
 							<div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center overflow-hidden flex-shrink-0 border border-orange-300">
-								{companyLogoUrl ? (
-									<img
-										src={companyLogoUrl}
-										alt={companyName}
-										className="w-full h-full object-cover"
-									/>
+								{companyLogoUrl && !imageErrors[companyIdParam] ? (
+									<>
+										{imageLoadingStates[companyIdParam] && (
+											<div className="w-4 h-4 border-2 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
+										)}
+										<img
+											src={companyLogoUrl}
+											alt={companyName}
+											className="w-full h-full object-contain p-1"
+											style={{ display: imageLoadingStates[companyIdParam] ? 'none' : 'block' }}
+											onLoad={() => handleImageLoad(companyIdParam)}
+											onError={() => handleImageError(companyIdParam, companyName)}
+										/>
+									</>
 								) : (
 									<span className="text-lg font-semibold text-orange-600">
 										{companyName.charAt(0)}
@@ -495,13 +590,27 @@ const JobsPageContent = () => {
 										<div className="flex-1">
 											<div className="flex items-start gap-3">
 												{/* Company Logo */}
-												<div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-200">
-													{companyLogos[job.companyId] ? (
-														<img
-															src={companyLogos[job.companyId]}
-															alt={job.companyName || 'Company'}
-															className="w-full h-full object-cover"
-														/>
+												<div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-200 relative">
+													{companyLogos[job.companyId] && !imageErrors[job.companyId] ? (
+														<>
+															{imageLoadingStates[job.companyId] && (
+																<div className="absolute inset-0 flex items-center justify-center">
+																	<div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+																</div>
+															)}
+															<img
+																key={`${job.companyId}-${imageRetries[job.companyId] || 0}`}
+																src={companyLogos[job.companyId]}
+																alt={job.companyName || 'Company'}
+																className="w-full h-full object-contain p-1 transition-opacity duration-200"
+																style={{
+																	display: imageLoadingStates[job.companyId] ? 'none' : 'block',
+																	opacity: imageLoadingStates[job.companyId] ? 0 : 1
+																}}
+																onLoad={() => handleImageLoad(job.companyId)}
+																onError={() => handleImageError(job.companyId, job.companyName || 'Unknown Company')}
+															/>
+														</>
 													) : (
 														<span className="text-lg font-semibold text-gray-400">
 															{job.companyName?.charAt(0) || 'C'}

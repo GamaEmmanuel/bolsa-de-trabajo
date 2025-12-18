@@ -55,7 +55,7 @@ export default function SubscriptionStatus({
   }, [companyId])
 
   const handleManageSubscription = async () => {
-    await createPortalSession(companyId)
+    await createPortalSession(companyId, company?.subscription?.stripeCustomerId)
   }
 
   if (loadingData) {

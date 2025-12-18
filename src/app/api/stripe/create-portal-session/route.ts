@@ -1,9 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe, createPortalSession } from '@/lib/stripe'
-import { getFirestore, doc, getDoc } from 'firebase/firestore'
-import { app } from '@/lib/firebase'
+import { initializeApp, getApps, cert } from 'firebase-admin/app'
+import { getFirestore } from 'firebase-admin/firestore'
 
-const db = getFirestore(app)
+// Initialize Firebase Admin inline if needed
+function getAdminDb() {
+  try {
+    let adminApp
+    if (getApps().length === 0) {
+      // Try with service account first
+      if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+        const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
+        adminApp = initializeApp({
+          credential: cert(serviceAccount),
+        })
+      } else {
+        // Fallback to project ID only (works for Firestore access)
+        adminApp = initializeApp({
+          projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'jobportal-4b561',
+        })
+      }
+    } else {
+      adminApp = getApps()[0]
+    }
+    return getFirestore(adminApp)
+  } catch (error) {
+    console.error('Error initializing admin:', error)
+    return null
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,7 +40,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const { companyId } = await req.json()
+    const { companyId, customerId: providedCustomerId } = await req.json()
 
     // Validate required fields
     if (!companyId) {
@@ -25,19 +50,40 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Get company document
-    const companyRef = doc(db, 'companies', companyId)
-    const companyDoc = await getDoc(companyRef)
+    let customerId = providedCustomerId
 
-    if (!companyDoc.exists()) {
-      return NextResponse.json(
-        { error: 'Company not found' },
-        { status: 404 }
-      )
+    // If customerId wasn't provided, try to fetch it from Firestore
+    if (!customerId) {
+      const adminDb = getAdminDb()
+
+      if (!adminDb) {
+        console.error('Could not initialize Firebase Admin and no customerId provided')
+        return NextResponse.json(
+          { error: 'Unable to retrieve customer information' },
+          { status: 500 }
+        )
+      }
+
+      try {
+        const companyDoc = await adminDb.collection('companies').doc(companyId).get()
+
+        if (!companyDoc.exists) {
+          return NextResponse.json(
+            { error: 'Company not found' },
+            { status: 404 }
+          )
+        }
+
+        const companyData = companyDoc.data()
+        customerId = companyData?.subscription?.stripeCustomerId
+      } catch (firestoreError) {
+        console.error('Error fetching company data:', firestoreError)
+        return NextResponse.json(
+          { error: 'Failed to retrieve company subscription information' },
+          { status: 500 }
+        )
+      }
     }
-
-    const companyData = companyDoc.data()
-    const customerId = companyData.subscription?.stripeCustomerId
 
     if (!customerId) {
       return NextResponse.json(

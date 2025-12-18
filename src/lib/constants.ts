@@ -175,14 +175,26 @@ export const EDUCATION_DEGREE_OPTIONS = [
 
 // Job Category Options
 export const JOB_CATEGORY_OPTIONS = [
-  { value: 'engineering', label: 'Ingeniería' },
-  { value: 'sales', label: 'Ventas' },
-  { value: 'marketing', label: 'Marketing' },
-  { value: 'design', label: 'Diseño' },
-  { value: 'hr', label: 'Recursos Humanos' },
-  { value: 'finance', label: 'Finanzas' },
-  { value: 'operations', label: 'Operaciones' },
-  { value: 'customer-service', label: 'Atención al Cliente' },
+  { value: 'chef', label: 'Chef / Cocinero' },
+  { value: 'kitchen', label: 'Cocina / Ayudante de Cocina' },
+  { value: 'server', label: 'Mesero/a' },
+  { value: 'bartender', label: 'Barman / Cantinero' },
+  { value: 'hostess', label: 'Hostess / Anfitrión' },
+  { value: 'cleaning', label: 'Limpieza / Intendencia' },
+  { value: 'barista', label: 'Barista' },
+  { value: 'cashier', label: 'Cajero/a' },
+  { value: 'supervisor', label: 'Supervisor / Gerente de Area' },
+  { value: 'receptionist', label: 'Recepcionista' },
+  { value: 'housekeeper', label: 'Camarista / Housekeeping' },
+  { value: 'valet', label: 'Valet Parking' },
+  { value: 'dishwasher', label: 'Lavaplatos / Steward' },
+  { value: 'pastry', label: 'Pastelería / Repostería' },
+  { value: 'sommelier', label: 'Sommelier' },
+  { value: 'maintenance', label: 'Mantenimiento' },
+  { value: 'security', label: 'Seguridad' },
+  { value: 'delivery', label: 'Repartidor / Delivery' },
+  { value: 'banquets', label: 'Banquetes / Eventos' },
+  { value: 'administration', label: 'Administración' },
   { value: 'other', label: 'Otro' }
 ]
 
@@ -205,15 +217,19 @@ export const COMPANY_SIZE_OPTIONS = [
 ]
 
 export const INDUSTRY_OPTIONS = [
-  { value: 'technology', label: 'Tecnología' },
-  { value: 'healthcare', label: 'Salud' },
-  { value: 'finance', label: 'Finanzas' },
-  { value: 'education', label: 'Educación' },
-  { value: 'retail', label: 'Retail' },
-  { value: 'manufacturing', label: 'Manufactura' },
-  { value: 'consulting', label: 'Consultoría' },
-  { value: 'non-profit', label: 'Sin fines de lucro' },
-  { value: 'government', label: 'Gobierno' },
+  { value: 'restaurant', label: 'Restaurante' },
+  { value: 'hotel', label: 'Hotel' },
+  { value: 'bar', label: 'Bar / Cantina' },
+  { value: 'cafe', label: 'Café / Cafetería' },
+  { value: 'fast-food', label: 'Comida Rápida' },
+  { value: 'catering', label: 'Catering / Banquetes' },
+  { value: 'nightclub', label: 'Antro / Club Nocturno' },
+  { value: 'bakery', label: 'Panadería / Pastelería' },
+  { value: 'food-truck', label: 'Food Truck' },
+  { value: 'resort', label: 'Resort / Spa' },
+  { value: 'hostel', label: 'Hostal / Hostel' },
+  { value: 'event-venue', label: 'Salón de Eventos' },
+  { value: 'tourism', label: 'Turismo / Agencia de Viajes' },
   { value: 'other', label: 'Otro' }
 ]
 

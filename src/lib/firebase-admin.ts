@@ -1,4 +1,4 @@
-import { initializeApp, getApps, cert, App } from 'firebase-admin/app'
+import { initializeApp, getApps, cert, App, applicationDefault } from 'firebase-admin/app'
 import { getFirestore } from 'firebase-admin/firestore'
 
 let adminApp: App | undefined
@@ -9,28 +9,47 @@ function initAdmin() {
     return getApps()[0]
   }
 
-  // For development/local testing, use application default credentials
-  // For production, set GOOGLE_APPLICATION_CREDENTIALS env var or use service account
   try {
-    // Try to initialize with service account if FIREBASE_SERVICE_ACCOUNT is set
+    // Method 1: Service account from environment variable
     if (process.env.FIREBASE_SERVICE_ACCOUNT) {
       const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
       adminApp = initializeApp({
         credential: cert(serviceAccount),
       })
-    } else if (process.env.FIREBASE_PROJECT_ID) {
-      // Initialize with project ID (works in Firebase hosting and Cloud Functions)
-      adminApp = initializeApp({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-      })
-    } else {
-      console.warn('Firebase Admin not initialized: Missing credentials')
-      return null
+      console.log('✅ Firebase Admin initialized with service account')
+      return adminApp
     }
 
+    // Method 2: Application Default Credentials (works in Firebase/GCP environments)
+    try {
+      adminApp = initializeApp({
+        credential: applicationDefault(),
+      })
+      console.log('✅ Firebase Admin initialized with application default credentials')
+      return adminApp
+    } catch (adcError) {
+      console.log('Application default credentials not available:', adcError)
+    }
+
+    // Method 3: Just project ID (limited functionality)
+    const projectId = process.env.FIREBASE_PROJECT_ID ||
+                     process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ||
+                     process.env.GCLOUD_PROJECT ||
+                     'jobportal-4b561'
+
+    adminApp = initializeApp({
+      projectId: projectId,
+    })
+    console.log('✅ Firebase Admin initialized with project ID:', projectId)
     return adminApp
+
   } catch (error) {
-    console.error('Error initializing Firebase Admin:', error)
+    console.error('❌ Error initializing Firebase Admin:', error)
+    console.error('Available env vars:', {
+      hasServiceAccount: !!process.env.FIREBASE_SERVICE_ACCOUNT,
+      hasProjectId: !!process.env.FIREBASE_PROJECT_ID,
+      hasPublicProjectId: !!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    })
     return null
   }
 }

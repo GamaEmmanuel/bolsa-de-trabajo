@@ -138,7 +138,7 @@ const JobPostingsPage = () => {
 				<div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
 					<button
 						onClick={() => setShowShareModal(true)}
-						className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white bg-purple-600 rounded-lg shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-200"
+						className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white bg-pink-500 rounded-lg shadow-sm hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 transition-all duration-200"
 					>
 						<svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
@@ -147,7 +147,7 @@ const JobPostingsPage = () => {
 					</button>
 					<Link
 						href="/company/job-postings/new"
-						className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white bg-green-600 rounded-lg shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200"
+						className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white bg-pink-600 rounded-lg shadow-sm hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 transition-all duration-200"
 					>
 						<svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -177,7 +177,7 @@ const JobPostingsPage = () => {
 					{loading ? (
 					<div className="flex items-center justify-center py-8">
 						<div className="text-center">
-							<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
+							<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
 							<p className="mt-2 text-gray-600">Cargando tus publicaciones de empleo...</p>
 						</div>
 					</div>
@@ -193,14 +193,14 @@ const JobPostingsPage = () => {
 								onClick={() => setStatusFilter(null)}
 								className={`p-3 sm:p-4 rounded-lg transition-colors text-left ${
 									statusFilter === null
-										? 'bg-orange-100 border-2 border-orange-500'
-										: 'bg-orange-50 hover:bg-orange-100'
+										? 'bg-pink-100 border-2 border-pink-500'
+										: 'bg-pink-50 hover:bg-pink-100'
 								}`}
 							>
-								<div className="text-xl sm:text-2xl font-bold text-orange-600">
+								<div className="text-xl sm:text-2xl font-bold text-pink-600">
 									{jobs.filter(job => job.status !== 'archived').length}
 								</div>
-								<div className="text-xs sm:text-sm text-orange-700">Total de Empleos</div>
+								<div className="text-xs sm:text-sm text-pink-700">Total de Empleos</div>
 							</button>
 							<button
 								onClick={() => setStatusFilter('published')}
@@ -241,13 +241,13 @@ const JobPostingsPage = () => {
 
 						{/* Active Filter Indicator */}
 						{statusFilter && (
-							<div className="mb-3 sm:mb-4 flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-2 bg-blue-50 border border-blue-200 rounded-lg p-2.5 sm:p-3">
-								<span className="text-xs sm:text-sm text-blue-700">
+							<div className="mb-3 sm:mb-4 flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-2 bg-pink-50 border border-pink-200 rounded-lg p-2.5 sm:p-3">
+								<span className="text-xs sm:text-sm text-pink-700">
 									Filtrando por: <span className="font-semibold">{translateStatus(statusFilter)}</span>
 								</span>
 								<button
 									onClick={() => setStatusFilter(null)}
-									className="text-xs text-pink-600 hover:text-blue-800 underline"
+									className="text-xs text-pink-600 hover:text-pink-800 underline"
 								>
 									Limpiar filtro
 								</button>
@@ -264,7 +264,7 @@ const JobPostingsPage = () => {
 									<Link
 										key={job.jobId}
 										href={`/jobs/${job.jobId}`}
-										className="block bg-white p-3 sm:p-4 rounded-lg border border-gray-200 hover:border-primary hover:shadow-md transition-all duration-200 cursor-pointer"
+										className="block bg-white p-3 sm:p-4 rounded-lg border border-gray-200 hover:border-pink-500 hover:shadow-md transition-all duration-200 cursor-pointer"
 									>
 										<div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4">
 											<div className="flex-1 min-w-0">
@@ -289,7 +289,7 @@ const JobPostingsPage = () => {
 												>
 													{translateStatus(job.status || '')}
 												</span>
-												<span className="hidden sm:inline text-primary text-sm font-medium whitespace-nowrap">
+												<span className="hidden sm:inline text-pink-600 text-sm font-medium whitespace-nowrap">
 													Ver Detalles →
 												</span>
 											</div>
@@ -306,7 +306,7 @@ const JobPostingsPage = () => {
 									<div className="mt-6">
 										<button
 											onClick={() => setStatusFilter(null)}
-											className="inline-flex items-center px-4 py-2 text-sm font-semibold text-primary hover:underline"
+											className="inline-flex items-center px-4 py-2 text-sm font-semibold text-pink-600 hover:text-pink-700 hover:underline"
 										>
 											Limpiar filtro
 										</button>
@@ -322,7 +322,7 @@ const JobPostingsPage = () => {
 									<div className="mt-6">
 										<Link
 											href="/company/job-postings/new"
-											className="inline-flex items-center px-6 py-3 text-sm font-semibold text-white bg-green-600 rounded-lg shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 transform hover:scale-105"
+											className="inline-flex items-center px-6 py-3 text-sm font-semibold text-white bg-pink-600 rounded-lg shadow-sm hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 transition-all duration-200 transform hover:scale-105"
 										>
 											<svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 												<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -356,7 +356,7 @@ const JobPostingsPage = () => {
 							/>
 							<button
 								onClick={copyCompanyJobsLink}
-								className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-sm whitespace-nowrap"
+								className="px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition-colors text-sm whitespace-nowrap"
 							>
 								Copiar
 							</button>

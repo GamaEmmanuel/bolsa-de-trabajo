@@ -89,6 +89,12 @@ export interface Company {
 	subscription?: Subscription
 	credits?: number // AI credits
 	emailPreferences?: EmailPreferences
+	// Social Media URLs
+	instagramUrl?: string
+	facebookUrl?: string
+	googleMapsUrl?: string
+	youtubeUrl?: string
+	tiktokUrl?: string
 }
 
 export type JobStatus =
@@ -105,12 +111,12 @@ export type JobType = 'full-time' | 'part-time' | 'contract' | 'internship' | 'f
 export type EmploymentType = 'remote' | 'hybrid' | 'on-site'
 export type ExperienceLevel = '0-1' | '1-3' | '3-5' | '5-10' | '10+'
 export type EducationLevel = 'high-school' | 'bachelor' | 'master' | 'phd' | 'no-requirement'
-export type JobCategory = 'engineering' | 'sales' | 'marketing' | 'design' | 'hr' | 'finance' | 'operations' | 'customer-service' | 'other'
+export type JobCategory = 'chef' | 'kitchen' | 'server' | 'bartender' | 'hostess' | 'cleaning' | 'barista' | 'cashier' | 'supervisor' | 'receptionist' | 'housekeeper' | 'valet' | 'dishwasher' | 'pastry' | 'sommelier' | 'maintenance' | 'security' | 'delivery' | 'banquets' | 'administration' | 'other'
 export type JobLevel = 'entry' | 'mid-level' | 'senior' | 'lead' | 'executive'
 
 // Phase 3 Job Posting Fields
 export type CompanySize = '1-10' | '11-50' | '51-200' | '201-500' | '500+'
-export type Industry = 'technology' | 'healthcare' | 'finance' | 'education' | 'retail' | 'manufacturing' | 'consulting' | 'non-profit' | 'government' | 'other'
+export type Industry = 'restaurant' | 'hotel' | 'bar' | 'cafe' | 'fast-food' | 'catering' | 'nightclub' | 'bakery' | 'food-truck' | 'resort' | 'hostel' | 'event-venue' | 'tourism' | 'other'
 export type StartDate = 'immediate' | '1-2-weeks' | '1-month' | '2-months' | 'flexible'
 export type UrgencyLevel = 'normal' | 'urgent' | 'critical'
 export type ApplicationProcess = 'resume-only' | 'portfolio-required' | 'cover-letter-required' | 'video-interview' | 'technical-test'

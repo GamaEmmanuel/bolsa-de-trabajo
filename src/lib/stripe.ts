@@ -12,7 +12,7 @@ export const stripe = stripeSecretKey
 
 // Stripe configuration constants
 export const STRIPE_CONFIG = {
-  priceId: process.env.STRIPE_PRICE_ID || 'price_1SYxb1DUi8OxbbECX57Ob6rJ',
+  priceId: process.env.STRIPE_PRICE_ID || 'price_1SdPUcDVPaRrtbNxKl4JWg3w',
   webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || '',
   creditsPerMonth: 1000, // AI credits awarded per successful payment
 }

@@ -55,7 +55,7 @@ export function useStripeCheckout() {
     }
   }
 
-  const createPortalSession = async (companyId: string) => {
+  const createPortalSession = async (companyId: string, customerId?: string) => {
     if (!user) {
       setError('You must be logged in to manage subscription')
       return null
@@ -70,7 +70,7 @@ export function useStripeCheckout() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ companyId }),
+        body: JSON.stringify({ companyId, customerId }),
       })
 
       if (!response.ok) {

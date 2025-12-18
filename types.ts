@@ -33,6 +33,12 @@ export interface Company {
 	logoUrl?: string
 	description?: string
 	createdAt: string
+	// Social Media URLs
+	instagramUrl?: string
+	facebookUrl?: string
+	googleMapsUrl?: string
+	youtubeUrl?: string
+	tiktokUrl?: string
 }
 
 export type JobStatus = 'draft' | 'pending_approval' | 'published' | 'expired' | 'filled'
@@ -43,7 +49,7 @@ export type JobType = 'full-time' | 'part-time' | 'contract' | 'internship' | 'f
 export type EmploymentType = 'remote' | 'hybrid' | 'on-site'
 export type ExperienceLevel = '0-1' | '1-3' | '3-5' | '5-10' | '10+'
 export type EducationLevel = 'high-school' | 'bachelor' | 'master' | 'phd' | 'no-requirement'
-export type JobCategory = 'engineering' | 'sales' | 'marketing' | 'design' | 'hr' | 'finance' | 'operations' | 'customer-service' | 'other'
+export type JobCategory = 'chef' | 'kitchen' | 'server' | 'bartender' | 'hostess' | 'cleaning' | 'barista' | 'cashier' | 'supervisor' | 'receptionist' | 'housekeeper' | 'valet' | 'dishwasher' | 'pastry' | 'sommelier' | 'maintenance' | 'security' | 'delivery' | 'banquets' | 'administration' | 'other'
 export type JobLevel = 'entry' | 'mid-level' | 'senior' | 'lead' | 'executive'
 
 // Phase 3 Job Posting Fields

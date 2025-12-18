@@ -43,7 +43,7 @@ const NewJobPostingPage = () => {
 	const [customRequiredSkill, setCustomRequiredSkill] = useState('')
 	const [preferredSkills, setPreferredSkills] = useState<string[]>([])
 	const [customPreferredSkill, setCustomPreferredSkill] = useState('')
-	const [jobCategory, setJobCategory] = useState<JobCategory>('engineering')
+	const [jobCategory, setJobCategory] = useState<JobCategory>('server')
 	const [jobLevel, setJobLevel] = useState<JobLevel>('mid-level')
 
 	// Predefined hospitality skills
@@ -828,49 +828,6 @@ const NewJobPostingPage = () => {
 								className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 								placeholder="Notas para uso interno únicamente..."
 							/>
-						</div>
-					</div>
-
-					{/* Tier Selection */}
-					<div className="bg-purple-50 p-4 sm:p-6 rounded-lg">
-						<h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Elige un Nivel de Publicación</h2>
-						<div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6">
-							<div
-								onClick={() => setSelectedTier('clasica')}
-								className={`p-4 sm:p-6 border rounded-lg cursor-pointer text-center transition-all ${
-									selectedTier === 'clasica'
-										? 'border-blue-500 bg-blue-50 ring-2 ring-blue-500'
-										: 'border-gray-300 hover:border-blue-300'
-								}`}
-							>
-								<h3 className="text-base sm:text-lg font-bold">Clásica</h3>
-								<p className="text-gray-600 text-xs sm:text-sm">Visibilidad básica</p>
-								<p className="text-xs text-gray-500 mt-1 sm:mt-2">Publicación estándar</p>
-							</div>
-							<div
-								onClick={() => setSelectedTier('destacada')}
-								className={`p-4 sm:p-6 border rounded-lg cursor-pointer text-center transition-all ${
-									selectedTier === 'destacada'
-										? 'border-blue-500 bg-blue-50 ring-2 ring-blue-500'
-										: 'border-gray-300 hover:border-blue-300'
-								}`}
-							>
-								<h3 className="text-base sm:text-lg font-bold">Destacada</h3>
-								<p className="text-gray-600 text-xs sm:text-sm">Mayor posicionamiento</p>
-								<p className="text-xs text-gray-500 mt-1 sm:mt-2">Destacada en búsquedas</p>
-							</div>
-							<div
-								onClick={() => setSelectedTier('premium')}
-								className={`p-4 sm:p-6 border rounded-lg cursor-pointer text-center transition-all ${
-									selectedTier === 'premium'
-										? 'border-blue-500 bg-blue-50 ring-2 ring-blue-500'
-										: 'border-gray-300 hover:border-blue-300'
-								}`}
-							>
-								<h3 className="text-base sm:text-lg font-bold">Premium</h3>
-								<p className="text-gray-600 text-xs sm:text-sm">Superior + IA</p>
-								<p className="text-xs text-gray-500 mt-1 sm:mt-2">Máxima visibilidad</p>
-							</div>
 						</div>
 					</div>
 

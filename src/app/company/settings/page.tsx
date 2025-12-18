@@ -28,6 +28,12 @@ interface CompanyData {
 	companySize?: CompanySize
 	benefits?: string[]
 	companyCulture?: string[]
+	// Social Media URLs
+	instagramUrl?: string
+	facebookUrl?: string
+	googleMapsUrl?: string
+	youtubeUrl?: string
+	tiktokUrl?: string
 }
 
 const CompanySettingsPage = () => {
@@ -136,12 +142,60 @@ const CompanySettingsPage = () => {
 	const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.target.files && e.target.files[0]) {
 			const file = e.target.files[0]
+
+			// Validate file type
+			const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+			if (!validTypes.includes(file.type)) {
+				setError('Formato de archivo inválido. Por favor, sube una imagen JPG, PNG, GIF o WebP.')
+				return
+			}
+
+			// Validate file size (max 2MB for better performance)
+			const maxSize = 2 * 1024 * 1024 // 2MB
+			if (file.size > maxSize) {
+				setError('El archivo es demasiado grande. El tamaño máximo permitido es 2MB.')
+				return
+			}
+
+			setError(null)
 			setLogoFile(file)
 
-			// Create preview
+			// Create preview and validate image dimensions
 			const reader = new FileReader()
 			reader.onload = (e) => {
-				setLogoPreview(e.target?.result as string)
+				const result = e.target?.result as string
+				setLogoPreview(result)
+
+				// Validate image dimensions
+				const img = new Image()
+				img.onload = () => {
+					const width = img.width
+					const height = img.height
+					const aspectRatio = width / height
+
+					// Log dimensions for monitoring
+					console.log(`📐 Logo dimensions: ${width}x${height}, aspect ratio: ${aspectRatio.toFixed(2)}`)
+
+					// Warn if image is too small or too large
+					if (width < 100 || height < 100) {
+						setError('⚠️ La imagen es muy pequeña. Se recomienda al menos 200x200px para mejor calidad.')
+					} else if (width > 2000 || height > 2000) {
+						setError('⚠️ La imagen es muy grande. Se recomienda máximo 1000x1000px.')
+					} else if (aspectRatio < 0.5 || aspectRatio > 2) {
+						setError('⚠️ La proporción de la imagen no es ideal. Se recomienda usar imágenes cuadradas o cercanas a cuadradas.')
+					} else {
+						console.log('✅ Logo dimensions are optimal')
+					}
+				}
+				img.onerror = () => {
+					setError('Error al procesar la imagen. Por favor, intenta con otra.')
+					setLogoFile(null)
+					setLogoPreview(null)
+				}
+				img.src = result
+			}
+			reader.onerror = () => {
+				setError('Error al leer el archivo. Por favor, intenta de nuevo.')
 			}
 			reader.readAsDataURL(file)
 		}
@@ -190,11 +244,23 @@ const CompanySettingsPage = () => {
 				lastUpdated: new Date().toISOString()
 			}
 
-			// Save to Firestore
+			// Save to Firestore - BOTH users and companies collections
 			const userRef = doc(db, 'users', auth.currentUser.uid)
 			await updateDoc(userRef, {
 				companyData: updatedCompanyData
 			})
+
+			// Also save to companies collection (this is where job listings fetch from)
+			if (companyId) {
+				const companyRef = doc(db, 'companies', companyId)
+				await updateDoc(companyRef, {
+					logoUrl,
+					lastUpdated: new Date().toISOString()
+				}).catch(err => {
+					console.error('Warning: Could not update companies collection:', err)
+					// Don't fail the whole save if this fails
+				})
+			}
 
 			setCompanyData(updatedCompanyData)
 			setSuccess(true)
@@ -313,7 +379,7 @@ const CompanySettingsPage = () => {
 										<img
 											src={logoPreview}
 											alt="Logo de la empresa"
-											className="h-20 w-20 rounded-lg object-cover border border-gray-200"
+											className="h-20 w-20 rounded-lg object-contain border border-gray-200 bg-gray-50 p-1"
 										/>
 									</div>
 								)}
@@ -323,12 +389,12 @@ const CompanySettingsPage = () => {
 									</label>
 									<input
 										type="file"
-										accept="image/*"
+										accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
 										onChange={handleLogoChange}
 										className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-pink-600 file:text-white hover:file:bg-blue-700"
 									/>
 									<p className="mt-1 text-sm text-gray-500">
-										PNG, JPG, GIF hasta 10MB. Tamaño recomendado: 200x200px
+										PNG, JPG, GIF, WebP hasta 2MB. Tamaño recomendado: 200x200px - 500x500px (cuadrado o similar)
 									</p>
 								</div>
 							</div>
@@ -352,25 +418,13 @@ const CompanySettingsPage = () => {
 								</div>
 								<div>
 									<label className="block text-sm font-medium text-gray-700 mb-2">
-										Industria
-									</label>
-									<input
-										type="text"
-										value={companyData.industry}
-										onChange={(e) => handleInputChange('industry', e.target.value)}
-										placeholder="ej., Tecnología, Salud, Finanzas"
-										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-									/>
-								</div>
-								<div>
-									<label className="block text-sm font-medium text-gray-700 mb-2">
 										URL del Sitio Web
 									</label>
 									<input
 										type="url"
 										value={companyData.websiteUrl}
 										onChange={(e) => handleInputChange('websiteUrl', e.target.value)}
-										placeholder="https://www.company.com"
+										placeholder="https://www.tu-restaurante.com"
 										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 									/>
 								</div>
@@ -535,20 +589,109 @@ const CompanySettingsPage = () => {
 								</div>
 								<div>
 									<label className="block text-sm font-medium text-gray-700 mb-2">
-										Industria
+										Tipo de Negocio *
 									</label>
 									<select
 										value={companyData.industry}
 										onChange={(e) => handleInputChange('industry', e.target.value)}
 										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+										required
 									>
-										<option value="">Selecciona una industria</option>
+										<option value="">Selecciona el tipo de negocio</option>
 										{INDUSTRY_OPTIONS.map(option => (
 											<option key={option.value} value={option.value}>
 												{option.label}
 											</option>
 										))}
 									</select>
+								</div>
+							</div>
+						</div>
+
+						{/* Social Media Links */}
+						<div className="bg-purple-50 p-6 rounded-lg">
+							<h2 className="text-xl font-semibold text-gray-900 mb-4">Redes Sociales</h2>
+							<p className="text-sm text-gray-600 mb-4">
+								Agrega los enlaces a las redes sociales de tu negocio para que los candidatos puedan conocerte mejor.
+							</p>
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+								<div>
+									<label className="block text-sm font-medium text-gray-700 mb-2">
+										<div className="flex items-center gap-2">
+											<span className="text-xl">📷</span>
+											Instagram
+										</div>
+									</label>
+									<input
+										type="url"
+										value={companyData.instagramUrl || ''}
+										onChange={(e) => handleInputChange('instagramUrl', e.target.value)}
+										placeholder="https://instagram.com/tu-negocio"
+										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+									/>
+								</div>
+								<div>
+									<label className="block text-sm font-medium text-gray-700 mb-2">
+										<div className="flex items-center gap-2">
+											<span className="text-xl">👍</span>
+											Facebook
+										</div>
+									</label>
+									<input
+										type="url"
+										value={companyData.facebookUrl || ''}
+										onChange={(e) => handleInputChange('facebookUrl', e.target.value)}
+										placeholder="https://facebook.com/tu-negocio"
+										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+									/>
+								</div>
+								<div>
+									<label className="block text-sm font-medium text-gray-700 mb-2">
+										<div className="flex items-center gap-2">
+											<span className="text-xl">📍</span>
+											Google Maps
+										</div>
+									</label>
+									<input
+										type="url"
+										value={companyData.googleMapsUrl || ''}
+										onChange={(e) => handleInputChange('googleMapsUrl', e.target.value)}
+										placeholder="https://maps.google.com/?cid=..."
+										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+									/>
+									<p className="mt-1 text-xs text-gray-500">
+										Enlace directo a tu ubicación en Google Maps
+									</p>
+								</div>
+								<div>
+									<label className="block text-sm font-medium text-gray-700 mb-2">
+										<div className="flex items-center gap-2">
+											<span className="text-xl">🎥</span>
+											YouTube
+										</div>
+									</label>
+									<input
+										type="url"
+										value={companyData.youtubeUrl || ''}
+										onChange={(e) => handleInputChange('youtubeUrl', e.target.value)}
+										placeholder="https://youtube.com/@tu-negocio"
+										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+									/>
+								</div>
+								<div>
+									<label className="block text-sm font-medium text-gray-700 mb-2">
+										<div className="flex items-center gap-2">
+											<span className="text-xl">🎵</span>
+											TikTok
+										</div>
+									</label>
+									<input
+										type="url"
+										value={companyData.tiktokUrl || ''}
+										onChange={(e) => handleInputChange('tiktokUrl', e.target.value)}
+										placeholder="https://tiktok.com/@tu-negocio"
+										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+									/>
 								</div>
 							</div>
 						</div>
