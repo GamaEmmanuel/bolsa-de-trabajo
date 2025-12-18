@@ -3,9 +3,11 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { JobPosting } from '../../../types'
-import { db, auth } from '../../../lib/firebase'
+import { db, auth, functions } from '../../../lib/firebase'
 import { doc, getDoc, collection, addDoc, query, where, getDocs, deleteDoc, updateDoc } from 'firebase/firestore'
 import { onAuthStateChanged } from 'firebase/auth'
+import { httpsCallable } from 'firebase/functions'
+import { JOB_CATEGORY_OPTIONS } from '../../../lib/constants'
 
 // Extend the JobPosting interface for additional fields
 declare module '../../../types' {
@@ -167,13 +169,23 @@ const JobDetailPage = () => {
 			setApplicationId(applicationRef.id)
 			alert('¡Solicitud enviada exitosamente!')
 
-			// Send email notifications (async, don't block UI)
-			try {
-				const { sendEmailFromBrowser } = await import('@/lib/emailClient')
-				const { buildApplicationSubmittedTemplate } = await import('@/lib/emailTemplates')
+		// Send email notifications (client-side with preference checking)
+		try {
+			const { sendEmailFromBrowser } = await import('@/lib/emailClient')
+			const { buildApplicationSubmittedTemplate, buildNewApplicationReceivedTemplate } = await import('@/lib/emailTemplates')
 
-				// Send email to candidate
-				if (user.email) {
+			console.log('📧 Sending email notifications...')
+
+			// Check candidate preferences before sending
+			const candidateDoc = await getDoc(doc(db, 'users', user.uid))
+			const candidatePrefs = candidateDoc.data()?.emailPreferences
+
+			// Send email to candidate (if preferences allow)
+			if (user.email) {
+				if (candidatePrefs?.applicationSubmitted === false) {
+					console.log('⏭️ Candidate email skipped - user preferences disabled')
+				} else {
+					console.log('📧 Sending candidate email to:', user.email)
 					const templateData = buildApplicationSubmittedTemplate({
 						candidateEmail: user.email,
 						candidateName: candidateName,
@@ -189,12 +201,59 @@ const JobDetailPage = () => {
 						to_name: candidateName,
 						notification_type: 'application_submitted',
 						company_name: 'HR Portal',
-					} as any).catch(err => console.error('Email error:', err))
+					} as any)
+						.then(() => console.log('✅ Candidate email sent successfully'))
+						.catch(err => console.error('❌ Candidate email error:', err))
 				}
-			} catch (emailError) {
-				console.error('Error sending application emails:', emailError)
-				// Don't show error to user - email is secondary
 			}
+
+			// Send email to company
+			try {
+				// Get company email and preferences
+				const companyDoc = await getDoc(doc(db, 'users', job.companyId))
+				if (companyDoc.exists()) {
+					const companyUserData = companyDoc.data()
+					const companyEmail = companyUserData?.email
+					const companyPrefs = companyUserData?.emailPreferences
+
+					if (companyEmail) {
+						if (companyPrefs?.newApplications === false) {
+							console.log('⏭️ Company email skipped - user preferences disabled')
+						} else {
+							console.log('📧 Sending company email to:', companyEmail)
+							const companyTemplateData = buildNewApplicationReceivedTemplate({
+								companyEmail: companyEmail,
+								companyName: companyData?.companyName || job.companyName || 'Su Empresa',
+								candidateName: candidateName,
+								jobTitle: job.jobTitle,
+								applicationDate: new Date().toISOString(),
+								atsLink: `${window.location.origin}/company/ats`,
+							})
+
+							sendEmailFromBrowser({
+								...companyTemplateData,
+								to_email: companyEmail,
+								to_name: companyData?.companyName || job.companyName || 'Su Empresa',
+								notification_type: 'new_application',
+								company_name: 'HR Portal',
+							} as any)
+								.then(() => console.log('✅ Company email sent successfully'))
+								.catch(err => console.error('❌ Company email error:', err))
+						}
+					} else {
+						console.log('⚠️ Company email not found in user document')
+					}
+				} else {
+					console.log('⚠️ Company user document not found for companyId:', job.companyId)
+				}
+			} catch (companyEmailError) {
+				console.error('❌ Error fetching company email:', companyEmailError)
+				// Don't block the application process
+			}
+		} catch (emailError) {
+			console.error('❌ Error sending application emails:', emailError)
+			// Don't show error to user - email is secondary
+		}
 		} catch (error) {
 			console.error('Error applying for job:', error)
 			alert('Error al enviar la solicitud. Por favor, inténtalo de nuevo.')
@@ -404,15 +463,25 @@ const JobDetailPage = () => {
 									<img
 										src={companyData.logoUrl}
 										alt={`${companyData.companyName || 'Company'} logo`}
-										className="w-16 h-16 rounded-lg object-cover mr-4 border border-border"
+										className="w-16 h-16 rounded-lg object-contain mr-4 border border-border bg-gray-50 p-1"
+										onError={(e) => {
+											console.error('Failed to load company logo:', companyData.logoUrl)
+											e.currentTarget.style.display = 'none'
+											const fallback = e.currentTarget.nextElementSibling
+											if (fallback) {
+												(fallback as HTMLElement).style.display = 'flex'
+											}
+										}}
 									/>
-								) : (
-									<div className="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center mr-4 border border-border">
-										<svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-										</svg>
-									</div>
-								)}
+								) : null}
+								<div
+									className="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center mr-4 border border-border"
+									style={{ display: companyData?.logoUrl ? 'none' : 'flex' }}
+								>
+									<svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+									</svg>
+								</div>
 								<div className="flex-1">
 									<h1 className="text-3xl font-bold text-foreground">{job.jobTitle}</h1>
 									<p className="text-xl text-muted-foreground font-semibold mt-1">
@@ -660,15 +729,7 @@ const JobDetailPage = () => {
 							<div className="bg-gray-50 p-4 rounded-lg">
 								<h3 className="font-semibold text-gray-700 mb-2">Categoría</h3>
 								<p className="text-gray-600">
-									{job.jobCategory === 'engineering' ? 'Ingeniería' :
-									 job.jobCategory === 'sales' ? 'Ventas' :
-									 job.jobCategory === 'marketing' ? 'Marketing' :
-									 job.jobCategory === 'design' ? 'Diseño' :
-									 job.jobCategory === 'hr' ? 'Recursos Humanos' :
-									 job.jobCategory === 'finance' ? 'Finanzas' :
-									 job.jobCategory === 'operations' ? 'Operaciones' :
-									 job.jobCategory === 'customer-service' ? 'Atención al Cliente' :
-									 job.jobCategory === 'other' ? 'Otro' : job.jobCategory}
+									{JOB_CATEGORY_OPTIONS.find(cat => cat.value === job.jobCategory)?.label || job.jobCategory}
 								</p>
 							</div>
 						)}

@@ -4,6 +4,7 @@ export type NotificationType =
 	| 'application_submitted'
 	| 'application_status_changed'
 	| 'application_rejected'
+	| 'new_application'
 	| 'payment_failed'
 	| 'payment_successful'
 	| 'subscription_activated'

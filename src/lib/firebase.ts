@@ -2,6 +2,7 @@ import { initializeApp, getApps } from "firebase/app";
 import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { getFunctions } from "firebase/functions";
 
 // Firebase configuration with hardcoded values
 const firebaseConfig = {
@@ -34,5 +35,6 @@ if (typeof window !== 'undefined') {
 
 const db = getFirestore(app);
 const storage = getStorage(app);
+const functions = getFunctions(app);
 
-export { app, auth, db, storage };
+export { app, auth, db, storage, functions };

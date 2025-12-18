@@ -87,9 +87,10 @@ service cloud.firestore {
       allow update, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
     }
 
-    // User accounts: users can manage their own account settings
+    // User accounts: users can manage their own account settings, but signed-in users (companies) can read others for talent search
     match /userAccounts/{userId} {
-      allow read, write: if isSignedIn() && request.auth.uid == userId;
+      allow read: if isSignedIn(); // Allow all signed-in users to read user accounts (for talent search)
+      allow write: if isSignedIn() && request.auth.uid == userId; // Only owner can write
     }
 
     // Companies: users can read any company data for job listings
@@ -99,8 +100,10 @@ service cloud.firestore {
       allow create: if isSignedIn();
       allow update: if isSignedIn() && (
         // Allow if user is updating their own company
-        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.companyId == companyId
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.companyId == companyId) ||
+        // Allow if companyId matches the user's UID (for 1:1 relationship)
+        companyId == request.auth.uid
       );
       allow delete: if false; // Prevent deletion
     }
@@ -150,6 +153,13 @@ service cloud.firestore {
         (resource.data.senderId == request.auth.uid)
       );
       allow delete: if false; // Don't allow hard deleting messages
+    }
+
+    // Email logs: Allow authenticated users to write logs
+    match /emailLogs/{logId} {
+      allow create: if isSignedIn();
+      allow read: if false; // Logs are write-only for privacy
+      allow update, delete: if false;
     }
 
     // Deny everything else

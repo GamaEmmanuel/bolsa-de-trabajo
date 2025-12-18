@@ -36,44 +36,66 @@ export async function POST(req: NextRequest) {
 			}
 		}
 
-		// Prepare final template data
-		const finalTemplateData: EmailTemplateData = {
-			to_email: recipientEmail,
-			to_name: recipientName || 'Usuario',
-			notification_type: notificationType,
-			subject: templateData.subject || 'Notificación de HR Portal',
-			title: templateData.title || 'Notificación',
-			greeting: templateData.greeting || `Hola ${recipientName || 'Usuario'},`,
-			main_message: templateData.main_message || '',
-			secondary_message: templateData.secondary_message,
-			action_label: templateData.action_label,
-			action_url: templateData.action_url,
-			detail_1_label: templateData.detail_1_label,
-			detail_1_value: templateData.detail_1_value,
-			detail_2_label: templateData.detail_2_label,
-			detail_2_value: templateData.detail_2_value,
-			detail_3_label: templateData.detail_3_label,
-			detail_3_value: templateData.detail_3_value,
-			detail_4_label: templateData.detail_4_label,
-			detail_4_value: templateData.detail_4_value,
-			footer_message: templateData.footer_message || 'Gracias por usar HR Portal',
-			company_name: 'HR Portal',
-		}
+	// Prepare final template data - only include fields with values
+	const cleanedData: any = {
+		to_email: recipientEmail,
+		to_name: recipientName || 'Usuario',
+		notification_type: notificationType,
+		subject: templateData.subject || 'Notificación de HR Portal',
+		title: templateData.title || 'Notificación',
+		greeting: templateData.greeting || `Hola ${recipientName || 'Usuario'},`,
+		main_message: templateData.main_message || '',
+		footer_message: templateData.footer_message || 'Gracias por usar HR Portal',
+		company_name: 'HR Portal',
+	}
 
-		// Send email via EmailJS REST API
-		const emailJSResponse = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				service_id: EMAILJS_SERVICE_ID,
-				template_id: EMAILJS_TEMPLATE_ID,
-				user_id: EMAILJS_PUBLIC_KEY,
-				accessToken: EMAILJS_PRIVATE_KEY,
-				template_params: finalTemplateData,
-			}),
-		})
+	// Only add optional fields if they have values
+	if (templateData.secondary_message) {
+		cleanedData.secondary_message = templateData.secondary_message
+	}
+	if (templateData.action_label) {
+		cleanedData.action_label = templateData.action_label
+	}
+	if (templateData.action_url) {
+		cleanedData.action_url = templateData.action_url
+	}
+	if (templateData.detail_1_label) {
+		cleanedData.detail_1_label = templateData.detail_1_label
+		cleanedData.detail_1_value = templateData.detail_1_value || ''
+	}
+	if (templateData.detail_2_label) {
+		cleanedData.detail_2_label = templateData.detail_2_label
+		cleanedData.detail_2_value = templateData.detail_2_value || ''
+	}
+	if (templateData.detail_3_label) {
+		cleanedData.detail_3_label = templateData.detail_3_label
+		cleanedData.detail_3_value = templateData.detail_3_value || ''
+	}
+	if (templateData.detail_4_label) {
+		cleanedData.detail_4_label = templateData.detail_4_label
+		cleanedData.detail_4_value = templateData.detail_4_value || ''
+	}
+
+	console.log('📧 Sending email via EmailJS API:', {
+		to: recipientEmail,
+		type: notificationType,
+		hasPreferences: !!userId
+	})
+
+	// Send email via EmailJS REST API
+	const emailJSResponse = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			service_id: EMAILJS_SERVICE_ID,
+			template_id: EMAILJS_TEMPLATE_ID,
+			user_id: EMAILJS_PUBLIC_KEY,
+			accessToken: EMAILJS_PRIVATE_KEY,
+			template_params: cleanedData,
+		}),
+	})
 
 		if (!emailJSResponse.ok) {
 			const errorText = await emailJSResponse.text()
