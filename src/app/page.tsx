@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import PricingSection from '../components/PricingSection'
@@ -10,6 +10,51 @@ type TabType = 'home' | 'jobs'
 
 const LandingPage = () => {
 	const [activeTab, setActiveTab] = useState<TabType>('home')
+
+	// Add structured data and meta tags for SEO
+	useEffect(() => {
+		// Update page title and meta description
+		document.title = "Meserea - Encuentra Trabajo en Restaurantes y Hoteles | Empleos de Mesero, Chef, Cocinero"
+
+		let metaDesc = document.querySelector('meta[name="description"]')
+		if (!metaDesc) {
+			metaDesc = document.createElement('meta')
+			metaDesc.setAttribute('name', 'description')
+			document.head.appendChild(metaDesc)
+		}
+		metaDesc.setAttribute('content', 'La plataforma #1 para encontrar trabajo en restaurantes, hoteles y el sector de hospitalidad. Empleos de mesero, cocinero, chef, bartender, camarera y más.')
+
+		// Add LocalBusiness structured data
+		const localBusinessSchema = {
+			'@context': 'https://schema.org',
+			'@type': 'WebSite',
+			name: 'Meserea',
+			url: 'https://meserea.com',
+			potentialAction: {
+				'@type': 'SearchAction',
+				target: {
+					'@type': 'EntryPoint',
+					urlTemplate: 'https://meserea.com/jobs?q={search_term_string}'
+				},
+				'query-input': 'required name=search_term_string'
+			}
+		}
+
+		const schemaScript = document.createElement('script')
+		schemaScript.type = 'application/ld+json'
+		schemaScript.text = JSON.stringify(localBusinessSchema)
+		schemaScript.id = 'website-schema'
+
+		if (!document.getElementById('website-schema')) {
+			document.head.appendChild(schemaScript)
+		}
+
+		// Cleanup
+		return () => {
+			const script = document.getElementById('website-schema')
+			if (script) script.remove()
+		}
+	}, [])
 
 	return (
 		<div className="min-h-screen bg-white">

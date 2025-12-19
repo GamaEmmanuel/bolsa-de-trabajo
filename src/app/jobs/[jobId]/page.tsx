@@ -8,6 +8,7 @@ import { doc, getDoc, collection, addDoc, query, where, getDocs, deleteDoc, upda
 import { onAuthStateChanged } from 'firebase/auth'
 import { httpsCallable } from 'firebase/functions'
 import { JOB_CATEGORY_OPTIONS } from '../../../lib/constants'
+import { generateJobPostingSchema, generateBreadcrumbSchema } from '../../../lib/structuredData'
 
 // Extend the JobPosting interface for additional fields
 declare module '../../../types' {
@@ -35,6 +36,61 @@ const JobDetailPage = () => {
 	const [republishing, setRepublishing] = useState(false)
 	const [showCompanyJobsModal, setShowCompanyJobsModal] = useState(false)
 
+	// Add structured data for SEO
+	useEffect(() => {
+		if (job && jobId) {
+			// Add JobPosting structured data
+			const jobSchema = generateJobPostingSchema(job, companyData)
+			const scriptId = 'job-schema'
+			let script = document.getElementById(scriptId) as HTMLScriptElement
+
+			if (!script) {
+				script = document.createElement('script')
+				script.id = scriptId
+				script.type = 'application/ld+json'
+				document.head.appendChild(script)
+			}
+
+			script.textContent = JSON.stringify(jobSchema)
+
+			// Add breadcrumb structured data
+			const breadcrumbSchema = generateBreadcrumbSchema([
+				{ name: 'Inicio', url: 'https://meserea.com' },
+				{ name: 'Empleos', url: 'https://meserea.com/jobs' },
+				{ name: job.jobTitle, url: `https://meserea.com/jobs/${jobId}` },
+			])
+			const breadcrumbScriptId = 'breadcrumb-schema'
+			let breadcrumbScript = document.getElementById(breadcrumbScriptId) as HTMLScriptElement
+
+			if (!breadcrumbScript) {
+				breadcrumbScript = document.createElement('script')
+				breadcrumbScript.id = breadcrumbScriptId
+				breadcrumbScript.type = 'application/ld+json'
+				document.head.appendChild(breadcrumbScript)
+			}
+
+			breadcrumbScript.textContent = JSON.stringify(breadcrumbSchema)
+
+			// Update page title and meta description
+			document.title = `${job.jobTitle} - ${companyData?.companyName || job.companyName || 'Empleo'} | Meserea`
+
+			let metaDesc = document.querySelector('meta[name="description"]')
+			if (!metaDesc) {
+				metaDesc = document.createElement('meta')
+				metaDesc.setAttribute('name', 'description')
+				document.head.appendChild(metaDesc)
+			}
+			metaDesc.setAttribute('content', `${job.jobDescription.substring(0, 155)}... Aplica ahora en Meserea.`)
+
+			// Cleanup on unmount
+			return () => {
+				const schemaScript = document.getElementById(scriptId)
+				const breadcrumbScriptElement = document.getElementById(breadcrumbScriptId)
+				if (schemaScript) schemaScript.remove()
+				if (breadcrumbScriptElement) breadcrumbScriptElement.remove()
+			}
+		}
+	}, [job, companyData, jobId])
 
 	// Fetch job details from database and check auth state
 	useEffect(() => {

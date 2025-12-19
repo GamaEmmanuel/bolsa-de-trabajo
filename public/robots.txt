@@ -1,0 +1,41 @@
+# Meserea - Robots.txt
+# Allow search engines to crawl public pages
+
+User-agent: *
+Allow: /
+Allow: /jobs
+Allow: /jobs/*
+Allow: /company/*/jobs
+Allow: /pricing
+Allow: /contact
+Allow: /cv/*
+Allow: /about
+Allow: /blog
+Allow: /blog/*
+Allow: /faq
+
+# Disallow private/authenticated pages
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /api/*
+Disallow: /candidate/*
+Disallow: /company/dashboard
+Disallow: /company/job-postings
+Disallow: /company/talent-search
+Disallow: /company/settings
+Disallow: /company/applicants
+Disallow: /company/subscription
+Disallow: /signin
+Disallow: /signup
+Disallow: /onboarding
+
+# Sitemap location
+Sitemap: https://meserea.com/sitemap.xml
+
+# Crawl-delay for specific bots (optional)
+User-agent: Googlebot
+Crawl-delay: 0
+
+User-agent: Bingbot
+Crawl-delay: 1
+
