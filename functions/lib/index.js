@@ -40,14 +40,17 @@ exports.sendApplicationEmail = exports.syncSubscription = exports.stripeWebhook 
 const functions = __importStar(require("firebase-functions"));
 const admin = __importStar(require("firebase-admin"));
 const stripe_1 = __importDefault(require("stripe"));
+const googleapis_1 = require("googleapis");
 // Initialize Firebase Admin
 admin.initializeApp();
 const db = admin.firestore();
-// EmailJS configuration
-const EMAILJS_SERVICE_ID = 'job-portal';
-const EMAILJS_TEMPLATE_ID = 'template_kv50v38';
-const EMAILJS_PUBLIC_KEY = 'dNgbSgz45xOHH5tbn';
-const EMAILJS_PRIVATE_KEY = '-Eo8kdyuTIvbpl1345mph';
+// Gmail API configuration
+const GMAIL_CONFIG = {
+    clientId: process.env.GMAIL_CLIENT_ID || functions.config().gmail?.client_id,
+    clientSecret: process.env.GMAIL_CLIENT_SECRET || functions.config().gmail?.client_secret,
+    refreshToken: process.env.GMAIL_REFRESH_TOKEN || functions.config().gmail?.refresh_token,
+    userEmail: process.env.GMAIL_USER_EMAIL || functions.config().gmail?.user_email || 'mesereamx@gmail.com',
+};
 // Initialize Stripe
 const stripe = new stripe_1.default(process.env.STRIPE_SECRET_KEY || functions.config().stripe?.secret_key || '', {
     apiVersion: '2024-11-20.acacia',
@@ -504,8 +507,8 @@ exports.sendApplicationEmail = functions.https.onCall(async (data, context) => {
                 footer_message: '¡Te deseamos mucha suerte en tu proceso de selección!',
                 company_name: 'HR Portal',
             };
-            // Send via EmailJS REST API
-            const emailResponse = await sendEmailViaEmailJS(templateData);
+            // Send via Gmail API
+            const emailResponse = await sendEmailViaGmail(templateData);
             results.candidateEmail = emailResponse;
         }
         // 2. Send email to COMPANY
@@ -555,8 +558,8 @@ exports.sendApplicationEmail = functions.https.onCall(async (data, context) => {
                 footer_message: 'Gestiona todas tus aplicaciones en un solo lugar.',
                 company_name: 'HR Portal',
             };
-            // Send via EmailJS REST API
-            const emailResponse = await sendEmailViaEmailJS(companyTemplateData);
+            // Send via Gmail API
+            const emailResponse = await sendEmailViaGmail(companyTemplateData);
             results.companyEmail = emailResponse;
         }
         // Log to Firestore
@@ -575,69 +578,140 @@ exports.sendApplicationEmail = functions.https.onCall(async (data, context) => {
         throw new functions.https.HttpsError('internal', error.message);
     }
 });
-// Helper function to send email via EmailJS REST API
-async function sendEmailViaEmailJS(templateData) {
+// Helper function to encode subject with UTF-8 (handles emojis and special characters)
+function encodeSubject(subject) {
+    // Encode subject line properly for MIME (RFC 2047)
+    const encoded = Buffer.from(subject, 'utf-8').toString('base64');
+    return `=?UTF-8?B?${encoded}?=`;
+}
+// Helper function to create MIME email message
+function createMimeMessage(to, from, subject, htmlBody, textBody) {
+    const boundary = '----=_Part_' + Math.random().toString(36).substring(2);
+    // Encode subject for proper UTF-8 handling
+    const encodedSubject = encodeSubject(subject);
+    const message = [
+        `From: ${from}`,
+        `To: ${to}`,
+        `Subject: ${encodedSubject}`,
+        'MIME-Version: 1.0',
+        `Content-Type: multipart/alternative; boundary="${boundary}"`,
+        '',
+        `--${boundary}`,
+        'Content-Type: text/plain; charset=UTF-8',
+        'Content-Transfer-Encoding: base64',
+        '',
+        Buffer.from(textBody, 'utf-8').toString('base64'),
+        '',
+        `--${boundary}`,
+        'Content-Type: text/html; charset=UTF-8',
+        'Content-Transfer-Encoding: base64',
+        '',
+        Buffer.from(htmlBody, 'utf-8').toString('base64'),
+        '',
+        `--${boundary}--`,
+    ].join('\r\n');
+    return Buffer.from(message).toString('base64')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '');
+}
+// Helper function to build HTML email
+function buildHtmlEmail(templateData) {
+    return `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 0; background-color: #f5f5f5; }
+        .container { background-color: #ffffff; margin: 20px auto; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%); color: white; padding: 40px 30px; text-align: center; }
+        .header h1 { margin: 0; font-size: 24px; font-weight: 600; }
+        .content { padding: 30px; }
+        .details { background: #f9fafb; padding: 20px; margin: 20px 0; border-left: 4px solid #ec4899; border-radius: 4px; }
+        .detail-item { margin: 12px 0; font-size: 14px; }
+        .button { display: inline-block; padding: 14px 32px; background: #ec4899; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; }
+        .footer { background: #f9fafb; padding: 25px 30px; text-align: center; border-top: 1px solid #e5e7eb; font-size: 14px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header"><h1>${templateData.title}</h1></div>
+        <div class="content">
+            <p>${templateData.greeting}</p>
+            <p><strong>${templateData.main_message}</strong></p>
+            ${templateData.secondary_message ? `<p>${templateData.secondary_message}</p>` : ''}
+            ${templateData.detail_1_label ? `
+            <div class="details">
+                <div class="detail-item"><strong>${templateData.detail_1_label}</strong> ${templateData.detail_1_value || ''}</div>
+                ${templateData.detail_2_label ? `<div class="detail-item"><strong>${templateData.detail_2_label}</strong> ${templateData.detail_2_value || ''}</div>` : ''}
+                ${templateData.detail_3_label ? `<div class="detail-item"><strong>${templateData.detail_3_label}</strong> ${templateData.detail_3_value || ''}</div>` : ''}
+            </div>
+            ` : ''}
+            ${templateData.action_url ? `<div style="text-align: center; margin: 30px 0;"><a href="${templateData.action_url}" class="button">${templateData.action_label || 'Ver Detalles'}</a></div>` : ''}
+        </div>
+        <div class="footer">
+            <p>${templateData.footer_message}</p>
+            <p><strong>${templateData.company_name || 'HR Portal'}</strong></p>
+            <p style="font-size: 11px; color: #999;">Este es un correo automático, por favor no responder.</p>
+        </div>
+    </div>
+</body>
+</html>
+  `.trim();
+}
+// Helper function to convert to plain text
+function htmlToText(templateData) {
+    let text = `${templateData.title}\n\n`;
+    text += `${templateData.greeting}\n\n`;
+    text += `${templateData.main_message}\n\n`;
+    if (templateData.secondary_message)
+        text += `${templateData.secondary_message}\n\n`;
+    if (templateData.detail_1_label)
+        text += `${templateData.detail_1_label}: ${templateData.detail_1_value || ''}\n`;
+    if (templateData.detail_2_label)
+        text += `${templateData.detail_2_label}: ${templateData.detail_2_value || ''}\n`;
+    if (templateData.detail_3_label)
+        text += `${templateData.detail_3_label}: ${templateData.detail_3_value || ''}\n`;
+    if (templateData.action_url)
+        text += `\n${templateData.action_label || 'Ver Detalles'}: ${templateData.action_url}\n`;
+    text += `\n---\n${templateData.footer_message}\n${templateData.company_name || 'HR Portal'}\n`;
+    return text;
+}
+// Helper function to send email via Gmail API
+async function sendEmailViaGmail(templateData) {
     try {
-        // Only include fields with values to prevent undefined in template
-        const cleanedData = {
-            to_email: templateData.to_email || '',
-            to_name: templateData.to_name || '',
-            notification_type: templateData.notification_type || '',
-            subject: templateData.subject || '',
-            title: templateData.title || '',
-            greeting: templateData.greeting || '',
-            main_message: templateData.main_message || '',
-            footer_message: templateData.footer_message || '',
-            company_name: templateData.company_name || 'HR Portal',
-        };
-        // Add optional fields only if they have values
-        if (templateData.secondary_message)
-            cleanedData.secondary_message = templateData.secondary_message;
-        if (templateData.action_label)
-            cleanedData.action_label = templateData.action_label;
-        if (templateData.action_url)
-            cleanedData.action_url = templateData.action_url;
-        if (templateData.detail_1_label) {
-            cleanedData.detail_1_label = templateData.detail_1_label;
-            cleanedData.detail_1_value = templateData.detail_1_value || '';
+        console.log('📧 Sending email via Gmail API to:', templateData.to_email);
+        // Verify configuration
+        if (!GMAIL_CONFIG.clientId || !GMAIL_CONFIG.clientSecret || !GMAIL_CONFIG.refreshToken) {
+            console.error('❌ Gmail API not configured');
+            return { success: false, error: 'Gmail API not configured' };
         }
-        if (templateData.detail_2_label) {
-            cleanedData.detail_2_label = templateData.detail_2_label;
-            cleanedData.detail_2_value = templateData.detail_2_value || '';
-        }
-        if (templateData.detail_3_label) {
-            cleanedData.detail_3_label = templateData.detail_3_label;
-            cleanedData.detail_3_value = templateData.detail_3_value || '';
-        }
-        if (templateData.detail_4_label) {
-            cleanedData.detail_4_label = templateData.detail_4_label;
-            cleanedData.detail_4_value = templateData.detail_4_value || '';
-        }
-        const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                service_id: EMAILJS_SERVICE_ID,
-                template_id: EMAILJS_TEMPLATE_ID,
-                user_id: EMAILJS_PUBLIC_KEY,
-                accessToken: EMAILJS_PRIVATE_KEY,
-                template_params: cleanedData,
-            }),
+        // Create OAuth2 client
+        const oauth2Client = new googleapis_1.google.auth.OAuth2(GMAIL_CONFIG.clientId, GMAIL_CONFIG.clientSecret);
+        oauth2Client.setCredentials({
+            refresh_token: GMAIL_CONFIG.refreshToken,
         });
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('EmailJS error:', errorText);
-            return { success: false, error: errorText };
-        }
-        const responseText = await response.text();
-        console.log('✅ Email sent via EmailJS:', responseText);
-        return { success: true, messageId: responseText || 'OK' };
+        // Create Gmail API client
+        const gmail = googleapis_1.google.gmail({ version: 'v1', auth: oauth2Client });
+        // Build HTML and text versions
+        const htmlBody = buildHtmlEmail(templateData);
+        const textBody = htmlToText(templateData);
+        // Create MIME message
+        const encodedMessage = createMimeMessage(templateData.to_email, `Meserea <${GMAIL_CONFIG.userEmail}>`, templateData.subject, htmlBody, textBody);
+        // Send email
+        const response = await gmail.users.messages.send({
+            userId: 'me',
+            requestBody: {
+                raw: encodedMessage,
+            },
+        });
+        console.log('✅ Email sent via Gmail:', response.data.id);
+        return { success: true, messageId: response.data.id || 'sent' };
     }
     catch (error) {
-        console.error('Error sending email via EmailJS:', error);
-        return { success: false, error: error.message };
+        console.error('❌ Gmail send failed:', error?.message);
+        return { success: false, error: error?.message || 'Failed to send email' };
     }
 }
 //# sourceMappingURL=index.js.map

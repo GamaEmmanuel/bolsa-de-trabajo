@@ -169,89 +169,46 @@ const JobDetailPage = () => {
 			setApplicationId(applicationRef.id)
 			alert('¡Solicitud enviada exitosamente!')
 
-		// Send email notifications (client-side with preference checking)
+		// Send email notifications via Firebase Function (Gmail API with preference checking)
 		try {
-			const { sendEmailFromBrowser } = await import('@/lib/emailClient')
-			const { buildApplicationSubmittedTemplate, buildNewApplicationReceivedTemplate } = await import('@/lib/emailTemplates')
+			console.log('📧 Sending email notifications via Firebase Function (Gmail)...')
 
-			console.log('📧 Sending email notifications...')
+			const sendApplicationEmail = httpsCallable(functions, 'sendApplicationEmail')
 
-			// Check candidate preferences before sending
-			const candidateDoc = await getDoc(doc(db, 'users', user.uid))
-			const candidatePrefs = candidateDoc.data()?.emailPreferences
+			sendApplicationEmail({
+				candidateId: user.uid,
+				candidateEmail: user.email,
+				candidateName: candidateName,
+				jobTitle: job.jobTitle,
+				companyId: job.companyId,
+				companyName: companyData?.companyName || job.companyName || 'La Empresa',
+				applicationDate: new Date().toISOString(),
+			})
+				.then((result: any) => {
+					console.log('✅ Email notifications result:', result.data)
 
-			// Send email to candidate (if preferences allow)
-			if (user.email) {
-				if (candidatePrefs?.applicationSubmitted === false) {
-					console.log('⏭️ Candidate email skipped - user preferences disabled')
-				} else {
-					console.log('📧 Sending candidate email to:', user.email)
-					const templateData = buildApplicationSubmittedTemplate({
-						candidateEmail: user.email,
-						candidateName: candidateName,
-						jobTitle: job.jobTitle,
-						companyName: companyData?.companyName || job.companyName || 'La Empresa',
-						applicationDate: new Date().toISOString(),
-						dashboardLink: `${window.location.origin}/candidate/my-applications`,
-					})
-
-					sendEmailFromBrowser({
-						...templateData,
-						to_email: user.email,
-						to_name: candidateName,
-						notification_type: 'application_submitted',
-						company_name: 'HR Portal',
-					} as any)
-						.then(() => console.log('✅ Candidate email sent successfully'))
-						.catch(err => console.error('❌ Candidate email error:', err))
-				}
-			}
-
-			// Send email to company
-			try {
-				// Get company email and preferences
-				const companyDoc = await getDoc(doc(db, 'users', job.companyId))
-				if (companyDoc.exists()) {
-					const companyUserData = companyDoc.data()
-					const companyEmail = companyUserData?.email
-					const companyPrefs = companyUserData?.emailPreferences
-
-					if (companyEmail) {
-						if (companyPrefs?.newApplications === false) {
-							console.log('⏭️ Company email skipped - user preferences disabled')
-						} else {
-							console.log('📧 Sending company email to:', companyEmail)
-							const companyTemplateData = buildNewApplicationReceivedTemplate({
-								companyEmail: companyEmail,
-								companyName: companyData?.companyName || job.companyName || 'Su Empresa',
-								candidateName: candidateName,
-								jobTitle: job.jobTitle,
-								applicationDate: new Date().toISOString(),
-								atsLink: `${window.location.origin}/company/ats`,
-							})
-
-							sendEmailFromBrowser({
-								...companyTemplateData,
-								to_email: companyEmail,
-								to_name: companyData?.companyName || job.companyName || 'Su Empresa',
-								notification_type: 'new_application',
-								company_name: 'HR Portal',
-							} as any)
-								.then(() => console.log('✅ Company email sent successfully'))
-								.catch(err => console.error('❌ Company email error:', err))
-						}
-					} else {
-						console.log('⚠️ Company email not found in user document')
+					if (result.data.candidateEmail?.success) {
+						console.log('✅ Candidate email sent via Gmail')
+					} else if (result.data.candidateEmail?.messageId === 'skipped_by_preferences') {
+						console.log('⏭️ Candidate email skipped - user preferences')
+					} else if (result.data.candidateEmail?.error) {
+						console.error('❌ Candidate email error:', result.data.candidateEmail.error)
 					}
-				} else {
-					console.log('⚠️ Company user document not found for companyId:', job.companyId)
-				}
-			} catch (companyEmailError) {
-				console.error('❌ Error fetching company email:', companyEmailError)
-				// Don't block the application process
-			}
+
+					if (result.data.companyEmail?.success) {
+						console.log('✅ Company email sent via Gmail')
+					} else if (result.data.companyEmail?.messageId === 'skipped_by_preferences') {
+						console.log('⏭️ Company email skipped - user preferences')
+					} else if (result.data.companyEmail?.error) {
+						console.error('❌ Company email error:', result.data.companyEmail.error)
+					}
+				})
+				.catch((err) => {
+					console.error('❌ Error sending email notifications:', err)
+					// Don't show error to user - email is secondary
+				})
 		} catch (emailError) {
-			console.error('❌ Error sending application emails:', emailError)
+			console.error('❌ Error triggering email notifications:', emailError)
 			// Don't show error to user - email is secondary
 		}
 		} catch (error) {
