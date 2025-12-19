@@ -208,8 +208,8 @@ const LandingPage = () => {
 				<div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
 					<div className="max-w-4xl mx-auto">
 						<h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-4 sm:mb-6 px-2">
-							Encuentra el mejor talento para tu
-							<span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-pink-700"> restaurante u hotel</span>
+							Encuentra el mejor talento para tu{' '}
+							<span className="text-pink-600 sm:text-transparent sm:bg-clip-text sm:bg-gradient-to-r sm:from-pink-600 sm:to-pink-700">restaurante u hotel</span>
 						</h1>
 						<p className="text-base sm:text-lg md:text-xl text-gray-600 leading-relaxed mb-8 sm:mb-10 max-w-2xl mx-auto px-4">
 							Contrata meseros, cocineros, camareras, chefs, bartenders y más personal de servicio de manera rápida y eficiente. Plataforma especializada en el sector de hospitalidad.
