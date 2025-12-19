@@ -39,6 +39,13 @@ firebase-adminsdk-*.json
 serviceAccountKey.json
 jobportal-4b561-firebase-adminsdk-fbsvc-3052bc11c1.json
 
+# Gmail API secrets (NEVER COMMIT THESE!)
+gmail_api_secrets.json
+*_api_secrets.json
+
+# Test and documentation files with secrets
+TEST_GMAIL_EMAIL.md
+
 # vercel
 .vercel
 
