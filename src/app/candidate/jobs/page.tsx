@@ -50,6 +50,7 @@ const JobsPageContent = () => {
 		remote: false,
 	})
 	const [sortBy, setSortBy] = useState<'date' | 'salary' | 'relevance'>('date')
+	const [showFilters, setShowFilters] = useState(false)
 
 	// Fetch company name if companyId is provided
 	useEffect(() => {
@@ -389,8 +390,6 @@ const JobsPageContent = () => {
 			</div>
 		)
 	}
-
-	const [showFilters, setShowFilters] = useState(false)
 
 	return (
 		<div className="space-y-4 md:space-y-6">

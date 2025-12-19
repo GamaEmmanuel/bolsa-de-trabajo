@@ -288,11 +288,11 @@ const CompanySettingsPage = () => {
 	}
 
 	return (
-		<div className="min-h-screen bg-gray-50 p-8">
-			<div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
-				<div className="mb-8">
-					<h1 className="text-3xl font-bold text-gray-900 mb-2">Configuración de la Empresa</h1>
-					<p className="text-gray-600">Gestiona la información y preferencias de tu empresa</p>
+		<div className="min-h-screen bg-gray-50 p-4 md:p-8">
+			<div className="max-w-4xl mx-auto bg-white p-4 md:p-8 rounded-lg shadow-md">
+				<div className="mb-6 md:mb-8">
+					<h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Configuración de la Empresa</h1>
+					<p className="text-sm md:text-base text-gray-600">Gestiona la información y preferencias de tu empresa</p>
 				</div>
 
 				{/* Payment Success Message */}
@@ -367,33 +367,33 @@ const CompanySettingsPage = () => {
 					</div>
 				)}
 
-				<div className="space-y-8">
-					<form onSubmit={(e) => { e.preventDefault(); handleSave(); }} className="space-y-8">
+				<div className="space-y-6 md:space-y-8">
+					<form onSubmit={(e) => { e.preventDefault(); handleSave(); }} className="space-y-6 md:space-y-8">
 
 						{/* Company Logo Section */}
-						<div className="bg-blue-50 p-6 rounded-lg">
-							<h2 className="text-xl font-semibold text-gray-900 mb-4">Logo de la Empresa</h2>
-							<div className="flex items-center space-x-6">
+						<div className="bg-blue-50 p-4 md:p-6 rounded-lg">
+							<h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-4">Logo de la Empresa</h2>
+							<div className="flex flex-col sm:flex-row items-center sm:space-x-6 space-y-4 sm:space-y-0">
 								{logoPreview && (
 									<div className="flex-shrink-0">
 										<img
 											src={logoPreview}
 											alt="Logo de la empresa"
-											className="h-20 w-20 rounded-lg object-contain border border-gray-200 bg-gray-50 p-1"
+											className="h-20 w-20 md:h-24 md:w-24 rounded-lg object-contain border border-gray-200 bg-gray-50 p-1"
 										/>
 									</div>
 								)}
-								<div className="flex-1">
-									<label className="block text-sm font-medium text-gray-700 mb-2">
+								<div className="flex-1 w-full">
+									<label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
 										Subir Logo
 									</label>
 									<input
 										type="file"
 										accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
 										onChange={handleLogoChange}
-										className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-pink-600 file:text-white hover:file:bg-blue-700"
+										className="block w-full text-xs md:text-sm text-gray-500 file:mr-3 file:py-2 file:px-3 md:file:px-4 file:rounded-md file:border-0 file:text-xs md:file:text-sm file:font-semibold file:bg-pink-600 file:text-white hover:file:bg-pink-700"
 									/>
-									<p className="mt-1 text-sm text-gray-500">
+									<p className="mt-1 text-xs md:text-sm text-gray-500">
 										PNG, JPG, GIF, WebP hasta 2MB. Tamaño recomendado: 200x200px - 500x500px (cuadrado o similar)
 									</p>
 								</div>
@@ -401,8 +401,8 @@ const CompanySettingsPage = () => {
 						</div>
 
 						{/* Basic Information */}
-						<div className="bg-gray-50 p-6 rounded-lg">
-							<h2 className="text-xl font-semibold text-gray-900 mb-4">Información Básica</h2>
+						<div className="bg-gray-50 p-4 md:p-6 rounded-lg">
+							<h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-4">Información Básica</h2>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<div>
 									<label className="block text-sm font-medium text-gray-700 mb-2">
@@ -468,8 +468,8 @@ const CompanySettingsPage = () => {
 						</div>
 
 						{/* Legal Information */}
-						<div className="bg-green-50 p-6 rounded-lg">
-							<h2 className="text-xl font-semibold text-gray-900 mb-4">Información Legal</h2>
+						<div className="bg-green-50 p-4 md:p-6 rounded-lg">
+							<h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-4">Información Legal</h2>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<div>
 									<label className="block text-sm font-medium text-gray-700 mb-2">
@@ -498,8 +498,8 @@ const CompanySettingsPage = () => {
 						</div>
 
 						{/* Address Information */}
-						<div className="bg-yellow-50 p-6 rounded-lg">
-							<h2 className="text-xl font-semibold text-gray-900 mb-4">Información de Dirección</h2>
+						<div className="bg-yellow-50 p-4 md:p-6 rounded-lg">
+							<h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-4">Información de Dirección</h2>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<div className="md:col-span-2">
 									<label className="block text-sm font-medium text-gray-700 mb-2">
@@ -568,8 +568,8 @@ const CompanySettingsPage = () => {
 						</div>
 
 						{/* Company Profile */}
-						<div className="bg-indigo-50 p-6 rounded-lg">
-							<h2 className="text-xl font-semibold text-gray-900 mb-4">Perfil de la Empresa</h2>
+						<div className="bg-indigo-50 p-4 md:p-6 rounded-lg">
+							<h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-4">Perfil de la Empresa</h2>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<div>
 									<label className="block text-sm font-medium text-gray-700 mb-2">
@@ -609,9 +609,9 @@ const CompanySettingsPage = () => {
 						</div>
 
 						{/* Social Media Links */}
-						<div className="bg-purple-50 p-6 rounded-lg">
-							<h2 className="text-xl font-semibold text-gray-900 mb-4">Redes Sociales</h2>
-							<p className="text-sm text-gray-600 mb-4">
+						<div className="bg-purple-50 p-4 md:p-6 rounded-lg">
+							<h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-4">Redes Sociales</h2>
+							<p className="text-xs md:text-sm text-gray-600 mb-4">
 								Agrega los enlaces a las redes sociales de tu negocio para que los candidatos puedan conocerte mejor.
 							</p>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -697,41 +697,71 @@ const CompanySettingsPage = () => {
 						</div>
 
 						{/* Benefits & Culture */}
-						<div className="bg-orange-50 p-6 rounded-lg">
-							<h2 className="text-xl font-semibold text-gray-900 mb-4">Beneficios y Cultura de la Empresa</h2>
+						<div className="bg-orange-50 p-4 md:p-6 rounded-lg">
+							<h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-4">Beneficios y Cultura de la Empresa</h2>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<div>
-									<label className="block text-sm font-medium text-gray-700 mb-2">
+									<label className="block text-sm font-medium text-gray-700 mb-3">
 										Beneficios (Selecciona todos los que apliquen)
 									</label>
-									<div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border border-gray-300 rounded-md p-3 bg-white">
+									<div className="space-y-2 max-h-80 overflow-y-auto border border-gray-200 rounded-lg p-4 bg-white">
 										{BENEFITS_OPTIONS.map(benefit => (
-											<label key={benefit.value} className="flex items-center text-sm">
-												<input
-													type="checkbox"
-													checked={companyData.benefits?.includes(benefit.value) || false}
-													onChange={(e) => handleArrayChange('benefits', benefit.value, e.target.checked)}
-													className="mr-2"
-												/>
-												{benefit.label}
+											<label
+												key={benefit.value}
+												className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors group min-h-[44px]"
+											>
+												<div className="relative flex items-center justify-center flex-shrink-0 mt-0.5">
+													<input
+														type="checkbox"
+														checked={companyData.benefits?.includes(benefit.value) || false}
+														onChange={(e) => handleArrayChange('benefits', benefit.value, e.target.checked)}
+														className="peer sr-only"
+													/>
+													<div className="w-5 h-5 border-2 border-gray-300 rounded-md peer-checked:border-pink-600 peer-checked:bg-pink-600 transition-all duration-200 flex items-center justify-center group-hover:border-pink-400">
+														<svg
+															className="w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200"
+															fill="none"
+															stroke="currentColor"
+															viewBox="0 0 24 24"
+														>
+															<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+														</svg>
+													</div>
+												</div>
+												<span className="text-sm text-gray-700 select-none leading-relaxed">{benefit.label}</span>
 											</label>
 										))}
 									</div>
 								</div>
 								<div>
-									<label className="block text-sm font-medium text-gray-700 mb-2">
+									<label className="block text-sm font-medium text-gray-700 mb-3">
 										Cultura de la Empresa (Selecciona todas las que apliquen)
 									</label>
-									<div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border border-gray-300 rounded-md p-3 bg-white">
+									<div className="space-y-2 max-h-80 overflow-y-auto border border-gray-200 rounded-lg p-4 bg-white">
 										{COMPANY_CULTURE_OPTIONS.map(culture => (
-											<label key={culture.value} className="flex items-center text-sm">
-												<input
-													type="checkbox"
-													checked={companyData.companyCulture?.includes(culture.value) || false}
-													onChange={(e) => handleArrayChange('companyCulture', culture.value, e.target.checked)}
-													className="mr-2"
-												/>
-												{culture.label}
+											<label
+												key={culture.value}
+												className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors group min-h-[44px]"
+											>
+												<div className="relative flex items-center justify-center flex-shrink-0 mt-0.5">
+													<input
+														type="checkbox"
+														checked={companyData.companyCulture?.includes(culture.value) || false}
+														onChange={(e) => handleArrayChange('companyCulture', culture.value, e.target.checked)}
+														className="peer sr-only"
+													/>
+													<div className="w-5 h-5 border-2 border-gray-300 rounded-md peer-checked:border-pink-600 peer-checked:bg-pink-600 transition-all duration-200 flex items-center justify-center group-hover:border-pink-400">
+														<svg
+															className="w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200"
+															fill="none"
+															stroke="currentColor"
+															viewBox="0 0 24 24"
+														>
+															<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+														</svg>
+													</div>
+												</div>
+												<span className="text-sm text-gray-700 select-none leading-relaxed">{culture.label}</span>
 											</label>
 										))}
 									</div>
@@ -740,21 +770,21 @@ const CompanySettingsPage = () => {
 						</div>
 
 						{/* Save Button */}
-						<div className="flex justify-end gap-4">
+						<div className="flex flex-col sm:flex-row justify-end gap-3 md:gap-4">
 							<button
 								type="button"
 								onClick={() => router.back()}
-								className="px-8 py-3 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 font-semibold text-lg transition-colors"
+								className="px-6 md:px-8 py-2.5 md:py-3 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 font-semibold text-base md:text-lg transition-colors"
 							>
 								Cancelar
 							</button>
 							<button
 								type="submit"
 								disabled={saving}
-								className="px-8 py-3 text-white bg-green-600 rounded-md hover:bg-green-700 disabled:bg-gray-400 font-semibold text-lg disabled:cursor-not-allowed transition-colors"
+								className="px-6 md:px-8 py-2.5 md:py-3 text-white bg-green-600 rounded-md hover:bg-green-700 disabled:bg-gray-400 font-semibold text-base md:text-lg disabled:cursor-not-allowed transition-colors"
 							>
 								{saving ? (
-									<div className="flex items-center">
+									<div className="flex items-center justify-center">
 										<div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
 										Guardando...
 									</div>

@@ -505,14 +505,26 @@ const NewJobPostingPage = () => {
 							</div>
 
 							<div className="flex items-center">
-								<label className="flex items-center">
-									<input
-										type="checkbox"
-										checked={isSalaryHidden}
-										onChange={e => setIsSalaryHidden(e.target.checked)}
-										className="mr-2 rounded border-gray-300 text-pink-600 focus:ring-pink-500"
-									/>
-									<span className="text-sm text-gray-700">Ocultar salario del público</span>
+								<label className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-green-100 cursor-pointer transition-colors group">
+									<div className="relative flex items-center justify-center flex-shrink-0 mt-0.5">
+										<input
+											type="checkbox"
+											checked={isSalaryHidden}
+											onChange={e => setIsSalaryHidden(e.target.checked)}
+											className="peer sr-only"
+										/>
+										<div className="w-5 h-5 border-2 border-gray-300 rounded-md peer-checked:border-pink-600 peer-checked:bg-pink-600 transition-all duration-200 flex items-center justify-center group-hover:border-pink-400">
+											<svg
+												className="w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200"
+												fill="none"
+												stroke="currentColor"
+												viewBox="0 0 24 24"
+											>
+												<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+											</svg>
+										</div>
+									</div>
+									<span className="text-sm text-gray-700 select-none leading-relaxed">Ocultar salario del público</span>
 								</label>
 							</div>
 						</div>
@@ -546,22 +558,37 @@ const NewJobPostingPage = () => {
 							<label className="block text-sm font-medium text-gray-700 mb-2 sm:mb-3">
 								Habilidades Requeridas
 							</label>
-							<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 mb-3 sm:mb-4">
+							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-3 sm:mb-4 max-h-80 overflow-y-auto border border-gray-200 rounded-lg p-4 bg-white">
 								{HOSPITALITY_SKILLS.map(skill => (
-									<label key={skill} className="flex items-center space-x-2 text-sm">
-										<input
-											type="checkbox"
-											checked={requiredSkills.includes(skill)}
-											onChange={(e) => {
-												if (e.target.checked) {
-													setRequiredSkills([...requiredSkills, skill])
-												} else {
-													setRequiredSkills(requiredSkills.filter(s => s !== skill))
-												}
-											}}
-											className="rounded border-gray-300 text-pink-600 focus:ring-pink-500"
-										/>
-										<span className="text-gray-700">{skill}</span>
+									<label
+										key={skill}
+										className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-pink-50 cursor-pointer transition-colors group min-h-[44px]"
+									>
+										<div className="relative flex items-center justify-center flex-shrink-0 mt-0.5">
+											<input
+												type="checkbox"
+												checked={requiredSkills.includes(skill)}
+												onChange={(e) => {
+													if (e.target.checked) {
+														setRequiredSkills([...requiredSkills, skill])
+													} else {
+														setRequiredSkills(requiredSkills.filter(s => s !== skill))
+													}
+												}}
+												className="peer sr-only"
+											/>
+											<div className="w-5 h-5 border-2 border-gray-300 rounded-md peer-checked:border-pink-600 peer-checked:bg-pink-600 transition-all duration-200 flex items-center justify-center group-hover:border-pink-400">
+												<svg
+													className="w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200"
+													fill="none"
+													stroke="currentColor"
+													viewBox="0 0 24 24"
+												>
+													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+												</svg>
+											</div>
+										</div>
+										<span className="text-sm text-gray-700 select-none leading-relaxed">{skill}</span>
 									</label>
 								))}
 							</div>
@@ -621,22 +648,37 @@ const NewJobPostingPage = () => {
 							<label className="block text-sm font-medium text-gray-700 mb-3">
 								Habilidades Preferidas (Opcional)
 							</label>
-							<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-4">
+							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-4 max-h-80 overflow-y-auto border border-gray-200 rounded-lg p-4 bg-white">
 								{HOSPITALITY_SKILLS.map(skill => (
-									<label key={skill} className="flex items-center space-x-2 text-sm">
-										<input
-											type="checkbox"
-											checked={preferredSkills.includes(skill)}
-											onChange={(e) => {
-												if (e.target.checked) {
-													setPreferredSkills([...preferredSkills, skill])
-												} else {
-													setPreferredSkills(preferredSkills.filter(s => s !== skill))
-												}
-											}}
-											className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-										/>
-										<span className="text-gray-700">{skill}</span>
+									<label
+										key={skill}
+										className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors group min-h-[44px]"
+									>
+										<div className="relative flex items-center justify-center flex-shrink-0 mt-0.5">
+											<input
+												type="checkbox"
+												checked={preferredSkills.includes(skill)}
+												onChange={(e) => {
+													if (e.target.checked) {
+														setPreferredSkills([...preferredSkills, skill])
+													} else {
+														setPreferredSkills(preferredSkills.filter(s => s !== skill))
+													}
+												}}
+												className="peer sr-only"
+											/>
+											<div className="w-5 h-5 border-2 border-gray-300 rounded-md peer-checked:border-blue-600 peer-checked:bg-blue-600 transition-all duration-200 flex items-center justify-center group-hover:border-blue-400">
+												<svg
+													className="w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200"
+													fill="none"
+													stroke="currentColor"
+													viewBox="0 0 24 24"
+												>
+													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+												</svg>
+											</div>
+										</div>
+										<span className="text-sm text-gray-700 select-none leading-relaxed">{skill}</span>
 									</label>
 								))}
 							</div>
