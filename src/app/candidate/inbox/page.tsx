@@ -464,27 +464,27 @@ const CandidateInboxPage = () => {
 	return (
 		<div className="h-[calc(100vh-64px)] flex bg-gray-50">
 			{/* Conversations List */}
-			<div className="w-80 bg-white border-r border-gray-200 flex flex-col">
-				<div className="p-4 border-b border-gray-200">
-					<h2 className="text-xl font-bold text-foreground">Mensajes</h2>
-					<p className="text-sm text-muted-foreground">{filteredConversations.length} conversaciones</p>
+			<div className={`${selectedConversation ? 'hidden md:flex' : 'flex'} w-full md:w-80 bg-white border-r border-gray-200 flex-col`}>
+				<div className="p-3 md:p-4 border-b border-gray-200">
+					<h2 className="text-lg md:text-xl font-bold text-foreground">Mensajes</h2>
+					<p className="text-xs md:text-sm text-muted-foreground">{filteredConversations.length} conversaciones</p>
 
 					{/* Search Input */}
-					<div className="mt-3">
+					<div className="mt-2 md:mt-3">
 						<input
 							type="text"
 							value={searchQuery}
 							onChange={e => setSearchQuery(e.target.value)}
 							placeholder="Buscar conversaciones..."
-							className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+							className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
 						/>
 					</div>
 
 					{/* Show Archived Toggle */}
-					<div className="mt-3 flex items-center gap-2">
+					<div className="mt-2 md:mt-3 flex items-center gap-2">
 						<button
 							onClick={() => setShowArchived(!showArchived)}
-							className={`text-xs px-3 py-1 rounded-full transition-colors ${
+							className={`text-xs px-3 py-1.5 md:py-1 rounded-full transition-colors ${
 								showArchived
 									? 'bg-pink-600 text-white'
 									: 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -499,13 +499,13 @@ const CandidateInboxPage = () => {
 					{filteredConversations.length === 0 ? (
 						<div className="p-4 text-center text-muted-foreground">
 							{searchQuery ? (
-								<p>No se encontraron conversaciones.</p>
+								<p className="text-sm">No se encontraron conversaciones.</p>
 							) : showArchived ? (
-								<p>No tienes conversaciones archivadas.</p>
+								<p className="text-sm">No tienes conversaciones archivadas.</p>
 							) : (
 								<>
-									<p>No tienes conversaciones aún.</p>
-									<p className="text-sm mt-2">Las empresas pueden contactarte sobre oportunidades.</p>
+									<p className="text-sm">No tienes conversaciones aún.</p>
+									<p className="text-xs md:text-sm mt-2">Las empresas pueden contactarte sobre oportunidades.</p>
 								</>
 							)}
 						</div>
@@ -519,14 +519,14 @@ const CandidateInboxPage = () => {
 								<div
 									key={conv.conversationId}
 									onClick={() => setSelectedConversation(conv)}
-									className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
+									className={`p-3 md:p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 active:bg-gray-100 transition-colors ${
 										isSelected ? 'bg-blue-50' : ''
 									}`}
 								>
 									<div className="flex justify-between items-start mb-1">
-										<div className="flex items-center gap-2">
+										<div className="flex items-center gap-2 min-w-0 flex-1">
 											{/* Company Logo */}
-											<div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden flex-shrink-0">
+											<div className="w-9 h-9 md:w-8 md:h-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden flex-shrink-0">
 												{companyInfo.logo ? (
 													<img
 														src={companyInfo.logo}
@@ -539,17 +539,17 @@ const CandidateInboxPage = () => {
 													</span>
 												)}
 											</div>
-											<h3 className="font-semibold text-foreground">{companyInfo.name}</h3>
+											<h3 className="font-semibold text-sm md:text-base text-foreground truncate">{companyInfo.name}</h3>
 										</div>
 										{unreadCount > 0 && (
-											<span className="bg-pink-600 text-white text-xs px-2 py-1 rounded-full">
+											<span className="bg-pink-600 text-white text-xs px-2 py-1 rounded-full flex-shrink-0 ml-2">
 												{unreadCount}
 											</span>
 										)}
 									</div>
-									<p className="text-sm text-muted-foreground truncate">{conv.lastMessage || 'Nueva conversación'}</p>
+									<p className="text-xs md:text-sm text-muted-foreground truncate pl-11 md:pl-0">{conv.lastMessage || 'Nueva conversación'}</p>
 									{conv.lastMessageTimestamp && (
-										<p className="text-xs text-muted-foreground mt-1">
+										<p className="text-xs text-muted-foreground mt-1 pl-11 md:pl-0">
 											{conv.lastMessageTimestamp.toDate ?
 												conv.lastMessageTimestamp.toDate().toLocaleDateString() :
 												'Ahora'
@@ -564,15 +564,25 @@ const CandidateInboxPage = () => {
 			</div>
 
 			{/* Messages Area */}
-			<div className="flex-1 flex flex-col">
+			<div className={`${selectedConversation ? 'flex' : 'hidden md:flex'} flex-1 flex-col w-full`}>
 				{selectedConversation ? (
 					<>
 						{/* Conversation Header */}
-						<div className="p-4 bg-white border-b border-gray-200">
+						<div className="p-3 md:p-4 bg-white border-b border-gray-200">
 							<div className="flex items-center justify-between">
-								<div className="flex items-center gap-3">
+								<div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
+									{/* Back Button (Mobile Only) */}
+									<button
+										onClick={() => setSelectedConversation(null)}
+										className="md:hidden p-2 -ml-2 text-gray-600 hover:text-gray-800 active:bg-gray-100 rounded-lg transition-colors"
+										aria-label="Volver a conversaciones"
+									>
+										<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+										</svg>
+									</button>
 									{/* Company Logo */}
-									<div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden flex-shrink-0">
+									<div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden flex-shrink-0">
 										{(companyNames[selectedConversation.companyId]?.logo || selectedConversation.companyLogoUrl) ? (
 											<img
 												src={companyNames[selectedConversation.companyId]?.logo || selectedConversation.companyLogoUrl}
@@ -580,32 +590,33 @@ const CandidateInboxPage = () => {
 												className="w-full h-full object-cover"
 											/>
 										) : (
-											<span className="text-lg font-semibold text-gray-600">
+											<span className="text-base md:text-lg font-semibold text-gray-600">
 												{(companyNames[selectedConversation.companyId]?.name || selectedConversation.companyName)?.charAt(0) || 'C'}
 											</span>
 										)}
 									</div>
-									<div>
-										<h2 className="text-lg font-semibold text-foreground">{companyNames[selectedConversation.companyId]?.name || selectedConversation.companyName}</h2>
-										<p className="text-sm text-muted-foreground">Empresa</p>
+									<div className="min-w-0 flex-1">
+										<h2 className="text-base md:text-lg font-semibold text-foreground truncate">{companyNames[selectedConversation.companyId]?.name || selectedConversation.companyName}</h2>
+										<p className="text-xs md:text-sm text-muted-foreground">Empresa</p>
 									</div>
 								</div>
 
 								{/* Action Buttons */}
-								<div className="flex items-center gap-2">
+								<div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
 									<button
 										onClick={handleArchiveConversation}
-										className="px-3 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+										className="px-2 md:px-3 py-1.5 md:py-2 text-xs md:text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 active:bg-gray-200 rounded-lg transition-colors"
 										title={selectedConversation.archivedBy?.includes(user.uid) ? 'Desarchivar' : 'Archivar conversación'}
 									>
-										{selectedConversation.archivedBy?.includes(user.uid) ? '📂 Desarchivar' : '🗄️ Archivar'}
+										<span className="hidden sm:inline">{selectedConversation.archivedBy?.includes(user.uid) ? '📂 Desarchivar' : '🗄️ Archivar'}</span>
+										<span className="sm:hidden">{selectedConversation.archivedBy?.includes(user.uid) ? '📂' : '🗄️'}</span>
 									</button>
 								</div>
 							</div>
 						</div>
 
 						{/* Messages */}
-						<div className="flex-1 overflow-y-auto p-4 space-y-4">
+						<div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4">
 							{messages.map(message => {
 								const isSent = message.senderId === user.uid
 								const isDeleted = message.deleted
@@ -619,37 +630,37 @@ const CandidateInboxPage = () => {
 										key={message.messageId}
 										className={`flex ${isSent ? 'justify-end' : 'justify-start'}`}
 									>
-										<div className="flex flex-col max-w-[70%]">
+										<div className="flex flex-col max-w-[85%] md:max-w-[70%]">
 											<div
 												onClick={() => handleMessageClick(message.messageId, isSent, canModify)}
-												className={`rounded-lg px-4 py-2 ${
+												className={`rounded-lg px-3 md:px-4 py-2 ${
 													isSent
 														? 'bg-pink-600 text-white'
 														: 'bg-white text-foreground border border-gray-200'
-												} ${isSent && canModify && !isDeleted && !isEditing ? 'cursor-pointer hover:opacity-90' : ''}`}
+												} ${isSent && canModify && !isDeleted && !isEditing ? 'cursor-pointer hover:opacity-90 active:opacity-80' : ''}`}
 											>
 												{isDeleted ? (
-													<p className="text-sm italic opacity-60">Este mensaje fue eliminado</p>
+													<p className="text-xs md:text-sm italic opacity-60">Este mensaje fue eliminado</p>
 												) : isEditing ? (
 													<div className="space-y-2">
 														<textarea
 															value={editingContent}
 															onChange={e => setEditingContent(e.target.value)}
-															className="w-full px-2 py-1 text-sm text-gray-900 border border-gray-300 rounded resize-none focus:ring-2 focus:ring-blue-500"
+															className="w-full px-2 py-1 text-xs md:text-sm text-gray-900 border border-gray-300 rounded resize-none focus:ring-2 focus:ring-blue-500"
 															rows={3}
 															autoFocus
 														/>
 														<div className="flex gap-2 justify-end">
 															<button
 																onClick={handleCancelEdit}
-																className="px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+																className="px-3 py-1.5 text-xs bg-gray-200 text-gray-700 rounded hover:bg-gray-300 active:bg-gray-400"
 															>
 																Cancelar
 															</button>
 															<button
 																onClick={() => handleSaveEdit(message.messageId, message.read)}
 																disabled={!editingContent.trim()}
-																className="px-2 py-1 text-xs bg-pink-600 text-white rounded hover:bg-pink-700 disabled:opacity-50"
+																className="px-3 py-1.5 text-xs bg-pink-600 text-white rounded hover:bg-pink-700 active:bg-pink-800 disabled:opacity-50"
 															>
 																Guardar
 															</button>
@@ -657,7 +668,7 @@ const CandidateInboxPage = () => {
 													</div>
 												) : (
 													<>
-														<p className="text-sm break-words">{message.content}</p>
+														<p className="text-xs md:text-sm break-words">{message.content}</p>
 														{message.edited && (
 															<span className="text-xs italic opacity-75 ml-1">(editado)</span>
 														)}
@@ -708,7 +719,7 @@ const CandidateInboxPage = () => {
 															e.stopPropagation()
 															handleStartEdit(message.messageId, message.content)
 														}}
-														className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+														className="text-xs px-3 py-1.5 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 active:bg-gray-300"
 														title="Editar mensaje (solo antes de ser leído)"
 													>
 														✏️ Editar
@@ -719,7 +730,7 @@ const CandidateInboxPage = () => {
 															handleDeleteMessage(message.messageId, message.read)
 															setActiveMessageId(null)
 														}}
-														className="text-xs px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200"
+														className="text-xs px-3 py-1.5 bg-red-100 text-red-700 rounded hover:bg-red-200 active:bg-red-300"
 														title="Eliminar mensaje (solo antes de ser leído)"
 													>
 														🗑️ Eliminar
@@ -734,10 +745,10 @@ const CandidateInboxPage = () => {
 						</div>
 
 						{/* Message Input */}
-						<div className="p-4 bg-white border-t border-gray-200">
+						<div className="p-3 md:p-4 bg-white border-t border-gray-200">
 							{/* Recipient Info */}
-							<div className="mb-3 pb-2 border-b border-gray-100">
-								<p className="text-sm text-muted-foreground">
+							<div className="mb-2 md:mb-3 pb-2 border-b border-gray-100">
+								<p className="text-xs md:text-sm text-muted-foreground">
 									<span className="font-semibold">Para:</span> {companyNames[selectedConversation.companyId]?.name || selectedConversation.companyName}
 								</p>
 							</div>
@@ -752,7 +763,7 @@ const CandidateInboxPage = () => {
 									type="button"
 									onClick={() => fileInputRef.current?.click()}
 									disabled={uploadingFile}
-									className="px-3 py-2 text-gray-600 hover:text-gray-800 transition-colors disabled:opacity-50"
+									className="px-2 md:px-3 py-2 text-gray-600 hover:text-gray-800 active:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 flex-shrink-0"
 									title="Adjuntar archivo"
 								>
 									📎
@@ -762,12 +773,12 @@ const CandidateInboxPage = () => {
 									value={newMessage}
 									onChange={e => setNewMessage(e.target.value)}
 									placeholder="Escribe un mensaje..."
-									className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+									className="flex-1 px-3 md:px-4 py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
 								/>
 								<button
 									type="submit"
 									disabled={!newMessage.trim()}
-									className="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+									className="px-4 md:px-6 py-2 bg-pink-600 text-white text-sm md:text-base rounded-lg hover:bg-pink-700 active:bg-pink-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
 								>
 									Enviar
 								</button>
@@ -778,10 +789,10 @@ const CandidateInboxPage = () => {
 						</div>
 					</>
 				) : (
-					<div className="flex-1 flex items-center justify-center">
+					<div className="flex-1 flex items-center justify-center p-4">
 						<div className="text-center text-muted-foreground">
-							<p className="text-lg mb-2">Selecciona una conversación</p>
-							<p className="text-sm">para ver tus mensajes</p>
+							<p className="text-base md:text-lg mb-2">Selecciona una conversación</p>
+							<p className="text-xs md:text-sm">para ver tus mensajes</p>
 						</div>
 					</div>
 				)}

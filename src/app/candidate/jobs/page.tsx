@@ -390,15 +390,17 @@ const JobsPageContent = () => {
 		)
 	}
 
+	const [showFilters, setShowFilters] = useState(false)
+
 	return (
-		<div className="space-y-6">
+		<div className="space-y-4 md:space-y-6">
 			{/* Company Filter Banner */}
 			{companyIdParam && companyName && (
-				<div className="bg-orange-50 border-2 border-orange-200 rounded-lg p-4">
-					<div className="flex items-center justify-between">
-						<div className="flex items-center gap-3">
+				<div className="bg-orange-50 border-2 border-orange-200 rounded-lg p-3 md:p-4">
+					<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+						<div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
 							{/* Company Logo */}
-							<div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center overflow-hidden flex-shrink-0 border border-orange-300">
+							<div className="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-white flex items-center justify-center overflow-hidden flex-shrink-0 border border-orange-300">
 								{companyLogoUrl && !imageErrors[companyIdParam] ? (
 									<>
 										{imageLoadingStates[companyIdParam] && (
@@ -419,9 +421,9 @@ const JobsPageContent = () => {
 									</span>
 								)}
 							</div>
-							<div>
-								<p className="text-sm font-semibold text-orange-900">
-									Mostrando empleos de: <span className="font-bold">{companyName}</span>
+							<div className="min-w-0 flex-1">
+								<p className="text-xs md:text-sm font-semibold text-orange-900">
+									Mostrando empleos de: <span className="font-bold truncate block sm:inline">{companyName}</span>
 								</p>
 								<p className="text-xs text-orange-700">
 									{filteredJobs.length} {filteredJobs.length === 1 ? 'posición disponible' : 'posiciones disponibles'}
@@ -430,7 +432,7 @@ const JobsPageContent = () => {
 						</div>
 						<button
 							onClick={clearCompanyFilter}
-							className="flex items-center gap-2 px-4 py-2 bg-white border border-orange-300 text-orange-700 rounded-lg hover:bg-orange-100 transition-colors text-sm font-medium"
+							className="flex items-center justify-center gap-1 md:gap-2 px-3 md:px-4 py-2 bg-white border border-orange-300 text-orange-700 rounded-lg hover:bg-orange-100 transition-colors text-xs md:text-sm font-medium w-full sm:w-auto flex-shrink-0"
 						>
 							<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -442,19 +444,19 @@ const JobsPageContent = () => {
 			)}
 
 			{/* Header */}
-			<div className="flex justify-between items-center">
-				<div>
-					<h1 className="text-3xl font-bold text-gray-900">Encuentra Tu Próximo Empleo</h1>
-					<p className="text-gray-600 mt-1">
+			<div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4">
+				<div className="min-w-0 flex-1">
+					<h1 className="text-2xl md:text-3xl font-bold text-gray-900">Encuentra Tu Próximo Empleo</h1>
+					<p className="text-sm md:text-base text-gray-600 mt-1">
 						{filteredJobs.length} empleo{filteredJobs.length !== 1 ? 's' : ''} encontrado{filteredJobs.length !== 1 ? 's' : ''}
 					</p>
 				</div>
-				<div className="flex items-center space-x-4">
-					<label className="text-sm font-medium text-gray-700">Ordenar por:</label>
+				<div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+					<label className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap">Ordenar por:</label>
 					<select
 						value={sortBy}
 						onChange={(e) => setSortBy(e.target.value as 'date' | 'salary' | 'relevance')}
-						className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-blue-500"
+						className="flex-1 sm:flex-initial px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-blue-500"
 					>
 						<option value="date">Fecha de Publicación</option>
 						<option value="salary">Salario</option>
@@ -462,6 +464,17 @@ const JobsPageContent = () => {
 					</select>
 				</div>
 			</div>
+
+			{/* Mobile Filter Toggle */}
+			<button
+				onClick={() => setShowFilters(!showFilters)}
+				className="lg:hidden w-full px-4 py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors flex items-center justify-center gap-2"
+			>
+				<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+				</svg>
+				{showFilters ? 'Ocultar Filtros' : 'Mostrar Filtros'}
+			</button>
 
 			{error && (
 				<div className="p-4 bg-red-50 border border-red-200 rounded-md">
@@ -471,22 +484,22 @@ const JobsPageContent = () => {
 
 			<div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 				{/* Filters Sidebar */}
-				<div className="lg:col-span-1">
-					<div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+				<div className={`lg:col-span-1 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+					<div className="bg-white p-4 md:p-6 rounded-lg shadow-sm border border-gray-200">
 						<div className="flex justify-between items-center mb-4">
-							<h2 className="text-lg font-semibold text-gray-900">Filtros</h2>
+							<h2 className="text-base md:text-lg font-semibold text-gray-900">Filtros</h2>
 							<button
 								onClick={clearFilters}
-								className="text-sm text-pink-600 hover:text-pink-800"
+								className="text-xs md:text-sm text-pink-600 hover:text-pink-800"
 							>
 								Limpiar Todo
 							</button>
 						</div>
 
-						<div className="space-y-4">
+						<div className="space-y-3 md:space-y-4">
 							{/* Keyword Search */}
 							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-2">
+								<label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
 									Palabras Clave
 								</label>
 								<input
@@ -494,13 +507,13 @@ const JobsPageContent = () => {
 									placeholder="Título del empleo, empresa, habilidades..."
 									value={filters.keyword}
 									onChange={(e) => handleFilterChange('keyword', e.target.value)}
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-blue-500"
+									className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-blue-500"
 								/>
 							</div>
 
 							{/* Location */}
 							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-2">
+								<label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
 									Ubicación
 								</label>
 								<input
@@ -508,7 +521,7 @@ const JobsPageContent = () => {
 									placeholder="Ciudad, estado, país..."
 									value={filters.location}
 									onChange={(e) => handleFilterChange('location', e.target.value)}
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-blue-500"
+									className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-blue-500"
 								/>
 							</div>
 
@@ -521,20 +534,20 @@ const JobsPageContent = () => {
 									onChange={(e) => handleFilterChange('remote', e.target.checked)}
 									className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
 								/>
-								<label htmlFor="remote" className="ml-2 text-sm text-gray-700">
+								<label htmlFor="remote" className="ml-2 text-xs md:text-sm text-gray-700">
 									Solo remoto
 								</label>
 							</div>
 
 							{/* Job Type */}
 							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-2">
+								<label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
 									Tipo de Empleo
 								</label>
 								<select
 									value={filters.jobType}
 									onChange={(e) => handleFilterChange('jobType', e.target.value)}
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-blue-500"
+									className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-blue-500"
 								>
 									<option value="">Todos los Tipos</option>
 									<option value="full-time">Tiempo Completo</option>
@@ -546,7 +559,7 @@ const JobsPageContent = () => {
 
 							{/* Salary Range */}
 							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-2">
+								<label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
 									Rango Salarial (MXN)
 								</label>
 								<div className="grid grid-cols-2 gap-2">
@@ -555,14 +568,14 @@ const JobsPageContent = () => {
 										placeholder="Mín"
 										value={filters.salaryMin}
 										onChange={(e) => handleFilterChange('salaryMin', e.target.value)}
-										className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-blue-500"
+										className="px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-blue-500"
 									/>
 									<input
 										type="number"
 										placeholder="Máx"
 										value={filters.salaryMax}
 										onChange={(e) => handleFilterChange('salaryMax', e.target.value)}
-										className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-blue-500"
+										className="px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-blue-500"
 									/>
 								</div>
 							</div>
@@ -574,23 +587,23 @@ const JobsPageContent = () => {
 				<div className="lg:col-span-3">
 					{filteredJobs.length === 0 ? (
 						<div className="text-center py-12">
-							<div className="text-gray-400 text-6xl mb-4">🔍</div>
-							<h3 className="text-lg font-medium text-gray-900 mb-2">No se encontraron empleos</h3>
-							<p className="text-gray-500">Intenta ajustar tus filtros para ver más resultados.</p>
+							<div className="text-gray-400 text-4xl md:text-6xl mb-4">🔍</div>
+							<h3 className="text-base md:text-lg font-medium text-gray-900 mb-2">No se encontraron empleos</h3>
+							<p className="text-sm md:text-base text-gray-500">Intenta ajustar tus filtros para ver más resultados.</p>
 						</div>
 					) : (
-						<div className="space-y-4">
+						<div className="space-y-3 md:space-y-4">
 							{filteredJobs.map(job => (
 								<Link
 									key={job.jobId}
 									href={`/jobs/${job.jobId}`}
-									className="block bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-300 transition-all duration-200 cursor-pointer"
+									className="block bg-white p-4 md:p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-300 transition-all duration-200 cursor-pointer"
 								>
-									<div className="flex justify-between items-start">
-										<div className="flex-1">
-											<div className="flex items-start gap-3">
+									<div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+										<div className="flex-1 min-w-0">
+											<div className="flex items-start gap-2 md:gap-3">
 												{/* Company Logo */}
-												<div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-200 relative">
+												<div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-200 relative">
 													{companyLogos[job.companyId] && !imageErrors[job.companyId] ? (
 														<>
 															{imageLoadingStates[job.companyId] && (
@@ -618,24 +631,24 @@ const JobsPageContent = () => {
 													)}
 												</div>
 
-												<div className="flex-1">
-													<h3 className="text-xl font-semibold text-gray-900 hover:text-pink-600 transition-colors">
+												<div className="flex-1 min-w-0">
+													<h3 className="text-base md:text-xl font-semibold text-gray-900 hover:text-pink-600 transition-colors truncate">
 														{job.jobTitle}
 													</h3>
-													<p className="text-gray-600 font-medium mt-1">
+													<p className="text-sm md:text-base text-gray-600 font-medium mt-1 truncate">
 														{job.companyName || 'Nombre de la Empresa'}
 													</p>
-													<p className="text-gray-500 text-sm mt-1">
+													<p className="text-xs md:text-sm text-gray-500 mt-1 truncate">
 														{job.location || 'Ubicación no especificada'}
 													</p>
-													<div className="flex items-center gap-2 mt-2">
+													<div className="flex flex-wrap items-center gap-2 mt-2">
 														{job.jobType && (
 															<span className="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
 																{job.jobType}
 															</span>
 														)}
 														{job.salaryMin && job.salaryMax && !job.isSalaryHidden && (
-															<span className="text-sm text-green-600 font-medium">
+															<span className="text-xs md:text-sm text-green-600 font-medium">
 																${job.salaryMin.toLocaleString()} - ${job.salaryMax.toLocaleString()} MXN
 															</span>
 														)}
@@ -643,13 +656,13 @@ const JobsPageContent = () => {
 												</div>
 											</div>
 										</div>
-										<div className="ml-4 flex flex-col items-end">
+										<div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2 sm:ml-4 flex-shrink-0">
 											{job.postedDate && (
-												<p className="text-xs text-gray-500">
+												<p className="text-xs text-gray-500 whitespace-nowrap">
 													Publicado {new Date(job.postedDate).toLocaleDateString()}
 												</p>
 											)}
-											<div className="mt-2 text-pink-600 text-sm font-medium">
+											<div className="text-pink-600 text-xs md:text-sm font-medium whitespace-nowrap">
 												Ver Detalles →
 											</div>
 										</div>

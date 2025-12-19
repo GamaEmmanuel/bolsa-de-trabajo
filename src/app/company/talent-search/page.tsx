@@ -222,21 +222,21 @@ const TalentSearchPage = () => {
 	}
 
 	return (
-		<div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-			<div className="mb-8">
-				<h1 className="text-3xl font-bold text-foreground mb-2">Búsqueda de Talento</h1>
-				<p className="text-muted-foreground">
+		<div className="max-w-7xl mx-auto py-6 md:py-8 px-4 sm:px-6 lg:px-8">
+			<div className="mb-6 md:mb-8">
+				<h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">Búsqueda de Talento</h1>
+				<p className="text-sm md:text-base text-muted-foreground">
 					Busca en nuestra base de datos de {allCandidates.length} perfiles de candidatos para encontrar la coincidencia perfecta
 				</p>
 			</div>
 
 			{/* Search and Filter Form */}
-			<div className="bg-orange-50 p-6 rounded-xl shadow-sm mb-8">
-				<form onSubmit={handleSearch} className="flex gap-4">
+			<div className="bg-orange-50 p-4 md:p-6 rounded-xl shadow-sm mb-6 md:mb-8">
+				<form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3 md:gap-4">
 						<input
 							type="text"
 							placeholder="Habilidades (ej., React, Python)"
-							className="flex-grow px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200"
+							className="flex-grow px-3 md:px-4 py-2 text-sm md:text-base border border-border rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200"
 							value={filters.skills}
 							onChange={e => setFilters({ ...filters, skills: e.target.value })}
 						/>

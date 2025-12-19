@@ -149,33 +149,35 @@ const MyApplicationsPage = () => {
 	}
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-4 md:space-y-6">
 			{/* Header */}
-			<div className="flex justify-between items-center">
-				<div>
-					<h1 className="text-3xl font-bold text-gray-900">Mis Aplicaciones</h1>
-					<p className="text-gray-600 mt-1">Rastrea el progreso de tus aplicaciones de empleo</p>
+			<div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 md:gap-4">
+				<div className="min-w-0 flex-1">
+					<h1 className="text-2xl md:text-3xl font-bold text-gray-900">Mis Aplicaciones</h1>
+					<p className="text-sm md:text-base text-gray-600 mt-1">Rastrea el progreso de tus aplicaciones de empleo</p>
 				</div>
-				<div className="flex gap-2">
+				<div className="flex gap-2 flex-shrink-0">
 					<button
 						onClick={() => setViewMode('kanban')}
-						className={`px-4 py-2 rounded-md text-sm font-medium ${
+						className={`flex-1 sm:flex-initial px-3 md:px-4 py-2 rounded-md text-xs md:text-sm font-medium ${
 							viewMode === 'kanban'
 								? 'bg-pink-600 text-white'
 								: 'bg-white text-gray-700 border border-gray-300'
 						}`}
 					>
-						Vista Kanban
+						<span className="hidden sm:inline">Vista Kanban</span>
+						<span className="sm:hidden">Kanban</span>
 					</button>
 					<button
 						onClick={() => setViewMode('table')}
-						className={`px-4 py-2 rounded-md text-sm font-medium ${
+						className={`flex-1 sm:flex-initial px-3 md:px-4 py-2 rounded-md text-xs md:text-sm font-medium ${
 							viewMode === 'table'
 								? 'bg-pink-600 text-white'
 								: 'bg-white text-gray-700 border border-gray-300'
 						}`}
 					>
-						Vista de Tabla
+						<span className="hidden sm:inline">Vista de Tabla</span>
+						<span className="sm:hidden">Tabla</span>
 					</button>
 				</div>
 			</div>
@@ -193,70 +195,111 @@ const MyApplicationsPage = () => {
 						loading={loading}
 					/>
 				) : (
-					<div className="bg-white p-6 rounded-lg shadow-md">
-						<table className="min-w-full divide-y divide-gray-200">
-							<thead className="bg-gray-50">
-								<tr>
-									<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-										Título del Empleo
-									</th>
-									<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-										Empresa
-									</th>
-									<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-										Fecha de Aplicación
-									</th>
-									<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-										Estado
-									</th>
-									<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-										Acciones
-									</th>
-								</tr>
-							</thead>
-							<tbody className="bg-white divide-y divide-gray-200">
-								{enrichedApplications.length === 0 ? (
-									<tr>
-										<td colSpan={5} className="px-6 py-12 text-center text-gray-500">
-											No se encontraron aplicaciones. Comienza a aplicar a empleos para verlos aquí.
-										</td>
-									</tr>
-								) : (
-									enrichedApplications.map(app => (
-										<tr key={app.applicationId}>
-											<td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-												{app.jobTitle}
-											</td>
-											<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-												{app.companyName}
-											</td>
-											<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+					<div className="bg-white rounded-lg shadow-md overflow-hidden">
+						{/* Mobile Card View */}
+						<div className="block md:hidden divide-y divide-gray-200">
+							{enrichedApplications.length === 0 ? (
+								<div className="p-6 text-center text-gray-500 text-sm">
+									No se encontraron aplicaciones. Comienza a aplicar a empleos para verlos aquí.
+								</div>
+							) : (
+								enrichedApplications.map(app => (
+									<div key={app.applicationId} className="p-4 space-y-3">
+										<div>
+											<h3 className="font-semibold text-gray-900 text-sm">{app.jobTitle}</h3>
+											<p className="text-xs text-gray-600 mt-0.5">{app.companyName}</p>
+										</div>
+										<div className="flex items-center justify-between">
+											<p className="text-xs text-gray-500">
 												{new Date(app.applicationDate).toLocaleDateString()}
-											</td>
-											<td className="px-6 py-4 whitespace-nowrap text-sm">
-												<span
-													className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
-														app.pipelineStatus
-													)}`}
-												>
-													{translateStatus(app.pipelineStatus)}
-												</span>
-											</td>
-											<td className="px-6 py-4 whitespace-nowrap text-sm">
-												{(app.pipelineStatus === 'applied' || app.pipelineStatus === 'reviewed') && (
-													<button
-														onClick={() => handleWithdraw(app.applicationId)}
-														className="text-red-600 hover:text-red-800 text-sm font-medium"
-													>
-														Retirar
-													</button>
-												)}
+											</p>
+											<span
+												className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
+													app.pipelineStatus
+												)}`}
+											>
+												{translateStatus(app.pipelineStatus)}
+											</span>
+										</div>
+										{(app.pipelineStatus === 'applied' || app.pipelineStatus === 'reviewed') && (
+											<button
+												onClick={() => handleWithdraw(app.applicationId)}
+												className="w-full px-3 py-2 text-red-600 hover:text-red-800 text-xs font-medium border border-red-200 rounded-lg hover:bg-red-50"
+											>
+												Retirar Aplicación
+											</button>
+										)}
+									</div>
+								))
+							)}
+						</div>
+
+						{/* Desktop Table View */}
+						<div className="hidden md:block overflow-x-auto">
+							<table className="min-w-full divide-y divide-gray-200">
+								<thead className="bg-gray-50">
+									<tr>
+										<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+											Título del Empleo
+										</th>
+										<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+											Empresa
+										</th>
+										<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+											Fecha de Aplicación
+										</th>
+										<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+											Estado
+										</th>
+										<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+											Acciones
+										</th>
+									</tr>
+								</thead>
+								<tbody className="bg-white divide-y divide-gray-200">
+									{enrichedApplications.length === 0 ? (
+										<tr>
+											<td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+												No se encontraron aplicaciones. Comienza a aplicar a empleos para verlos aquí.
 											</td>
 										</tr>
-									))
-								)}
-							</tbody>
-						</table>
+									) : (
+										enrichedApplications.map(app => (
+											<tr key={app.applicationId}>
+												<td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+													{app.jobTitle}
+												</td>
+												<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+													{app.companyName}
+												</td>
+												<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+													{new Date(app.applicationDate).toLocaleDateString()}
+												</td>
+												<td className="px-6 py-4 whitespace-nowrap text-sm">
+													<span
+														className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
+															app.pipelineStatus
+														)}`}
+													>
+														{translateStatus(app.pipelineStatus)}
+													</span>
+												</td>
+												<td className="px-6 py-4 whitespace-nowrap text-sm">
+													{(app.pipelineStatus === 'applied' || app.pipelineStatus === 'reviewed') && (
+														<button
+															onClick={() => handleWithdraw(app.applicationId)}
+															className="text-red-600 hover:text-red-800 text-sm font-medium"
+														>
+															Retirar
+														</button>
+													)}
+												</td>
+											</tr>
+										))
+									)}
+								</tbody>
+							</table>
+						</div>
 					</div>
 				)}
 		</div>

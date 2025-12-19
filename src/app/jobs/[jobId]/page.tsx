@@ -400,11 +400,11 @@ const JobDetailPage = () => {
 
 	return (
 		<div className="min-h-screen bg-secondary">
-			<div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+			<div className="max-w-4xl mx-auto py-6 md:py-12 px-4 sm:px-6 lg:px-8">
 				{/* Back Button */}
 				<button
 					onClick={() => router.back()}
-					className="mb-6 flex items-center text-primary hover:text-primary/80 transition-colors"
+					className="mb-4 md:mb-6 flex items-center text-primary hover:text-primary/80 transition-colors"
 				>
 					<svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -412,15 +412,15 @@ const JobDetailPage = () => {
 					Volver a Empleos
 				</button>
 
-				<div className="bg-card p-8 rounded-lg border border-border">
-					<div className="flex justify-between items-start mb-6">
-						<div className="flex-1">
-							<div className="flex items-center mb-4">
+				<div className="bg-card p-4 md:p-8 rounded-lg border border-border">
+					<div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4 md:gap-6 mb-6">
+						<div className="flex-1 min-w-0">
+							<div className="flex items-center gap-3 mb-4">
 								{companyData?.logoUrl ? (
 									<img
 										src={companyData.logoUrl}
 										alt={`${companyData.companyName || 'Company'} logo`}
-										className="w-16 h-16 rounded-lg object-contain mr-4 border border-border bg-gray-50 p-1"
+										className="w-12 h-12 md:w-16 md:h-16 rounded-lg object-contain border border-border bg-gray-50 p-1 flex-shrink-0"
 										onError={(e) => {
 											console.error('Failed to load company logo:', companyData.logoUrl)
 											e.currentTarget.style.display = 'none'
@@ -432,30 +432,30 @@ const JobDetailPage = () => {
 									/>
 								) : null}
 								<div
-									className="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center mr-4 border border-border"
+									className="w-12 h-12 md:w-16 md:h-16 rounded-lg bg-gray-200 flex items-center justify-center border border-border flex-shrink-0"
 									style={{ display: companyData?.logoUrl ? 'none' : 'flex' }}
 								>
-									<svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<svg className="w-6 h-6 md:w-8 md:h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
 									</svg>
 								</div>
-								<div className="flex-1">
-									<h1 className="text-3xl font-bold text-foreground">{job.jobTitle}</h1>
-									<p className="text-xl text-muted-foreground font-semibold mt-1">
+								<div className="flex-1 min-w-0">
+									<h1 className="text-xl md:text-3xl font-bold text-foreground truncate">{job.jobTitle}</h1>
+									<p className="text-base md:text-xl text-muted-foreground font-semibold mt-1 truncate">
 										{companyData?.companyName || job.companyName || 'Company Name'}
 									</p>
-									<div className="flex flex-wrap items-center gap-4 mt-2">
+									<div className="flex flex-wrap items-center gap-2 md:gap-4 mt-2">
 										{job.location && (
-											<div className="flex items-center text-sm text-muted-foreground">
-												<svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<div className="flex items-center text-xs md:text-sm text-muted-foreground">
+												<svg className="w-3 h-3 md:w-4 md:h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
 													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
 												</svg>
-												{job.location}
+												<span className="truncate">{job.location}</span>
 											</div>
 										)}
 										{job.jobType && (
-											<span className="inline-block px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-full">
+											<span className="inline-block px-2 md:px-3 py-1 text-xs md:text-sm font-medium bg-blue-100 text-blue-800 rounded-full whitespace-nowrap">
 												{job.jobType === 'full-time' ? 'Tiempo Completo' :
 												 job.jobType === 'part-time' ? 'Medio Tiempo' :
 												 job.jobType === 'contract' ? 'Contrato' :
@@ -464,7 +464,7 @@ const JobDetailPage = () => {
 											</span>
 										)}
 										{job.employmentType && (
-											<span className="inline-block px-3 py-1 text-sm font-medium bg-green-100 text-green-800 rounded-full">
+											<span className="inline-block px-2 md:px-3 py-1 text-xs md:text-sm font-medium bg-green-100 text-green-800 rounded-full whitespace-nowrap">
 												{job.employmentType === 'remote' ? 'Remoto' :
 												 job.employmentType === 'hybrid' ? 'Híbrido' :
 												 job.employmentType === 'on-site' ? 'Presencial' : job.employmentType}
@@ -474,21 +474,21 @@ const JobDetailPage = () => {
 								</div>
 							</div>
 						</div>
-						<div className="ml-6 text-right">
+						<div className="lg:ml-6 w-full lg:w-auto lg:text-right">
 							{!job.isSalaryHidden && job.salaryMin && job.salaryMax && (
-								<p className="text-2xl font-bold text-green-600 mb-4">
+								<p className="text-xl md:text-2xl font-bold text-green-600 mb-3 md:mb-4">
 									${job.salaryMin.toLocaleString()} - ${job.salaryMax.toLocaleString()} MXN
 								</p>
 							)}
-							<div className="space-y-3">
+							<div className="space-y-2 md:space-y-3">
 								{isJobOwner ? (
-									<div className="grid grid-cols-2 gap-2">
+									<div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
 										<button
 											onClick={handleShare}
-											className="px-4 py-2 text-sm font-medium rounded-lg bg-green-500/80 text-white hover:bg-green-600/80 transition-all duration-200"
+											className="px-3 md:px-4 py-2 text-xs md:text-sm font-medium rounded-lg bg-green-500/80 text-white hover:bg-green-600/80 transition-all duration-200"
 										>
 											<div className="flex items-center justify-center">
-												<svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<svg className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
 												</svg>
 												Compartir Empleo
@@ -496,10 +496,10 @@ const JobDetailPage = () => {
 										</button>
 										<button
 											onClick={() => router.push(`/company/job-postings/${jobId}/edit`)}
-											className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-500/80 text-white hover:bg-pink-600/80 transition-all duration-200"
+											className="px-3 md:px-4 py-2 text-xs md:text-sm font-medium rounded-lg bg-blue-500/80 text-white hover:bg-pink-600/80 transition-all duration-200"
 										>
 											<div className="flex items-center justify-center">
-												<svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<svg className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
 												</svg>
 												Editar Empleo
@@ -509,7 +509,7 @@ const JobDetailPage = () => {
 											<button
 												onClick={handleRepublishJob}
 												disabled={republishing}
-												className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+												className={`px-3 md:px-4 py-2 text-xs md:text-sm font-medium rounded-lg transition-all duration-200 ${
 													republishing
 														? 'bg-gray-300 text-gray-500 cursor-not-allowed'
 														: 'bg-green-500/80 text-white hover:bg-green-600/80'
@@ -517,15 +517,16 @@ const JobDetailPage = () => {
 											>
 												{republishing ? (
 													<div className="flex items-center justify-center">
-														<div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-1.5"></div>
-														Publicando...
+														<div className="animate-spin rounded-full h-3 w-3 md:h-4 md:w-4 border-b-2 border-white mr-1 md:mr-1.5"></div>
+														<span className="hidden sm:inline">Publicando...</span>
 													</div>
 												) : (
 													<div className="flex items-center justify-center">
-														<svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+														<svg className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 															<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
 														</svg>
-														Publicar Nuevamente
+														<span className="hidden sm:inline">Publicar Nuevamente</span>
+														<span className="sm:hidden">Publicar</span>
 													</div>
 												)}
 											</button>
@@ -533,7 +534,7 @@ const JobDetailPage = () => {
 											<button
 												onClick={handleArchiveJob}
 												disabled={archiving}
-												className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+												className={`px-3 md:px-4 py-2 text-xs md:text-sm font-medium rounded-lg transition-all duration-200 ${
 													archiving
 														? 'bg-gray-300 text-gray-500 cursor-not-allowed'
 														: 'bg-orange-500/80 text-white hover:bg-orange-600/80'
@@ -556,13 +557,14 @@ const JobDetailPage = () => {
 										)}
 										<button
 											onClick={() => setShowCompanyJobsModal(true)}
-											className="px-4 py-2 text-sm font-medium rounded-lg bg-purple-500/80 text-white hover:bg-purple-600/80 transition-all duration-200"
+											className="px-3 md:px-4 py-2 text-xs md:text-sm font-medium rounded-lg bg-purple-500/80 text-white hover:bg-purple-600/80 transition-all duration-200"
 										>
 											<div className="flex items-center justify-center">
-												<svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<svg className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
 												</svg>
-												Compartir Todos los Empleos
+												<span className="hidden sm:inline">Compartir Todos los Empleos</span>
+												<span className="sm:hidden">Compartir Todos</span>
 											</div>
 										</button>
 									</div>
@@ -571,28 +573,28 @@ const JobDetailPage = () => {
 										<button
 											onClick={handleWithdraw}
 											disabled={withdrawing}
-											className={`px-5 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
+											className={`w-full sm:w-auto px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-lg transition-all duration-200 ${
 												withdrawing
 													? 'bg-gray-100 text-gray-500 cursor-not-allowed'
 													: 'bg-red-50 text-red-700 border border-red-200 hover:bg-red-100'
 											}`}
 										>
 											{withdrawing ? (
-												<div className="flex items-center">
-													<div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500 mr-1.5"></div>
+												<div className="flex items-center justify-center">
+													<div className="animate-spin rounded-full h-3 w-3 md:h-4 md:w-4 border-b-2 border-red-500 mr-1 md:mr-1.5"></div>
 													Retirando...
 												</div>
 											) : (
-												<div className="flex items-center">
-													<svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<div className="flex items-center justify-center">
+													<svg className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 														<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
 													</svg>
 													Retirar Solicitud
 												</div>
 											)}
 										</button>
-										<div className="flex items-center justify-center text-green-600 text-sm font-medium mt-2">
-											<svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+										<div className="flex items-center justify-center text-green-600 text-xs md:text-sm font-medium mt-2">
+											<svg className="w-3 h-3 md:w-4 md:h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
 												<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
 											</svg>
 											Solicitud Enviada
@@ -602,7 +604,7 @@ const JobDetailPage = () => {
 									<button
 										onClick={handleApply}
 										disabled={applying || !user}
-										className={`px-5 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
+										className={`w-full sm:w-auto px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-lg transition-all duration-200 ${
 											applying
 												? 'bg-gray-100 text-gray-500 cursor-not-allowed'
 												: !user
@@ -629,13 +631,13 @@ const JobDetailPage = () => {
 				<hr className="my-6 border-border" />
 
 				{/* Job Description Section - Moved to Top */}
-				<div className="prose prose-lg max-w-none text-foreground mb-8">
-					<h2 className="text-2xl font-semibold mb-4">Descripción del Empleo</h2>
+				<div className="prose prose-sm md:prose-lg max-w-none text-foreground mb-6 md:mb-8">
+					<h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4">Descripción del Empleo</h2>
 					<p>{job.jobDescription}</p>
 
 					{job.requirements && (
 						<>
-							<h2 className="text-2xl font-semibold mt-6 mb-4">Requisitos</h2>
+							<h2 className="text-xl md:text-2xl font-semibold mt-4 md:mt-6 mb-3 md:mb-4">Requisitos</h2>
 							{typeof job.requirements === 'string'
 								? <div dangerouslySetInnerHTML={{ __html: job.requirements }} />
 								: <div className="whitespace-pre-wrap">{String(job.requirements as any)}</div>
@@ -645,7 +647,7 @@ const JobDetailPage = () => {
 				</div>
 
 				{/* Job Details Section */}
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
 						{job.yearsOfExperience && (
 							<div className="bg-gray-50 p-4 rounded-lg">
 								<h3 className="font-semibold text-gray-700 mb-2">Experiencia Requerida</h3>
