@@ -147,9 +147,9 @@ const LandingPage = () => {
 				</div>
 			</nav>
 
-			{/* Jobs Section */}
-			{activeTab === 'jobs' && (
-				<section className="relative pt-20 sm:pt-24 pb-12 sm:pb-16 bg-gray-50 min-h-screen overflow-hidden">
+		{/* Jobs Section */}
+		{activeTab === 'jobs' && (
+			<section className="relative pt-28 sm:pt-32 md:pt-24 pb-12 sm:pb-16 bg-gray-50 min-h-screen overflow-hidden">
 					{/* Container to constrain illustration positioning */}
 					<div className="absolute inset-0 max-w-[1600px] mx-auto pointer-events-none">
 					{/* Decorative Background Illustration - Top Right */}
@@ -178,10 +178,10 @@ const LandingPage = () => {
 				</section>
 			)}
 
-			{/* Hero Section */}
-			{activeTab === 'home' && (
-			<>
-			<section className="relative pt-20 sm:pt-24 pb-12 sm:pb-16 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
+		{/* Hero Section */}
+		{activeTab === 'home' && (
+		<>
+		<section className="relative pt-28 sm:pt-32 md:pt-24 pb-12 sm:pb-16 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
 				{/* Container to constrain illustration positioning */}
 				<div className="absolute inset-0 max-w-[1600px] mx-auto pointer-events-none">
 				{/* Decorative Background Illustration - Top Right */}
