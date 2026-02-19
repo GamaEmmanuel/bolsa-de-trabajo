@@ -23,12 +23,11 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || functions.config().st
 // Stripe configuration
 const STRIPE_CONFIG = {
   webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || functions.config().stripe?.webhook_secret || '',
-  creditsPerMonth: 1000,
 };
 
 /**
  * Stripe Webhook Handler
- * Handles all Stripe webhook events for subscription management
+ * Handles Stripe webhook events for pay-per-job payments
  */
 export const stripeWebhook = functions.https.onRequest(async (req, res) => {
   // Only allow POST requests
@@ -70,31 +69,6 @@ export const stripeWebhook = functions.https.onRequest(async (req, res) => {
         break;
       }
 
-      case 'customer.subscription.created':
-      case 'customer.subscription.updated': {
-        const subscription = event.data.object as Stripe.Subscription;
-        await handleSubscriptionUpdate(subscription);
-        break;
-      }
-
-      case 'customer.subscription.deleted': {
-        const subscription = event.data.object as Stripe.Subscription;
-        await handleSubscriptionDeleted(subscription);
-        break;
-      }
-
-      case 'invoice.paid': {
-        const invoice = event.data.object as Stripe.Invoice;
-        await handleInvoicePaid(invoice);
-        break;
-      }
-
-      case 'invoice.payment_failed': {
-        const invoice = event.data.object as Stripe.Invoice;
-        await handleInvoicePaymentFailed(invoice);
-        break;
-      }
-
       default:
         console.log(`Unhandled event type: ${event.type}`);
     }
@@ -106,402 +80,60 @@ export const stripeWebhook = functions.https.onRequest(async (req, res) => {
   }
 });
 
-// Handle checkout session completed
+// Handle checkout session completed (one-time payment for a job posting)
 async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   const companyId = session.metadata?.companyId;
+  const jobPostingId = session.metadata?.jobPostingId;
   const customerId = session.customer as string;
+  const paymentIntentId = session.payment_intent as string;
 
   if (!companyId) {
     console.error('No companyId in session metadata');
     return;
   }
 
-  console.log('Checkout completed for company:', companyId);
+  if (!jobPostingId) {
+    console.error('No jobPostingId in session metadata');
+    return;
+  }
 
-  // Get the subscription
-  const subscriptionId = session.subscription as string;
-  const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+  console.log('Payment completed for job:', jobPostingId, 'company:', companyId);
 
-  // Update company document
-  const companyRef = db.collection('companies').doc(companyId);
-  await companyRef.set({
-    subscription: {
-      stripeCustomerId: customerId,
-      stripeSubscriptionId: subscription.id,
-      stripePriceId: subscription.items.data[0].price.id,
-      status: subscription.status,
-      currentPeriodStart: new Date(subscription.current_period_start * 1000),
-      currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-      cancelAtPeriodEnd: subscription.cancel_at_period_end,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    },
-    credits: admin.firestore.FieldValue.increment(STRIPE_CONFIG.creditsPerMonth),
-  }, { merge: true });
-
-  // Also store in dedicated subscriptions collection for easier querying
-  const subscriptionRef = db.collection('subscriptions').doc(subscription.id);
-  await subscriptionRef.set({
-    companyId,
-    stripeCustomerId: customerId,
-    stripeSubscriptionId: subscription.id,
-    stripePriceId: subscription.items.data[0].price.id,
-    status: subscription.status,
-    planId: 'startup',
-    planName: 'Empresa',
-    amount: 10000, // $100 MXN in centavos
-    currency: 'mxn',
-    currentPeriodStart: new Date(subscription.current_period_start * 1000),
-    currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-    cancelAtPeriodEnd: subscription.cancel_at_period_end,
-    canceledAt: subscription.canceled_at ? new Date(subscription.canceled_at * 1000) : null,
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+  // Update the job posting: mark as published and paid
+  const jobRef = db.collection('jobPostings').doc(jobPostingId);
+  await jobRef.update({
+    status: 'published',
+    paymentStatus: 'paid',
+    stripePaymentIntentId: paymentIntentId || null,
+    stripeCheckoutSessionId: session.id,
+    paidAt: admin.firestore.FieldValue.serverTimestamp(),
+    postedDate: new Date().toISOString().split('T')[0],
   });
 
-  console.log('Company subscription created:', companyId);
-}
-
-// Handle subscription update
-async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
-  const companyId = subscription.metadata?.companyId;
-
-  if (!companyId) {
-    // Try to find company by stripeCustomerId
-    const customerId = subscription.customer as string;
-    console.log('No companyId in subscription metadata, searching by customerId:', customerId);
-
-    const companiesSnapshot = await db.collection('companies')
-      .where('subscription.stripeCustomerId', '==', customerId)
-      .limit(1)
-      .get();
-
-    if (companiesSnapshot.empty) {
-      console.error('No company found for customerId:', customerId);
-      return;
-    }
-
-    const companyDoc = companiesSnapshot.docs[0];
-    await updateCompanySubscription(companyDoc.id, subscription);
-    return;
-  }
-
-  console.log('Subscription updated for company:', companyId);
-  await updateCompanySubscription(companyId, subscription);
-}
-
-async function updateCompanySubscription(companyId: string, subscription: Stripe.Subscription) {
-  const companyRef = db.collection('companies').doc(companyId);
-  await companyRef.set({
-    subscription: {
-      status: subscription.status,
-      currentPeriodStart: new Date(subscription.current_period_start * 1000),
-      currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-      cancelAtPeriodEnd: subscription.cancel_at_period_end,
+  // Store stripeCustomerId on the company doc for future payments
+  if (customerId) {
+    const companyRef = db.collection('companies').doc(companyId);
+    await companyRef.set({
+      stripeCustomerId: customerId,
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-    },
-  }, { merge: true });
-
-  // Update subscriptions collection
-  const subscriptionRef = db.collection('subscriptions').doc(subscription.id);
-  await subscriptionRef.set({
-    status: subscription.status,
-    currentPeriodStart: new Date(subscription.current_period_start * 1000),
-    currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-    cancelAtPeriodEnd: subscription.cancel_at_period_end,
-    canceledAt: subscription.canceled_at ? new Date(subscription.canceled_at * 1000) : null,
-    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-  }, { merge: true });
-
-  console.log('Company subscription updated:', companyId);
-}
-
-// Handle subscription deletion
-async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
-  const companyId = subscription.metadata?.companyId;
-
-  if (!companyId) {
-    // Try to find company by stripeCustomerId
-    const customerId = subscription.customer as string;
-    const companiesSnapshot = await db.collection('companies')
-      .where('subscription.stripeCustomerId', '==', customerId)
-      .limit(1)
-      .get();
-
-    if (companiesSnapshot.empty) {
-      console.error('No company found for customerId:', customerId);
-      return;
-    }
-
-    const companyDoc = companiesSnapshot.docs[0];
-    await cancelCompanySubscription(companyDoc.id, subscription.id);
-    return;
-  }
-
-  console.log('Subscription deleted for company:', companyId);
-  await cancelCompanySubscription(companyId, subscription.id);
-}
-
-async function cancelCompanySubscription(companyId: string, subscriptionId: string) {
-  const companyRef = db.collection('companies').doc(companyId);
-  await companyRef.set({
-    subscription: {
-      status: 'canceled',
-      cancelAtPeriodEnd: false,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-    },
-  }, { merge: true });
-
-  // Update subscriptions collection
-  const subscriptionRef = db.collection('subscriptions').doc(subscriptionId);
-  await subscriptionRef.set({
-    status: 'canceled',
-    cancelAtPeriodEnd: false,
-    canceledAt: admin.firestore.FieldValue.serverTimestamp(),
-    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-  }, { merge: true });
-
-  console.log('Company subscription canceled:', companyId);
-}
-
-// Handle invoice paid (recurring payments)
-async function handleInvoicePaid(invoice: Stripe.Invoice) {
-  const subscriptionId = invoice.subscription as string;
-
-  if (!subscriptionId) {
-    console.log('Invoice not related to subscription');
-    return;
-  }
-
-  // Get subscription to get company ID
-  const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-  let companyId = subscription.metadata?.companyId;
-
-  if (!companyId) {
-    // Try to find company by stripeCustomerId
-    const customerId = subscription.customer as string;
-    const companiesSnapshot = await db.collection('companies')
-      .where('subscription.stripeCustomerId', '==', customerId)
-      .limit(1)
-      .get();
-
-    if (companiesSnapshot.empty) {
-      console.error('No company found for invoice');
-      return;
-    }
-
-    companyId = companiesSnapshot.docs[0].id;
-  }
-
-  console.log('Invoice paid for company:', companyId);
-
-  // Award monthly credits
-  const companyRef = db.collection('companies').doc(companyId);
-  await companyRef.set({
-    subscription: {
-      status: 'active',
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-    },
-    credits: admin.firestore.FieldValue.increment(STRIPE_CONFIG.creditsPerMonth),
-  }, { merge: true });
-
-  console.log('Credits awarded to company:', companyId, STRIPE_CONFIG.creditsPerMonth);
-}
-
-// Handle invoice payment failed
-async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
-  const subscriptionId = invoice.subscription as string;
-
-  if (!subscriptionId) {
-    console.log('Invoice not related to subscription');
-    return;
-  }
-
-  // Get subscription to get company ID
-  const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-  let companyId = subscription.metadata?.companyId;
-
-  if (!companyId) {
-    // Try to find company by stripeCustomerId
-    const customerId = subscription.customer as string;
-    const companiesSnapshot = await db.collection('companies')
-      .where('subscription.stripeCustomerId', '==', customerId)
-      .limit(1)
-      .get();
-
-    if (companiesSnapshot.empty) {
-      console.error('No company found for invoice');
-      return;
-    }
-
-    companyId = companiesSnapshot.docs[0].id;
-  }
-
-  console.log('Invoice payment failed for company:', companyId);
-
-  // Update subscription status
-  const companyRef = db.collection('companies').doc(companyId);
-  await companyRef.set({
-    subscription: {
-      status: 'past_due',
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-    },
-  }, { merge: true });
-
-  console.log('Company subscription marked as past_due:', companyId);
-}
-
-/**
- * Manual subscription sync endpoint
- * Call this to manually sync a company's subscription from Stripe
- */
-export const syncSubscription = functions.https.onRequest(async (req, res) => {
-  // Simple auth check - require a secret header
-  const authHeader = req.headers['x-sync-secret'];
-  if (authHeader !== process.env.SYNC_SECRET && authHeader !== functions.config().sync?.secret) {
-    res.status(401).json({ error: 'Unauthorized' });
-    return;
-  }
-
-  const { companyId, email } = req.query;
-
-  if (!companyId && !email) {
-    res.status(400).json({ error: 'companyId or email required' });
-    return;
-  }
-
-  try {
-    let targetCompanyId = companyId as string;
-
-    // If email provided, find the company
-    if (email && !companyId) {
-      const usersSnapshot = await db.collection('users')
-        .where('email', '==', email)
-        .limit(1)
-        .get();
-
-      if (usersSnapshot.empty) {
-        res.status(404).json({ error: 'User not found' });
-        return;
-      }
-
-      targetCompanyId = usersSnapshot.docs[0].data().companyId;
-      if (!targetCompanyId) {
-        res.status(404).json({ error: 'User has no company' });
-        return;
-      }
-    }
-
-    // Get company document
-    const companyDoc = await db.collection('companies').doc(targetCompanyId).get();
-    if (!companyDoc.exists) {
-      res.status(404).json({ error: 'Company not found' });
-      return;
-    }
-
-    const companyData = companyDoc.data();
-    const stripeCustomerId = companyData?.subscription?.stripeCustomerId;
-
-    if (!stripeCustomerId) {
-      // Try to find customer by email
-      const userDoc = await db.collection('users')
-        .where('companyId', '==', targetCompanyId)
-        .limit(1)
-        .get();
-
-      if (userDoc.empty) {
-        res.status(404).json({ error: 'No Stripe customer found' });
-        return;
-      }
-
-      const userEmail = userDoc.docs[0].data().email;
-      const customers = await stripe.customers.list({ email: userEmail, limit: 1 });
-
-      if (customers.data.length === 0) {
-        res.status(404).json({ error: 'No Stripe customer found for email' });
-        return;
-      }
-
-      const customer = customers.data[0];
-      const subscriptions = await stripe.subscriptions.list({
-        customer: customer.id,
-        status: 'all',
-        limit: 1
-      });
-
-      if (subscriptions.data.length === 0) {
-        res.status(404).json({ error: 'No subscription found' });
-        return;
-      }
-
-      const subscription = subscriptions.data[0];
-
-      // Update company with subscription data
-      await db.collection('companies').doc(targetCompanyId).set({
-        subscription: {
-          stripeCustomerId: customer.id,
-          stripeSubscriptionId: subscription.id,
-          stripePriceId: subscription.items.data[0].price.id,
-          status: subscription.status,
-          currentPeriodStart: new Date(subscription.current_period_start * 1000),
-          currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-          cancelAtPeriodEnd: subscription.cancel_at_period_end,
-          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-        },
-        credits: admin.firestore.FieldValue.increment(STRIPE_CONFIG.creditsPerMonth),
-      }, { merge: true });
-
-      res.status(200).json({
-        success: true,
-        message: 'Subscription synced',
-        subscription: {
-          id: subscription.id,
-          status: subscription.status,
-          customerId: customer.id
-        }
-      });
-      return;
-    }
-
-    // Get latest subscription from Stripe
-    const subscriptions = await stripe.subscriptions.list({
-      customer: stripeCustomerId,
-      status: 'all',
-      limit: 1
-    });
-
-    if (subscriptions.data.length === 0) {
-      res.status(404).json({ error: 'No subscription found in Stripe' });
-      return;
-    }
-
-    const subscription = subscriptions.data[0];
-
-    // Update Firestore
-    await db.collection('companies').doc(targetCompanyId).set({
-      subscription: {
-        status: subscription.status,
-        currentPeriodStart: new Date(subscription.current_period_start * 1000),
-        currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-        cancelAtPeriodEnd: subscription.cancel_at_period_end,
-        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      },
     }, { merge: true });
-
-    res.status(200).json({
-      success: true,
-      message: 'Subscription synced',
-      subscription: {
-        id: subscription.id,
-        status: subscription.status
-      }
-    });
-
-  } catch (error: any) {
-    console.error('Sync error:', error);
-    res.status(500).json({ error: 'Sync failed', details: error.message });
   }
-});
+
+  // Store payment record in a dedicated collection
+  await db.collection('payments').add({
+    companyId,
+    jobPostingId,
+    stripeCheckoutSessionId: session.id,
+    stripePaymentIntentId: paymentIntentId || null,
+    stripeCustomerId: customerId,
+    amount: session.amount_total,
+    currency: session.currency,
+    status: 'paid',
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+
+  console.log('Job posting published after payment:', jobPostingId);
+}
 
 /**
  * Send Application Email Notification

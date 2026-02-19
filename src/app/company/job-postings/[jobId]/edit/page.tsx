@@ -2,21 +2,22 @@
 
 import React, { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { db, auth } from '../../../../../lib/firebase'
+import { db } from '../../../../../lib/firebase'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
-import { onAuthStateChanged } from 'firebase/auth'
 import { JobPosting, JobTier, JobStatus } from '../../../../../../types'
 import LocationSelector from '../../../../../components/ui/LocationSelector'
+import { JOB_CATEGORY_OPTIONS } from '../../../../../lib/constants'
+import { useAuth } from '../../../../../lib/authContext'
 
 const EditJobPage = () => {
 	const { jobId } = useParams()
 	const router = useRouter()
+	const { user, loading: authLoading } = useAuth()
 	const [job, setJob] = useState<JobPosting | null>(null)
 	const [loading, setLoading] = useState(true)
 	const [saving, setSaving] = useState(false)
 	const [error, setError] = useState<string | null>(null)
 	const [success, setSuccess] = useState(false)
-	const [user, setUser] = useState(auth.currentUser)
 
 	// Form state
 	const [formData, setFormData] = useState({
@@ -34,16 +35,15 @@ const EditJobPage = () => {
 	})
 
 	useEffect(() => {
-		const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
-			setUser(currentUser)
-			if (!currentUser) {
-				router.push('/signin')
-				return
-			}
-		})
+		if (authLoading) return
+
+		if (!user) {
+			router.push('/signin')
+			return
+		}
 
 		const fetchJob = async () => {
-			if (!jobId || !user) return
+			if (!jobId) return
 
 			try {
 				const jobRef = doc(db, 'jobPostings', jobId as string)
@@ -52,7 +52,6 @@ const EditJobPage = () => {
 				if (jobDoc.exists()) {
 					const jobData = { jobId: jobDoc.id, ...jobDoc.data() } as JobPosting
 
-					// Check if the current user owns this job
 					if (jobData.createdByUserId !== user.uid) {
 						setError('You do not have permission to edit this job posting.')
 						setLoading(false)
@@ -61,7 +60,6 @@ const EditJobPage = () => {
 
 					setJob(jobData)
 
-					// Populate form with existing data
 					setFormData({
 						jobTitle: jobData.jobTitle || '',
 						jobDescription: jobData.jobDescription || '',
@@ -86,12 +84,8 @@ const EditJobPage = () => {
 			}
 		}
 
-		if (user && jobId) {
-			fetchJob()
-		}
-
-		return () => unsubscribeAuth()
-	}, [jobId, user, router])
+		fetchJob()
+	}, [jobId, user, authLoading, router])
 
 	const handleInputChange = (field: string, value: string | boolean | number) => {
 		setFormData(prev => ({
@@ -314,14 +308,10 @@ const EditJobPage = () => {
 										onChange={(e) => handleInputChange('category', e.target.value)}
 										className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
 									>
-										<option value="">Select category</option>
-										<option value="technology">Technology</option>
-										<option value="healthcare">Healthcare</option>
-										<option value="finance">Finance</option>
-										<option value="education">Education</option>
-										<option value="marketing">Marketing</option>
-										<option value="sales">Sales</option>
-										<option value="other">Other</option>
+										<option value="">Seleccionar categoría</option>
+										{JOB_CATEGORY_OPTIONS.map(option => (
+											<option key={option.value} value={option.value}>{option.label}</option>
+										))}
 									</select>
 								</div>
 								<div>

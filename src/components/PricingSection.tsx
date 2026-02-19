@@ -51,24 +51,24 @@ const PricingSection: React.FC<PricingSectionProps> = ({
 		},
 		{
 			name: "Empresa",
-			price: "$100 mx",
-			period: "/mes",
-			description: "Perfecto para empresas en crecimiento",
+			price: "$10 mx",
+			period: "/publicación",
+			description: "Paga solo por lo que publicas",
 			features: [
-				"Publicaciones ilimitadas",
-				"ATS avanzado",
+				"Pago por publicación de empleo",
+				"ATS avanzado incluido",
 				"Evaluación y filtrado de currículums",
-				"Notificaciones",
+				"Notificaciones automáticas",
 				"Dashboard de análisis",
-				"Soporte",
-				"Hasta 100 candidatos por publicación de empleo"
+				"Soporte incluido",
+				"Hasta 100 candidatos por publicación"
 			],
-			ctaText: "Suscribirse Ahora",
-			ctaLink: "/company/subscription/checkout?plan=startup",
+			ctaText: "Publicar Empleo",
+			ctaLink: "/signup?type=company",
 			popular: true,
 			buttonStyle: "primary",
-			planId: "startup",
-			amount: 10000
+			planId: "per-job",
+			amount: 1000
 		}
 	]
 

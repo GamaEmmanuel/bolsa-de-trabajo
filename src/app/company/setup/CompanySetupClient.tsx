@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { auth, db, storage } from '../../../lib/firebase'
 import { doc, updateDoc, getDoc, setDoc } from 'firebase/firestore'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { useAuth } from '../../../lib/authContext'
 
 const steps = [
 	'Bienvenida',
@@ -26,20 +27,21 @@ const CompanySetupClient = () => {
 	})
 	const [loading, setLoading] = useState(true)
 	const router = useRouter()
+	const { user: authUser, loading: authLoading } = useAuth()
 
 	// Check if user has already completed setup
 	useEffect(() => {
+		if (authLoading) return
+
 		const checkSetupStatus = async () => {
-			const user = auth.currentUser
-			if (user) {
+			if (authUser) {
 				try {
-					const userRef = doc(db, 'users', user.uid)
+					const userRef = doc(db, 'users', authUser.uid)
 					const userDoc = await getDoc(userRef)
 
 					if (userDoc.exists()) {
 						const userData = userDoc.data()
 						if (userData.companySetupCompleted) {
-							// User has already completed setup, redirect to dashboard
 							router.push('/company/dashboard')
 							return
 						}
@@ -52,7 +54,7 @@ const CompanySetupClient = () => {
 		}
 
 		checkSetupStatus()
-	}, [router])
+	}, [authUser, authLoading, router])
 
 	const handleNext = async () => {
 		if (currentStep < steps.length - 1) {
@@ -152,7 +154,7 @@ const CompanySetupClient = () => {
 						<div className="text-center py-4">
 							<div className="text-5xl sm:text-6xl mb-4">🏢</div>
 							<h3 className="text-lg sm:text-xl font-semibold">
-								¡Bienvenido a Meserea!
+								¡Bienvenido a Trabajo Libre!
 							</h3>
 							<p className="mt-2 text-sm sm:text-base text-gray-600">
 								Configuremos tu empresa. Esto solo tomará un par de minutos.
@@ -167,7 +169,7 @@ const CompanySetupClient = () => {
 								</label>
 								<input
 									type="text"
-									placeholder="ej., Restaurante La Hacienda"
+									placeholder="ej., Mi Empresa S.A."
 									value={companyData.companyName}
 									onChange={(e) => setCompanyData({ ...companyData, companyName: e.target.value })}
 									className="w-full px-3 py-2.5 sm:py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-transparent"
@@ -179,7 +181,7 @@ const CompanySetupClient = () => {
 								</label>
 								<input
 									type="text"
-									placeholder="ej., Restaurante, Hotel, Café"
+									placeholder="ej., Tecnología, Retail, Educación"
 									value={companyData.industry}
 									onChange={(e) => setCompanyData({ ...companyData, industry: e.target.value })}
 									className="w-full px-3 py-2.5 sm:py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-transparent"
@@ -191,7 +193,7 @@ const CompanySetupClient = () => {
 								</label>
 								<input
 									type="url"
-									placeholder="https://tu-restaurante.com"
+									placeholder="https://tu-empresa.com"
 									value={companyData.websiteUrl}
 									onChange={(e) => setCompanyData({ ...companyData, websiteUrl: e.target.value })}
 									className="w-full px-3 py-2.5 sm:py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-transparent"

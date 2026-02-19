@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { adminDb } from '@/lib/firebase-admin'
 import { EmailPreferences } from '@/types/index'
+import { RateLimiters } from '@/middleware/rateLimit'
 
 // GET - Load email preferences
 export async function GET(req: NextRequest) {
+	// Apply rate limiting - generous for read operations
+	const rateLimitResponse = RateLimiters.generous(req)
+	if (rateLimitResponse) {
+		return rateLimitResponse
+	}
 	try {
 		const { searchParams } = new URL(req.url)
 		const userId = searchParams.get('userId')
@@ -76,6 +82,12 @@ export async function GET(req: NextRequest) {
 
 // POST - Save email preferences
 export async function POST(req: NextRequest) {
+	// Apply rate limiting - standard for write operations
+	const rateLimitResponse = RateLimiters.standard(req)
+	if (rateLimitResponse) {
+		return rateLimitResponse
+	}
+
 	try {
 		const body = await req.json()
 		const { userId, preferences } = body as { userId: string; preferences: EmailPreferences }

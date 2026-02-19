@@ -7,6 +7,7 @@ interface CheckoutSessionData {
   email: string
   companyName: string
   customerId?: string
+  jobPostingId: string
 }
 
 export function useStripeCheckout() {
@@ -16,7 +17,7 @@ export function useStripeCheckout() {
 
   const createCheckoutSession = async (data: CheckoutSessionData) => {
     if (!user) {
-      setError('You must be logged in to subscribe')
+      setError('Debes iniciar sesión para realizar el pago')
       return null
     }
 
@@ -34,7 +35,7 @@ export function useStripeCheckout() {
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to create checkout session')
+        throw new Error(errorData.error || 'Error al crear la sesión de pago')
       }
 
       const { url } = await response.json()
@@ -46,7 +47,7 @@ export function useStripeCheckout() {
 
       return url
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      const errorMessage = err instanceof Error ? err.message : 'Ocurrió un error'
       setError(errorMessage)
       console.error('Checkout error:', err)
       return null
@@ -55,52 +56,9 @@ export function useStripeCheckout() {
     }
   }
 
-  const createPortalSession = async (companyId: string, customerId?: string) => {
-    if (!user) {
-      setError('You must be logged in to manage subscription')
-      return null
-    }
-
-    setLoading(true)
-    setError(null)
-
-    try {
-      const response = await fetch('/api/stripe/create-portal-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ companyId, customerId }),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to create portal session')
-      }
-
-      const { url } = await response.json()
-
-      // Redirect to Stripe Customer Portal
-      if (url) {
-        window.location.href = url
-      }
-
-      return url
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
-      setError(errorMessage)
-      console.error('Portal error:', err)
-      return null
-    } finally {
-      setLoading(false)
-    }
-  }
-
   return {
     createCheckoutSession,
-    createPortalSession,
     loading,
     error,
   }
 }
-

@@ -6,53 +6,53 @@ import { useRouter, usePathname } from 'next/navigation'
 import { auth, db } from '../../lib/firebase'
 import { signOut } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
+import { useAuth } from '../../lib/authContext'
 
 const CompanyLayout = ({ children }: { children: React.ReactNode }) => {
 	const router = useRouter()
 	const pathname = usePathname()
-	const [loading, setLoading] = useState(true)
+	const { user, loading: authLoading } = useAuth()
+	const [setupChecked, setSetupChecked] = useState(false)
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-	// Check if user has completed company setup (except for setup page itself)
 	useEffect(() => {
+		// Wait for Firebase Auth to fully resolve before making any decisions
+		if (authLoading) return
+
+		// Skip check if we're on the setup page or public company jobs page
+		if (pathname === '/company/setup' || pathname?.match(/^\/company\/[^/]+\/jobs$/)) {
+			setSetupChecked(true)
+			return
+		}
+
+		if (!user) {
+			router.push('/signin')
+			return
+		}
+
 		const checkSetupStatus = async () => {
-			// Skip check if we're on the setup page or public company jobs page
-			if (pathname === '/company/setup' || pathname?.match(/^\/company\/[^/]+\/jobs$/)) {
-				setLoading(false)
-				return
-			}
+			try {
+				const userRef = doc(db, 'users', user.uid)
+				const userDoc = await getDoc(userRef)
 
-			const user = auth.currentUser
-			if (user) {
-				try {
-					const userRef = doc(db, 'users', user.uid)
-					const userDoc = await getDoc(userRef)
-
-					if (userDoc.exists()) {
-						const userData = userDoc.data()
-						if (!userData.companySetupCompleted) {
-							// User hasn't completed setup, redirect to setup page
-							router.push('/company/setup')
-							return
-						}
-					} else {
-						// User document doesn't exist, redirect to setup
+				if (userDoc.exists()) {
+					const userData = userDoc.data()
+					if (!userData.companySetupCompleted) {
 						router.push('/company/setup')
 						return
 					}
-				} catch (error) {
-					console.error('Error checking setup status:', error)
+				} else {
+					router.push('/company/setup')
+					return
 				}
-			} else {
-				// No authenticated user, redirect to signin
-				router.push('/signin')
-				return
+			} catch (error) {
+				console.error('Error checking setup status:', error)
 			}
-			setLoading(false)
+			setSetupChecked(true)
 		}
 
 		checkSetupStatus()
-	}, [router, pathname])
+	}, [user, authLoading, router, pathname])
 
 	const handleSignOut = async () => {
 		try {
@@ -68,7 +68,7 @@ const CompanyLayout = ({ children }: { children: React.ReactNode }) => {
 		{ name: 'Candidatos', href: '/company/ats', icon: '👥' },
 		{ name: 'Búsqueda', href: '/company/talent-search', icon: '🔍' },
 		{ name: 'Mensajes', href: '/company/inbox', icon: '💬' },
-		{ name: 'Suscripción', href: '/company/credits', icon: '💳' },
+		{ name: 'Pagos', href: '/company/credits', icon: '💳' },
 		{ name: 'Configuración', href: '/company/settings', icon: '⚙️' },
 	]
 
@@ -82,8 +82,8 @@ const CompanyLayout = ({ children }: { children: React.ReactNode }) => {
 		return pathname === href
 	}
 
-	// Show loading state while checking setup status
-	if (loading) {
+	// Show loading state while auth is resolving or setup is being checked
+	if (authLoading || !setupChecked) {
 		return (
 			<div className="flex items-center justify-center min-h-screen bg-gray-50">
 				<div className="text-center">
@@ -113,7 +113,7 @@ const CompanyLayout = ({ children }: { children: React.ReactNode }) => {
 							<Link href="/company/dashboard" className="flex items-center">
 								<img
 									src="/logo.png"
-									alt="Meserea Logo"
+									alt="Trabajo Libre Logo"
 									className="h-12 w-auto"
 								/>
 							</Link>

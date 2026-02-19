@@ -1,146 +1,51 @@
-import { Company, SubscriptionStatus } from '@/types'
+import { JobPosting } from '@/types'
 
 /**
- * Check if a company has an active subscription
- * Also verifies the subscription hasn't expired
+ * Check if a job posting has been paid for
  */
-export function hasActiveSubscription(company: Company): boolean {
-  const subscription = company.subscription
-  if (!subscription) return false
-
-  const status = subscription.status
-  const hasActiveStatus = status === 'active' || status === 'trialing'
-
-  // Also check if subscription period hasn't ended
-  if (subscription.currentPeriodEnd) {
-    const periodEnd = subscription.currentPeriodEnd.toDate ?
-      subscription.currentPeriodEnd.toDate() :
-      new Date(subscription.currentPeriodEnd)
-
-    const now = new Date()
-    const isNotExpired = periodEnd > now
-
-    return hasActiveStatus && isNotExpired
-  }
-
-  return hasActiveStatus
+export function isJobPaid(job: JobPosting): boolean {
+  return job.paymentStatus === 'paid'
 }
 
 /**
- * Check if subscription payment is current (not past due and within billing period)
+ * Check if a job posting is pending payment
  */
-export function isPaymentCurrent(company: Company): boolean {
-  const subscription = company.subscription
-  if (!subscription) return false
-
-  // Check status
-  if (subscription.status === 'past_due' || subscription.status === 'unpaid') {
-    return false
-  }
-
-  // Check if within current billing period
-  if (subscription.currentPeriodEnd) {
-    const periodEnd = subscription.currentPeriodEnd.toDate ?
-      subscription.currentPeriodEnd.toDate() :
-      new Date(subscription.currentPeriodEnd)
-
-    return periodEnd > new Date()
-  }
-
-  return subscription.status === 'active' || subscription.status === 'trialing'
+export function isJobPendingPayment(job: JobPosting): boolean {
+  return job.status === 'draft' && (!job.paymentStatus || job.paymentStatus === 'pending')
 }
 
 /**
- * Check if subscription is past due
+ * Get a human-readable payment status message
  */
-export function isSubscriptionPastDue(company: Company): boolean {
-  return company.subscription?.status === 'past_due'
-}
-
-/**
- * Check if subscription is canceled or expired
- */
-export function isSubscriptionCanceled(company: Company): boolean {
-  const status = company.subscription?.status
-  return status === 'canceled' || status === 'incomplete_expired'
-}
-
-/**
- * Get a human-readable subscription status message
- */
-export function getSubscriptionStatusMessage(status?: SubscriptionStatus): string {
-  switch (status) {
-    case 'active':
-      return 'Activa'
-    case 'trialing':
-      return 'Período de prueba'
-    case 'past_due':
-      return 'Pago pendiente'
-    case 'canceled':
-      return 'Cancelada'
-    case 'incomplete':
-      return 'Pago incompleto'
-    case 'incomplete_expired':
-      return 'Expirada'
-    case 'unpaid':
-      return 'Sin pagar'
+export function getPaymentStatusMessage(paymentStatus?: string): string {
+  switch (paymentStatus) {
+    case 'paid':
+      return 'Pagado'
+    case 'pending':
+      return 'Pendiente de pago'
+    case 'failed':
+      return 'Pago fallido'
+    case 'refunded':
+      return 'Reembolsado'
     default:
-      return 'Sin suscripción'
+      return 'Sin pago'
   }
 }
 
 /**
- * Get color class for subscription status
+ * Get color class for payment status
  */
-export function getSubscriptionStatusColor(status?: SubscriptionStatus): string {
-  switch (status) {
-    case 'active':
+export function getPaymentStatusColor(paymentStatus?: string): string {
+  switch (paymentStatus) {
+    case 'paid':
       return 'text-green-600 bg-green-100'
-    case 'trialing':
-      return 'text-blue-600 bg-blue-100'
-    case 'past_due':
+    case 'pending':
       return 'text-yellow-600 bg-yellow-100'
-    case 'canceled':
-    case 'incomplete_expired':
-    case 'unpaid':
+    case 'failed':
       return 'text-red-600 bg-red-100'
+    case 'refunded':
+      return 'text-gray-600 bg-gray-100'
     default:
       return 'text-gray-600 bg-gray-100'
   }
 }
-
-/**
- * Check if company has enough credits
- */
-export function hasEnoughCredits(company: Company, requiredCredits: number): boolean {
-  const credits = company.credits || 0
-  return credits >= requiredCredits
-}
-
-/**
- * Format date from Firestore Timestamp
- */
-export function formatSubscriptionDate(timestamp: any): string {
-  if (!timestamp) return 'N/A'
-
-  try {
-    // Handle Firestore Timestamp
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp)
-    return date.toLocaleDateString('es-MX', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    })
-  } catch (err) {
-    return 'N/A'
-  }
-}
-
-/**
- * Check if subscription requires action (payment failed, incomplete, etc.)
- */
-export function subscriptionRequiresAction(company: Company): boolean {
-  const status = company.subscription?.status
-  return status === 'past_due' || status === 'incomplete' || status === 'unpaid'
-}
-

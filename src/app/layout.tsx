@@ -3,34 +3,35 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import React from "react";
 import { AuthProvider } from "../lib/authContext";
+import { SITE_NAME, BASE_URL, DEFAULT_DESCRIPTION } from "../lib/constants";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Meserea - Encuentra Trabajo en Restaurantes y Hoteles | Empleos de Mesero, Chef, Cocinero",
-  description: "La plataforma #1 para encontrar trabajo en restaurantes, hoteles y el sector de hospitalidad. Empleos de mesero, cocinero, chef, bartender, camarera y más. Contrata personal calificado para tu negocio.",
-  keywords: ["empleos restaurantes", "trabajo mesero", "chef vacantes", "cocinero empleo", "hoteles trabajo", "hospitalidad empleo", "bartender vacante", "camarera trabajo", "empleo gastronomía"],
-  authors: [{ name: "Meserea" }],
+  title: `${SITE_NAME} - Encuentra Trabajo y Talento | Bolsa de Empleo en Latinoamérica`,
+  description: DEFAULT_DESCRIPTION,
+  keywords: ["bolsa de empleo", "buscar trabajo", "vacantes", "empleo Latinoamérica", "contratar personal", "ofertas de trabajo", "empleo tecnología", "trabajo remoto", "empleo ventas"],
+  authors: [{ name: SITE_NAME }],
   openGraph: {
-    title: "Meserea - Empleos en Restaurantes y Hoteles",
-    description: "Encuentra trabajo como mesero, chef, cocinero, bartender o camarera. Plataforma especializada en hospitalidad.",
+    title: `${SITE_NAME} - Bolsa de Empleo en Latinoamérica`,
+    description: "Encuentra empleo o contrata talento calificado. La plataforma líder en Latinoamérica para todas las industrias.",
     type: "website",
     locale: "es_MX",
-    siteName: "Meserea",
+    siteName: SITE_NAME,
     images: [
       {
-        url: "/logo.png",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Meserea - Empleos en Hospitalidad",
+        alt: `${SITE_NAME} - Bolsa de Empleo`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Meserea - Empleos en Restaurantes y Hoteles",
-    description: "Encuentra trabajo como mesero, chef, cocinero, bartender o camarera.",
-    images: ["/logo.png"],
+    title: `${SITE_NAME} - Bolsa de Empleo en Latinoamérica`,
+    description: "Encuentra empleo o contrata talento calificado en todas las industrias.",
+    images: ["/og-image.png"],
   },
   robots: {
     index: true,
@@ -44,7 +45,6 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    // Add Google Search Console verification when available
     // google: "your-verification-code",
   },
 };
@@ -69,13 +69,11 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Organization",
-              name: "Meserea",
-              description: "Plataforma de empleos para restaurantes, hoteles y sector de hospitalidad en Latinoamérica",
-              url: "https://meserea.com",
-              logo: "https://meserea.com/logo.png",
-              sameAs: [
-                // Add social media URLs when available
-              ],
+              name: SITE_NAME,
+              description: "Plataforma de empleos para todas las industrias en Latinoamérica",
+              url: BASE_URL,
+              logo: `${BASE_URL}/logo.png`,
+              sameAs: [],
               contactPoint: {
                 "@type": "ContactPoint",
                 contactType: "Customer Service",

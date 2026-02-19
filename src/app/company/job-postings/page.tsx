@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { db, auth } from '../../../lib/firebase'
 import { collection, query, where, onSnapshot, orderBy, doc, updateDoc } from 'firebase/firestore'
 import { onAuthStateChanged } from 'firebase/auth'
@@ -14,6 +15,8 @@ const JobPostingsPage = () => {
 	const [error, setError] = useState<string | null>(null)
 	const [statusFilter, setStatusFilter] = useState<string | null>(null)
 	const [showShareModal, setShowShareModal] = useState(false)
+	const [paymentMessage, setPaymentMessage] = useState<string | null>(null)
+	const searchParams = useSearchParams()
 
 	const translateStatus = (status: string) => {
 		switch (status) {
@@ -128,6 +131,36 @@ const JobPostingsPage = () => {
 		return () => unsubscribeAuth()
 	}, [])
 
+	const verifyPayment = useCallback(async (sessionId: string) => {
+		try {
+			const res = await fetch('/api/stripe/verify-session', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ sessionId }),
+			})
+
+			if (res.ok) {
+				const data = await res.json()
+				if (data.status === 'published' || data.status === 'already_published') {
+					setPaymentMessage('Pago exitoso. Tu vacante ha sido publicada.')
+				}
+			} else {
+				console.error('Payment verification failed:', await res.text())
+			}
+		} catch (err) {
+			console.error('Error verifying payment:', err)
+		}
+	}, [])
+
+	useEffect(() => {
+		const sessionId = searchParams.get('session_id')
+		const paidJobId = searchParams.get('paid')
+
+		if (sessionId && paidJobId) {
+			verifyPayment(sessionId)
+		}
+	}, [searchParams, verifyPayment])
+
 	return (
 		<div className="max-w-7xl mx-auto py-4 sm:py-6 md:py-8 px-4 sm:px-6 lg:px-8">
 			<div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 sm:mb-8">
@@ -156,6 +189,28 @@ const JobPostingsPage = () => {
 					</Link>
 				</div>
 			</div>
+
+			{/* Payment Success Message */}
+			{paymentMessage && (
+				<div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+					<div className="flex items-center justify-between">
+						<div className="flex items-center">
+							<svg className="h-5 w-5 text-green-500 mr-3" viewBox="0 0 20 20" fill="currentColor">
+								<path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+							</svg>
+							<p className="text-sm font-medium text-green-800">{paymentMessage}</p>
+						</div>
+						<button
+							onClick={() => setPaymentMessage(null)}
+							className="text-green-500 hover:text-green-700"
+						>
+							<svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+							</svg>
+						</button>
+					</div>
+				</div>
+			)}
 
 			{/* Error Message */}
 			{error && (

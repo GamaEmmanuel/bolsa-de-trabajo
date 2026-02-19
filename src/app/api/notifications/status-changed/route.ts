@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sendApplicationStatusChangedEmail, sendApplicationRejectedEmail, getCandidateEmail, getCompanyEmail } from '@/lib/emailNotifications'
 import { adminDb } from '@/lib/firebase-admin'
+import { RateLimiters } from '@/middleware/rateLimit'
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
 export async function POST(req: NextRequest) {
+	// Apply rate limiting - email rate limit (3 per minute)
+	const rateLimitResponse = RateLimiters.email(req)
+	if (rateLimitResponse) {
+		return rateLimitResponse
+	}
 	try {
 		const body = await req.json()
 		const {

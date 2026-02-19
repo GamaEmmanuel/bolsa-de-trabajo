@@ -111,16 +111,18 @@ export type JobType = 'full-time' | 'part-time' | 'contract' | 'internship' | 'f
 export type EmploymentType = 'remote' | 'hybrid' | 'on-site'
 export type ExperienceLevel = '0-1' | '1-3' | '3-5' | '5-10' | '10+'
 export type EducationLevel = 'high-school' | 'bachelor' | 'master' | 'phd' | 'no-requirement'
-export type JobCategory = 'chef' | 'kitchen' | 'server' | 'bartender' | 'hostess' | 'cleaning' | 'barista' | 'cashier' | 'supervisor' | 'receptionist' | 'housekeeper' | 'valet' | 'dishwasher' | 'pastry' | 'sommelier' | 'maintenance' | 'security' | 'delivery' | 'banquets' | 'administration' | 'other'
+export type JobCategory = 'technology' | 'healthcare' | 'finance' | 'education' | 'marketing' | 'sales' | 'engineering' | 'design' | 'legal' | 'operations' | 'customer-service' | 'logistics' | 'construction' | 'hospitality' | 'retail' | 'human-resources' | 'media' | 'administration' | 'other'
 export type JobLevel = 'entry' | 'mid-level' | 'senior' | 'lead' | 'executive'
 
 // Phase 3 Job Posting Fields
 export type CompanySize = '1-10' | '11-50' | '51-200' | '201-500' | '500+'
-export type Industry = 'restaurant' | 'hotel' | 'bar' | 'cafe' | 'fast-food' | 'catering' | 'nightclub' | 'bakery' | 'food-truck' | 'resort' | 'hostel' | 'event-venue' | 'tourism' | 'other'
+export type Industry = 'technology' | 'healthcare' | 'finance' | 'education' | 'retail' | 'manufacturing' | 'consulting' | 'hospitality' | 'construction' | 'real-estate' | 'media' | 'non-profit' | 'government' | 'logistics' | 'other'
 export type StartDate = 'immediate' | '1-2-weeks' | '1-month' | '2-months' | 'flexible'
 export type UrgencyLevel = 'normal' | 'urgent' | 'critical'
 export type ApplicationProcess = 'resume-only' | 'portfolio-required' | 'cover-letter-required' | 'video-interview' | 'technical-test'
 export type InterviewRounds = '1' | '2' | '3' | '4+' | 'varies'
+
+export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded'
 
 export interface JobPosting {
 	jobId: UUID
@@ -146,6 +148,11 @@ export interface JobPosting {
 	status: JobStatus
 	postedDate?: string
 	tier?: JobTier
+	// Payment fields (pay-per-job model)
+	paymentStatus?: PaymentStatus
+	stripePaymentIntentId?: string
+	stripeCheckoutSessionId?: string
+	paidAt?: any // Firestore Timestamp
 	// Phase 3 Fields
 	applicationDeadline?: string
 	startDate?: StartDate

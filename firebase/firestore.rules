@@ -155,6 +155,12 @@ service cloud.firestore {
       allow delete: if false; // Don't allow hard deleting messages
     }
 
+    // Blog posts: public read for published posts, admin-only writes
+    match /blogPosts/{postId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
     // Email logs: Allow authenticated users to write logs
     match /emailLogs/{logId} {
       allow create: if isSignedIn();

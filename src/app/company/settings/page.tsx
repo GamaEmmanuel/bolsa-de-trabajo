@@ -7,8 +7,8 @@ import { doc, updateDoc, getDoc } from 'firebase/firestore'
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage'
 import { CompanySize, Industry } from '../../../../types'
 import { COMPANY_SIZE_OPTIONS, INDUSTRY_OPTIONS, BENEFITS_OPTIONS, COMPANY_CULTURE_OPTIONS } from '../../../lib/constants'
-import SubscriptionStatus from '../../../components/SubscriptionStatus'
 import EmailPreferences from '../../../components/EmailPreferences'
+import { useAuth } from '../../../lib/authContext'
 
 interface CompanyData {
 	companyName: string
@@ -66,26 +66,27 @@ const CompanySettingsPage = () => {
 	const [paymentSuccess, setPaymentSuccess] = useState(false)
 	const router = useRouter()
 	const searchParams = useSearchParams()
+	const { user: authUser, loading: authLoading } = useAuth()
 
 	// Check for payment success
 	useEffect(() => {
 		const payment = searchParams.get('payment')
 		if (payment === 'success') {
 			setPaymentSuccess(true)
-			// Clear the query parameter after showing message
 			setTimeout(() => {
 				setPaymentSuccess(false)
-				// Remove query param from URL
 				router.replace('/company/settings')
-			}, 10000) // Show for 10 seconds
+			}, 10000)
 		}
 	}, [searchParams, router])
 
 	// Load existing company data
 	useEffect(() => {
+		if (authLoading) return
+
 		const loadCompanyData = async () => {
 			try {
-				const user = auth.currentUser
+				const user = authUser
 				if (!user) {
 					router.push('/signin')
 					return
@@ -121,7 +122,7 @@ const CompanySettingsPage = () => {
 		}
 
 		loadCompanyData()
-	}, [router])
+	}, [authUser, authLoading, router])
 
 	const handleInputChange = (field: keyof CompanyData, value: string) => {
 		setCompanyData(prev => ({
@@ -306,34 +307,17 @@ const CompanySettingsPage = () => {
 							</div>
 							<div className="ml-4 flex-1">
 								<h3 className="text-lg font-bold text-green-900 mb-1">
-									¡Suscripción Exitosa! 🎉
+									¡Pago Exitoso! 🎉
 								</h3>
-								<p className="text-green-800 mb-2">
-									Tu suscripción ha sido activada correctamente. Ya tienes acceso a todas las funciones premium.
+								<p className="text-green-800">
+									Tu pago se ha procesado correctamente.
 								</p>
-								<ul className="text-sm text-green-700 space-y-1">
-									<li>✓ 1000 créditos de IA agregados a tu cuenta</li>
-									<li>✓ Publicaciones de empleo ilimitadas</li>
-									<li>✓ ATS avanzado disponible</li>
-									<li>✓ Soporte prioritario activado</li>
-								</ul>
 							</div>
 						</div>
 					</div>
 				)}
 
-				{/* Subscription Status Section */}
-				{companyId && (
-					<div className="mb-8">
-						<SubscriptionStatus
-							companyId={companyId}
-							showManageButton={true}
-							compact={false}
-						/>
-					</div>
-				)}
-
-				{/* Success Message */}
+					{/* Success Message */}
 				{success && (
 					<div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
 						<div className="flex">
@@ -424,7 +408,7 @@ const CompanySettingsPage = () => {
 										type="url"
 										value={companyData.websiteUrl}
 										onChange={(e) => handleInputChange('websiteUrl', e.target.value)}
-										placeholder="https://www.tu-restaurante.com"
+										placeholder="https://www.tu-empresa.com"
 										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 									/>
 								</div>

@@ -1,4 +1,5 @@
 import { JobPosting } from '../types'
+import { BASE_URL } from './constants'
 
 export function generateJobPostingSchema(
   job: JobPosting,
@@ -8,7 +9,7 @@ export function generateJobPostingSchema(
     description?: string
   }
 ) {
-  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://meserea.com'
+  const baseUrl = BASE_URL
 
   const jobLocation = job.location || 'Location not specified'
   const hiringOrganization = {

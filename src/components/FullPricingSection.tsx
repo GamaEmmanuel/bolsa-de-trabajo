@@ -52,24 +52,24 @@ const FullPricingSection: React.FC<FullPricingSectionProps> = ({
 		},
 		{
 			name: "Empresa",
-			price: "$100 mx",
-			period: "/mes",
-			description: "Perfecto para empresas en crecimiento",
+			price: "$10 mx",
+			period: "/publicación",
+			description: "Paga solo por lo que publicas",
 			features: [
-				"Publicaciones ilimitadas",
-				"ATS avanzado",
+				"Pago por publicación de empleo",
+				"ATS avanzado incluido",
 				"Evaluación y filtrado de currículums",
-				"Notificaciones",
+				"Notificaciones automáticas",
 				"Dashboard de análisis",
-				"Soporte",
-				"Hasta 100 candidatos por publicación de empleo"
+				"Soporte incluido",
+				"Hasta 100 candidatos por publicación"
 			],
-			ctaText: "Suscribirse Ahora",
-			ctaLink: "/company/subscription/checkout?plan=startup",
+			ctaText: "Publicar Empleo",
+			ctaLink: "/signup?type=company",
 			popular: true,
 			buttonStyle: "primary",
-			planId: "startup",
-			amount: 10000
+			planId: "per-job",
+			amount: 1000
 		},
 		{
 			name: "Enterprise",
@@ -99,48 +99,40 @@ const FullPricingSection: React.FC<FullPricingSectionProps> = ({
 			answer: "El plan gratuito te permite aplicar a empleos ilimitados, crear tu currículum profesional, recibir alertas de trabajo y hacer seguimiento de tus aplicaciones. No necesitas tarjeta de crédito para comenzar."
 		},
 		{
-			question: "¿Puedo cambiar de plan en cualquier momento?",
-			answer: "Sí, puedes actualizar o cancelar tu plan cuando quieras. Los cambios toman efecto inmediatamente y se facturan de forma proporcional."
+			question: "¿Cómo funciona el pago por publicación?",
+			answer: "Cada vez que quieras publicar una vacante, pagas $10 MXN. Puedes crear borradores sin costo y solo pagas al momento de publicar. Tu vacante se mantiene activa hasta que la cierres o la llenes."
 		},
 		{
-			question: "¿Qué incluye el plan Empresa?",
-			answer: "El plan Empresa incluye publicaciones ilimitadas, ATS avanzado, evaluación automática de currículums, dashboard de análisis, notificaciones y hasta 100 candidatos por publicación de empleo."
-		},
-		{
-			question: "¿Ofrecen periodo de prueba?",
-			answer: "Sí, el plan Empresa incluye 14 días de prueba gratuita. No se requiere tarjeta de crédito para empezar."
+			question: "¿Qué incluye cada publicación?",
+			answer: "Cada publicación incluye ATS avanzado, evaluación y filtrado de currículums, notificaciones automáticas, dashboard de análisis, soporte y hasta 100 candidatos por publicación."
 		},
 		{
 			question: "¿Qué métodos de pago aceptan?",
-			answer: "Aceptamos tarjetas de crédito/débito (Visa, Mastercard, American Express), transferencias bancarias y PayPal."
+			answer: "Aceptamos tarjetas de crédito/débito (Visa, Mastercard, American Express). El pago se procesa de forma segura a través de Stripe."
 		},
 		{
-			question: "¿Cómo funciona el límite de candidatos por publicación?",
-			answer: "El plan Empresa permite hasta 100 candidatos por publicación de empleo. Si recibes más aplicaciones, te notificaremos para que puedas actualizar tu plan o gestionar las aplicaciones existentes."
+			question: "¿Puedo crear vacantes sin pagar?",
+			answer: "Sí, puedes crear y guardar borradores de vacantes sin costo. Solo pagas cuando decides publicar la vacante para que los candidatos la vean."
+		},
+		{
+			question: "¿Cuánto tiempo dura mi publicación activa?",
+			answer: "Tu publicación se mantiene activa hasta que tú decidas cerrarla o marcarla como llenada. No hay límite de tiempo."
 		},
 		{
 			question: "¿Mis datos están seguros?",
 			answer: "Absolutamente. Utilizamos encriptación de nivel bancario, cumplimos con GDPR y realizamos auditorías de seguridad regulares. Tus datos nunca se comparten con terceros sin tu consentimiento."
 		},
 		{
-			question: "¿Qué diferencia al plan Enterprise del plan Empresa?",
-			answer: "El plan Enterprise ofrece integraciones personalizadas, API completa, gerente de cuenta dedicado, soporte 24/7 premium y capacitación personalizada para tu equipo. Ambos planes incluyen publicaciones ilimitadas."
-		},
-		{
-			question: "¿Ofrecen capacitación para usar la plataforma?",
-			answer: "Sí, todos los planes incluyen documentación completa y videos tutoriales. El plan Enterprise incluye capacitación personalizada en vivo para tu equipo."
+			question: "¿Qué diferencia al plan Enterprise?",
+			answer: "El plan Enterprise ofrece integraciones personalizadas, API completa, gerente de cuenta dedicado, soporte 24/7 premium y capacitación personalizada para tu equipo."
 		},
 		{
 			question: "¿Puedo exportar mis datos si decido cambiar de plataforma?",
 			answer: "Por supuesto. Puedes exportar todos tus datos (candidatos, publicaciones, análisis) en cualquier momento en formatos CSV o JSON."
 		},
 		{
-			question: "¿Qué tipo de soporte ofrecen?",
-			answer: "El plan Empresa incluye soporte por email con respuesta en 24 horas. El plan Enterprise incluye soporte prioritario 24/7 por email, chat y teléfono."
-		},
-		{
 			question: "¿Hay cargos ocultos o comisiones adicionales?",
-			answer: "No. El precio que ves es el precio que pagas. Sin cargos de configuración, sin comisiones por contratación, sin costos ocultos."
+			answer: "No. Pagas $10 MXN por publicación y nada más. Sin cargos de configuración, sin comisiones por contratación, sin costos ocultos."
 		}
 	]
 

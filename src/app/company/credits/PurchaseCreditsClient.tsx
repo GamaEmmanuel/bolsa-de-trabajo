@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/authContext'
-import { getFirestore, doc, getDoc } from 'firebase/firestore'
+import { getFirestore, doc, getDoc, collection, query, where, getDocs, orderBy, limit } from 'firebase/firestore'
 import { app } from '@/lib/firebase'
-import FullPricingSection from '../../../components/FullPricingSection'
+import Link from 'next/link'
 
 const db = getFirestore(app)
 
@@ -13,18 +13,17 @@ const PurchaseCreditsClient = () => {
 	const { user } = useAuth()
 	const router = useRouter()
 	const [loading, setLoading] = useState(true)
-	const [hasActiveSubscription, setHasActiveSubscription] = useState(false)
-	const [companyData, setCompanyData] = useState<any>(null)
+	const [payments, setPayments] = useState<any[]>([])
+	const [companyName, setCompanyName] = useState('')
 
 	useEffect(() => {
-		async function checkSubscriptionStatus() {
+		async function loadPaymentHistory() {
 			if (!user) {
 				setLoading(false)
 				return
 			}
 
 			try {
-				// Get user document to find companyId
 				const userRef = doc(db, 'users', user.uid)
 				const userDoc = await getDoc(userRef)
 
@@ -33,32 +32,34 @@ const PurchaseCreditsClient = () => {
 					const companyId = userData.companyId
 
 					if (companyId) {
-						// Get company document
 						const companyRef = doc(db, 'companies', companyId)
 						const companyDoc = await getDoc(companyRef)
-
 						if (companyDoc.exists()) {
-							const data = companyDoc.data()
-							setCompanyData({
-								companyId,
-								...data
-							})
-
-							// Check if subscription is active or trialing
-							if (data?.subscription?.status === 'active' || data?.subscription?.status === 'trialing') {
-								setHasActiveSubscription(true)
-							}
+							setCompanyName(companyDoc.data()?.companyName || '')
 						}
+
+						const paymentsQuery = query(
+							collection(db, 'payments'),
+							where('companyId', '==', companyId),
+							orderBy('createdAt', 'desc'),
+							limit(20)
+						)
+						const paymentsSnap = await getDocs(paymentsQuery)
+						const paymentsList = paymentsSnap.docs.map(d => ({
+							id: d.id,
+							...d.data()
+						}))
+						setPayments(paymentsList)
 					}
 				}
 			} catch (err) {
-				console.error('Error checking subscription status:', err)
+				console.error('Error loading payment history:', err)
 			} finally {
 				setLoading(false)
 			}
 		}
 
-		checkSubscriptionStatus()
+		loadPaymentHistory()
 	}, [user])
 
 	if (loading) {
@@ -74,99 +75,83 @@ const PurchaseCreditsClient = () => {
 		)
 	}
 
-	if (hasActiveSubscription) {
-		return (
-			<div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-				<div className="max-w-2xl mx-auto text-center">
-					<div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 border-2 border-green-200">
-						<div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-100 mb-6">
-							<svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-							</svg>
-						</div>
+	return (
+		<div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+			<h1 className="text-2xl font-bold text-gray-900 mb-6">Pagos</h1>
 
-						<h2 className="text-3xl font-bold text-gray-900 mb-4">
-							¡Ya Tienes una Suscripción Activa!
-						</h2>
-
-						<p className="text-lg text-gray-600 mb-8">
-							Tu empresa <strong className="text-gray-900">{companyData?.companyName || 'ya'}</strong> cuenta con una suscripción activa al plan Empresa.
+			{/* Payment Model Info */}
+			<div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+				<div className="flex items-start gap-4">
+					<div className="flex-shrink-0 w-12 h-12 rounded-full bg-pink-100 flex items-center justify-center">
+						<svg className="w-6 h-6 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+						</svg>
+					</div>
+					<div>
+						<h2 className="text-lg font-semibold text-gray-900">Pago por publicación</h2>
+						<p className="text-gray-600 mt-1">
+							Paga <strong className="text-pink-600">$10 MXN</strong> por cada vacante que publiques. Sin suscripciones, sin cargos recurrentes. Crea borradores gratis y solo paga al publicar.
 						</p>
-
-						<div className="bg-green-50 rounded-lg p-6 mb-8 border border-green-200">
-							<p className="text-sm text-gray-500 uppercase tracking-wide font-semibold mb-2">
-								Tu Plan Actual
-							</p>
-							<p className="text-2xl font-bold text-green-700 mb-3">
-								Plan Empresa
-							</p>
-							<ul className="text-left space-y-2 text-sm text-gray-600">
-								<li className="flex items-center">
-									<svg className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-										<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-									</svg>
-									Publicaciones ilimitadas
-								</li>
-								<li className="flex items-center">
-									<svg className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-										<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-									</svg>
-									ATS avanzado
-								</li>
-								<li className="flex items-center">
-									<svg className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-										<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-									</svg>
-									Dashboard de análisis
-								</li>
-								<li className="flex items-center">
-									<svg className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-										<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-									</svg>
-									Soporte prioritario
-								</li>
-							</ul>
-							{companyData?.subscription?.currentPeriodEnd && (
-								<p className="text-sm text-gray-500 mt-4 pt-4 border-t border-green-200">
-									Próxima facturación: {new Date(companyData.subscription.currentPeriodEnd.seconds * 1000).toLocaleDateString('es-MX', {
-										year: 'numeric',
-										month: 'long',
-										day: 'numeric'
-									})}
-								</p>
-							)}
-						</div>
-
-						<div className="flex flex-col sm:flex-row gap-4 justify-center">
-							<button
-								onClick={() => router.push('/company/dashboard')}
-								className="px-8 py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors font-semibold text-base"
-							>
-								Ir al Dashboard
-							</button>
-							<button
-								onClick={() => router.push('/company/subscription/checkout?plan=startup')}
-								className="px-8 py-3 bg-white border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-semibold text-base flex items-center justify-center gap-2"
-							>
-								<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-								</svg>
-								Gestionar Suscripción
-							</button>
-						</div>
+						<Link
+							href="/company/job-postings/new"
+							className="inline-flex items-center gap-2 mt-4 px-5 py-2.5 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors font-medium text-sm"
+						>
+							Publicar Empleo
+						</Link>
 					</div>
 				</div>
 			</div>
-		)
-	}
 
-	return (
-		<div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-			<FullPricingSection
-				title="Suscripción"
-				subtitle="Comienza gratis y escala mientras creces. Sin tarifas ocultas, sin sorpresas."
-			/>
+			{/* Payment History */}
+			<div className="bg-white rounded-xl shadow-sm border border-gray-200">
+				<div className="px-6 py-4 border-b border-gray-200">
+					<h2 className="text-lg font-semibold text-gray-900">Historial de Pagos</h2>
+				</div>
+
+				{payments.length === 0 ? (
+					<div className="p-8 text-center text-gray-500">
+						<svg className="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z" />
+						</svg>
+						<p>Aún no tienes pagos registrados.</p>
+						<p className="text-sm mt-1">Tus pagos aparecerán aquí cuando publiques una vacante.</p>
+					</div>
+				) : (
+					<div className="divide-y divide-gray-100">
+						{payments.map((payment) => (
+							<div key={payment.id} className="px-6 py-4 flex items-center justify-between">
+								<div>
+									<p className="text-sm font-medium text-gray-900">
+										Publicación de empleo
+									</p>
+									<p className="text-xs text-gray-500 mt-0.5">
+										{payment.createdAt?.toDate
+											? payment.createdAt.toDate().toLocaleDateString('es-MX', {
+												year: 'numeric',
+												month: 'long',
+												day: 'numeric'
+											})
+											: 'Fecha no disponible'
+										}
+									</p>
+								</div>
+								<div className="text-right">
+									<p className="text-sm font-semibold text-gray-900">
+										${payment.amount ? (payment.amount / 100).toFixed(2) : '10.00'} {payment.currency?.toUpperCase() || 'MXN'}
+									</p>
+									<span className={`inline-block text-xs px-2 py-0.5 rounded-full font-medium ${
+										payment.status === 'paid'
+											? 'bg-green-100 text-green-700'
+											: 'bg-yellow-100 text-yellow-700'
+									}`}>
+										{payment.status === 'paid' ? 'Pagado' : 'Pendiente'}
+									</span>
+								</div>
+							</div>
+						))}
+					</div>
+				)}
+			</div>
 		</div>
 	)
 }

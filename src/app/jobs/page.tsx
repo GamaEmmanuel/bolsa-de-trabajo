@@ -2,21 +2,21 @@ import { Metadata } from 'next'
 import JobSearchPageClient from './JobSearchPageClient'
 
 export const metadata: Metadata = {
-  title: "Empleos en Restaurantes y Hoteles | Mesero, Chef, Cocinero, Bartender - Meserea",
-  description: "Encuentra trabajo en restaurantes, hoteles, cafeterías y el sector de hospitalidad. Ofertas de empleo para meseros, cocineros, chefs, bartenders, camareras, personal de limpieza y más. Aplica hoy.",
-  keywords: ["empleos restaurantes", "trabajo mesero", "vacantes chef", "empleo cocinero", "trabajo bartender", "camarera empleo", "hospitalidad trabajo", "gastronomía empleo", "hoteles vacantes", "trabajo cocina"],
+  title: "Ofertas de Empleo en Todas las Industrias | Trabajo Libre - Bolsa de Trabajo",
+  description: "Encuentra trabajo en tecnología, ventas, marketing, finanzas, ingeniería, diseño, salud y más. Miles de ofertas de empleo actualizadas. Aplica hoy.",
+  keywords: ["ofertas de empleo", "buscar trabajo", "vacantes", "empleo tecnología", "trabajo ventas", "empleo marketing", "trabajo finanzas", "empleo ingeniería", "vacantes diseño", "trabajo remoto"],
   openGraph: {
-    title: "Empleos en Restaurantes y Hoteles | Meserea",
-    description: "Cientos de ofertas de empleo en restaurantes, hoteles y sector de hospitalidad. Encuentra tu próximo trabajo como mesero, chef, cocinero o bartender.",
+    title: "Ofertas de Empleo | Trabajo Libre",
+    description: "Miles de ofertas de empleo en todas las industrias. Encuentra tu próximo trabajo en la plataforma líder de Latinoamérica.",
     type: "website",
     locale: "es_MX",
     url: "https://meserea.com/jobs",
-    siteName: "Meserea",
+    siteName: "Trabajo Libre",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Empleos en Restaurantes y Hoteles",
-    description: "Encuentra trabajo como mesero, chef, cocinero, bartender o camarera.",
+    title: "Ofertas de Empleo | Trabajo Libre",
+    description: "Encuentra trabajo en tecnología, ventas, marketing, finanzas y más sectores.",
   },
   alternates: {
     canonical: "https://meserea.com/jobs",

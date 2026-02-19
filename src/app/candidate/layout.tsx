@@ -41,7 +41,7 @@ const CandidateLayout = ({ children }: { children: React.ReactNode }) => {
 							<Link href="/candidate/dashboard" className="flex items-center">
 								<img
 									src="/logo.png"
-									alt="Meserea Logo"
+									alt="Trabajo Libre Logo"
 									className="h-12 w-auto"
 								/>
 							</Link>

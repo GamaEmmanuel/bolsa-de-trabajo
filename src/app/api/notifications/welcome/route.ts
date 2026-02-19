@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sendWelcomeCandidateEmail, sendWelcomeCompanyEmail } from '@/lib/emailNotifications'
+import { RateLimiters } from '@/middleware/rateLimit'
 
 export async function POST(req: NextRequest) {
+	// Apply rate limiting - email rate limit (3 per minute)
+	const rateLimitResponse = RateLimiters.email(req)
+	if (rateLimitResponse) {
+		return rateLimitResponse
+	}
 	try {
 		const body = await req.json()
 		const { userId, userEmail, userName, accountType, dashboardLink } = body

@@ -4,8 +4,8 @@ import Header from '../../components/Header'
 import { generateFAQSchema } from '../../lib/structuredData'
 
 export const metadata: Metadata = {
-  title: "Preguntas Frecuentes | Meserea - Empleos en Restaurantes y Hoteles",
-  description: "Respuestas a las preguntas más comunes sobre cómo usar Meserea para encontrar trabajo en restaurantes y hoteles o contratar personal de hospitalidad.",
+  title: "Preguntas Frecuentes | Trabajo Libre - Bolsa de Empleo",
+  description: "Respuestas a las preguntas más comunes sobre cómo usar Trabajo Libre para encontrar trabajo o contratar talento calificado.",
   alternates: {
     canonical: "https://meserea.com/faq",
   },
@@ -13,40 +13,40 @@ export const metadata: Metadata = {
 
 const faqs = [
   {
-    question: "¿Qué es Meserea?",
-    answer: "Meserea es la plataforma #1 para conectar restaurantes, hoteles y negocios de hospitalidad con personal calificado. Ayudamos a empresas a encontrar meseros, cocineros, chefs, bartenders, camareras y más profesionales del sector."
+    question: "¿Qué es Trabajo Libre?",
+    answer: "Trabajo Libre es la plataforma #1 para conectar empresas de todas las industrias con profesionales calificados. Ayudamos a empresas a encontrar el talento que necesitan de forma rápida y eficiente."
   },
   {
     question: "¿Cómo funciona para los candidatos?",
-    answer: "Como candidato, puedes crear tu perfil profesional gratuitamente, buscar empleos en restaurantes y hoteles, y aplicar a las vacantes que te interesen. Recibirás notificaciones cuando haya nuevas oportunidades que coincidan con tu perfil."
+    answer: "Como candidato, puedes crear tu perfil profesional gratuitamente, buscar empleos en todas las industrias, y aplicar a las vacantes que te interesen. Recibirás notificaciones cuando haya nuevas oportunidades que coincidan con tu perfil."
   },
   {
     question: "¿Cómo funciona para las empresas?",
     answer: "Las empresas pueden publicar vacantes, revisar aplicaciones, gestionar candidatos y contratar personal calificado. Ofrecemos diferentes planes según las necesidades de contratación de tu negocio."
   },
   {
-    question: "¿Cuánto cuesta usar Meserea?",
-    answer: "Para candidatos, Meserea es completamente gratis. Para empresas, ofrecemos planes desde $999 MXN/mes con una prueba gratuita de 7 días. Consulta nuestra página de precios para más detalles."
+    question: "¿Cuánto cuesta usar Trabajo Libre?",
+    answer: "Para candidatos, Trabajo Libre es completamente gratis. Para empresas, ofrecemos planes desde $999 MXN/mes con una prueba gratuita de 7 días. Consulta nuestra página de precios para más detalles."
   },
   {
-    question: "¿En qué países está disponible Meserea?",
-    answer: "Actualmente Meserea opera en México, Colombia, Argentina, Perú, Chile y Brasil, enfocándonos en el sector de hospitalidad y restaurantes en Latinoamérica."
+    question: "¿En qué países está disponible Trabajo Libre?",
+    answer: "Actualmente Trabajo Libre opera en México, Colombia, Argentina, Perú, Chile y Brasil, conectando empresas y profesionales en toda Latinoamérica."
   },
   {
     question: "¿Qué tipos de empleos puedo encontrar?",
-    answer: "Ofrecemos empleos en el sector de hospitalidad incluyendo: meseros, cocineros, chefs, sous chefs, bartenders, baristas, camareras de hotel, personal de limpieza, gerentes de restaurante, hostess, ayudantes de cocina y más posiciones en restaurantes, hoteles, cafeterías y negocios de servicio."
+    answer: "Ofrecemos empleos en todas las industrias incluyendo: tecnología, ventas, marketing, finanzas, ingeniería, diseño, salud, educación, retail, logística, construcción, hospitalidad, administración y más posiciones en empresas de todos los tamaños y sectores."
   },
   {
     question: "¿Cómo puedo destacar mi perfil como candidato?",
-    answer: "Completa tu perfil al 100%, agrega tu experiencia laboral en restaurantes o hoteles, incluye tus habilidades específicas (servicio al cliente, cocina, mixología, etc.), y mantén tu disponibilidad actualizada. Los perfiles completos reciben 5 veces más visualizaciones."
+    answer: "Completa tu perfil al 100%, agrega tu experiencia laboral, incluye tus habilidades específicas y certificaciones, y mantén tu disponibilidad actualizada. Los perfiles completos reciben 5 veces más visualizaciones."
   },
   {
     question: "¿Cuánto tiempo toma el proceso de contratación?",
-    answer: "Muchas empresas en Meserea contratan en menos de 24 horas. El tiempo depende de la urgencia de la vacante y el proceso de cada empresa. Algunas posiciones urgentes se llenan el mismo día."
+    answer: "Muchas empresas en Trabajo Libre contratan en menos de 24 horas. El tiempo depende de la urgencia de la vacante y el proceso de cada empresa. Algunas posiciones urgentes se llenan el mismo día."
   },
   {
     question: "¿Necesito experiencia previa para aplicar?",
-    answer: "Tenemos vacantes para todos los niveles de experiencia. Algunos empleos requieren experiencia específica, mientras que otros están abiertos a personas sin experiencia previa que quieran iniciar en el sector de hospitalidad."
+    answer: "Tenemos vacantes para todos los niveles de experiencia. Algunos empleos requieren experiencia específica, mientras que otros están abiertos a personas sin experiencia previa que quieran iniciar su carrera profesional."
   },
   {
     question: "¿Puedo trabajar medio tiempo o por turno?",
@@ -74,13 +74,13 @@ export default function FAQPage() {
         }}
       />
       <Header />
-      <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto pt-20 sm:pt-24 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Preguntas Frecuentes
           </h1>
           <p className="text-xl text-gray-600">
-            Encuentra respuestas a las preguntas más comunes sobre Meserea
+            Encuentra respuestas a las preguntas más comunes sobre Trabajo Libre
           </p>
         </div>
 

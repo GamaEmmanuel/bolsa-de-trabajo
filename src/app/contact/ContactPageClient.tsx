@@ -122,7 +122,7 @@ const ContactPageClient = () => {
 											value={formData.company}
 											onChange={handleChange}
 											className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
-											placeholder="Tu Restaurante"
+											placeholder="Tu Empresa"
 										/>
 									</div>
 									<div>

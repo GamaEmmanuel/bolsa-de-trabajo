@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useMemo } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { JobPosting } from '../../types'
 import { db } from '../../lib/firebase'
 import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore'
@@ -26,6 +27,7 @@ interface JobFilters {
 }
 
 const JobSearchPageClient = () => {
+	const searchParams = useSearchParams()
 	const [jobs, setJobs] = useState<JobPosting[]>([])
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState<string | null>(null)
@@ -40,6 +42,20 @@ const JobSearchPageClient = () => {
 		remote: false,
 	})
 	const [sortBy, setSortBy] = useState<'date' | 'salary' | 'relevance'>('date')
+
+	// Read URL params and apply them as initial filters
+	useEffect(() => {
+		const q = searchParams.get('q')
+		const loc = searchParams.get('location')
+		if (q || loc) {
+			setFilters(prev => ({
+				...prev,
+				keyword: q || '',
+				location: loc || '',
+			}))
+			if (q) setSortBy('relevance')
+		}
+	}, [searchParams])
 
 	// Fetch jobs from database
 	useEffect(() => {
@@ -152,45 +168,45 @@ const JobSearchPageClient = () => {
 
 	if (loading) {
 		return (
-			<div className="min-h-screen bg-secondary">
+			<div className="min-h-screen bg-gray-50">
 				<Header />
 				<div className="flex items-center justify-center py-12">
-					<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-					<p className="ml-2 text-muted-foreground">Loading job postings...</p>
+					<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
+					<p className="ml-2 text-gray-600">Cargando empleos...</p>
 				</div>
 			</div>
 		)
 	}
 
 	return (
-		<div className="min-h-screen bg-secondary">
+		<div className="min-h-screen bg-gray-50">
 			<Header />
-			<div className="max-w-7xl mx-auto py-6 md:py-12 px-4 sm:px-6 lg:px-8">
+			<div className="max-w-7xl mx-auto pt-20 sm:pt-24 pb-6 md:pb-10 px-4 sm:px-6 lg:px-8">
 				<div className="space-y-4 md:space-y-6">
 					{/* Header */}
 					<div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4">
 						<div className="min-w-0 flex-1">
-							<h1 className="text-2xl md:text-3xl font-bold text-foreground">Find Your Next Opportunity</h1>
-							<p className="text-sm md:text-base text-muted-foreground mt-1">
-								{filteredJobs.length} job{filteredJobs.length !== 1 ? 's' : ''} found
+							<h1 className="text-2xl md:text-3xl font-bold text-gray-900">Encuentra tu Próxima Oportunidad</h1>
+							<p className="text-sm md:text-base text-gray-500 mt-1">
+								{filteredJobs.length} empleo{filteredJobs.length !== 1 ? 's' : ''} encontrado{filteredJobs.length !== 1 ? 's' : ''}
 							</p>
 						</div>
 						<div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
-							<label className="text-xs sm:text-sm font-medium text-foreground whitespace-nowrap">Sort by:</label>
+							<label className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap">Ordenar por:</label>
 							<select
 								value={sortBy}
 								onChange={(e) => setSortBy(e.target.value as 'date' | 'salary' | 'relevance')}
-								className="flex-1 sm:flex-initial px-3 py-2 text-sm border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-primary bg-input"
+								className="flex-1 sm:flex-initial px-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
 							>
-								<option value="date">Publication Date</option>
-								<option value="salary">Salary</option>
-								<option value="relevance">Relevance</option>
+								<option value="date">Fecha de publicación</option>
+								<option value="salary">Salario</option>
+								<option value="relevance">Relevancia</option>
 							</select>
 						</div>
 					</div>
 
 					{error && (
-						<div className="p-4 bg-red-50 border border-red-200 rounded-md">
+						<div className="p-4 bg-red-50 border border-red-200 rounded-lg">
 							<p className="text-red-600">{error}</p>
 						</div>
 					)}
@@ -198,54 +214,54 @@ const JobSearchPageClient = () => {
 					{/* Mobile Filter Toggle */}
 					<button
 						onClick={() => setShowFilters(!showFilters)}
-						className="lg:hidden w-full px-4 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
+						className="lg:hidden w-full px-4 py-3 bg-pink-600 text-white rounded-xl hover:bg-pink-700 transition-colors flex items-center justify-center gap-2 font-medium"
 					>
 						<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
 						</svg>
-						{showFilters ? 'Hide Filters' : 'Show Filters'}
+						{showFilters ? 'Ocultar Filtros' : 'Mostrar Filtros'}
 					</button>
 
 					<div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 						{/* Filters Sidebar */}
 						<div className={`lg:col-span-1 ${showFilters ? 'block' : 'hidden lg:block'}`}>
-							<div className="bg-card p-4 md:p-6 rounded-lg shadow-sm border border-border">
-								<div className="flex justify-between items-center mb-4">
-									<h2 className="text-base md:text-lg font-semibold text-foreground">Filters</h2>
+							<div className="bg-white p-5 md:p-6 rounded-xl shadow-sm">
+								<div className="flex justify-between items-center mb-5">
+									<h2 className="text-base md:text-lg font-semibold text-gray-900">Filtros</h2>
 									<button
 										onClick={clearFilters}
-										className="text-xs md:text-sm text-primary hover:text-primary/80"
+										className="text-xs md:text-sm text-pink-600 hover:text-pink-700 font-medium"
 									>
-										Clear All
+										Limpiar todo
 									</button>
 								</div>
 
-								<div className="space-y-3 md:space-y-4">
+								<div className="space-y-4">
 									{/* Keyword Search */}
 									<div>
-										<label className="block text-xs md:text-sm font-medium text-foreground mb-2">
-											Keywords
+										<label className="block text-xs md:text-sm font-medium text-gray-700 mb-1.5">
+											Palabras clave
 										</label>
 										<input
 											type="text"
-											placeholder="Job title, company, skills..."
+											placeholder="Puesto, empresa, habilidades..."
 											value={filters.keyword}
 											onChange={(e) => handleFilterChange('keyword', e.target.value)}
-											className="w-full px-3 py-2 text-sm border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-primary bg-input"
+											className="w-full px-3 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent focus:bg-white transition-colors"
 										/>
 									</div>
 
 									{/* Location */}
 									<div>
-										<label className="block text-xs md:text-sm font-medium text-foreground mb-2">
-											Location
+										<label className="block text-xs md:text-sm font-medium text-gray-700 mb-1.5">
+											Ubicación
 										</label>
 										<input
 											type="text"
-											placeholder="City, state, country..."
+											placeholder="Ciudad o estado..."
 											value={filters.location}
 											onChange={(e) => handleFilterChange('location', e.target.value)}
-											className="w-full px-3 py-2 text-sm border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-primary bg-input"
+											className="w-full px-3 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent focus:bg-white transition-colors"
 										/>
 									</div>
 
@@ -256,50 +272,50 @@ const JobSearchPageClient = () => {
 											id="remote"
 											checked={filters.remote}
 											onChange={(e) => handleFilterChange('remote', e.target.checked)}
-											className="h-4 w-4 text-primary focus:ring-primary border-border rounded"
+											className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
 										/>
-										<label htmlFor="remote" className="ml-2 text-xs md:text-sm text-foreground">
-											Remote only
+										<label htmlFor="remote" className="ml-2 text-xs md:text-sm text-gray-700">
+											Solo remoto
 										</label>
 									</div>
 
 									{/* Job Type */}
 									<div>
-										<label className="block text-xs md:text-sm font-medium text-foreground mb-2">
-											Job Type
+										<label className="block text-xs md:text-sm font-medium text-gray-700 mb-1.5">
+											Tipo de Empleo
 										</label>
 										<select
 											value={filters.jobType}
 											onChange={(e) => handleFilterChange('jobType', e.target.value)}
-											className="w-full px-3 py-2 text-sm border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-primary bg-input"
+											className="w-full px-3 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent focus:bg-white transition-colors"
 										>
-											<option value="">All Types</option>
-											<option value="full-time">Full Time</option>
-											<option value="part-time">Part Time</option>
-											<option value="contract">Contract</option>
-											<option value="internship">Internship</option>
+											<option value="">Todos los tipos</option>
+											<option value="full-time">Tiempo Completo</option>
+											<option value="part-time">Medio Tiempo</option>
+											<option value="contract">Contrato</option>
+											<option value="internship">Prácticas</option>
 										</select>
 									</div>
 
 									{/* Salary Range */}
 									<div>
-										<label className="block text-xs md:text-sm font-medium text-foreground mb-2">
-											Salary Range (MXN)
+										<label className="block text-xs md:text-sm font-medium text-gray-700 mb-1.5">
+											Rango Salarial (MXN)
 										</label>
 										<div className="grid grid-cols-2 gap-2">
 											<input
 												type="number"
-												placeholder="Min"
+												placeholder="Mínimo"
 												value={filters.salaryMin}
 												onChange={(e) => handleFilterChange('salaryMin', e.target.value)}
-												className="px-3 py-2 text-sm border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-primary bg-input"
+												className="px-3 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent focus:bg-white transition-colors"
 											/>
 											<input
 												type="number"
-												placeholder="Max"
+												placeholder="Máximo"
 												value={filters.salaryMax}
 												onChange={(e) => handleFilterChange('salaryMax', e.target.value)}
-												className="px-3 py-2 text-sm border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-primary bg-input"
+												className="px-3 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent focus:bg-white transition-colors"
 											/>
 										</div>
 									</div>
@@ -310,55 +326,77 @@ const JobSearchPageClient = () => {
 						{/* Job Listings */}
 						<div className="lg:col-span-3">
 							{filteredJobs.length === 0 ? (
-								<div className="text-center py-12">
-									<div className="text-muted-foreground text-4xl md:text-6xl mb-4">🔍</div>
-									<h3 className="text-base md:text-lg font-medium text-foreground mb-2">No jobs found</h3>
-									<p className="text-sm md:text-base text-muted-foreground">Try adjusting your filters to see more results.</p>
+								<div className="text-center py-16">
+									<div className="text-gray-300 text-5xl md:text-6xl mb-4">🔍</div>
+									<h3 className="text-base md:text-lg font-semibold text-gray-900 mb-2">No se encontraron empleos</h3>
+									<p className="text-sm md:text-base text-gray-500">Intenta ajustar tus filtros para ver más resultados.</p>
 								</div>
 							) : (
-								<div className="space-y-3 md:space-y-4">
+								<div className="space-y-3">
 									{filteredJobs.map(job => (
+										<article key={job.jobId}>
 										<Link
-											key={job.jobId}
 											href={`/jobs/${job.jobId}`}
-											className="block bg-card p-4 md:p-6 rounded-lg shadow-sm border border-border hover:shadow-md hover:border-primary transition-all duration-200 cursor-pointer"
+											className="block bg-white p-4 sm:p-5 rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
 										>
-											<div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+											<div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 sm:gap-4">
 												<div className="flex-1 min-w-0">
-													<h3 className="text-base md:text-xl font-semibold text-foreground hover:text-primary transition-colors truncate">
-														{job.jobTitle}
-													</h3>
-													<p className="text-sm md:text-base text-muted-foreground font-medium mt-1 truncate">
-														{job.companyName || 'Company Name'}
-													</p>
-													<p className="text-xs md:text-sm text-muted-foreground mt-1 truncate">
-														{job.location || 'Location not specified'}
-													</p>
-													<div className="flex flex-wrap items-center gap-2 mt-2">
+													<div className="flex items-start justify-between gap-2 sm:gap-3 mb-1">
+														<h3 className="text-base sm:text-lg font-semibold text-gray-900 group-hover:text-pink-600 break-words">
+															{job.jobTitle}
+														</h3>
+														{job.postedDate && (
+															<span className="text-xs text-gray-400 whitespace-nowrap flex-shrink-0 mt-1">
+																{new Date(job.postedDate).toLocaleDateString('es-MX', {
+																	month: 'short',
+																	day: 'numeric'
+																})}
+															</span>
+														)}
+													</div>
+													<div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-sm">
+														<span className="text-gray-600 font-medium">
+															{job.companyName || 'Empresa'}
+														</span>
+														<span className="hidden sm:inline text-gray-300">•</span>
+														<span className="text-gray-400 text-xs sm:text-sm">
+															{job.location || 'Ubicación no especificada'}
+														</span>
+													</div>
+													<div className="flex items-center gap-2 flex-wrap mt-2.5">
 														{job.jobType && (
-															<span className="inline-block px-2 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full">
-																{job.jobType}
+															<span className="inline-block px-2.5 py-0.5 text-xs font-medium bg-pink-50 text-pink-700 rounded-full">
+																{job.jobType === 'full-time' && 'Tiempo Completo'}
+																{job.jobType === 'part-time' && 'Medio Tiempo'}
+																{job.jobType === 'contract' && 'Contrato'}
+																{job.jobType === 'internship' && 'Prácticas'}
+																{job.jobType === 'freelance' && 'Freelance'}
+																{!['full-time', 'part-time', 'contract', 'internship', 'freelance'].includes(job.jobType) && job.jobType}
+															</span>
+														)}
+														{job.employmentType && (
+															<span className="inline-block px-2.5 py-0.5 text-xs font-medium bg-blue-50 text-blue-700 rounded-full">
+																{job.employmentType === 'remote' && 'Remoto'}
+																{job.employmentType === 'hybrid' && 'Híbrido'}
+																{job.employmentType === 'on-site' && 'Presencial'}
 															</span>
 														)}
 														{job.salaryMin && job.salaryMax && !job.isSalaryHidden && (
-															<span className="text-xs md:text-sm text-green-600 font-medium">
+															<span className="text-xs sm:text-sm text-green-600 font-medium">
 																${job.salaryMin.toLocaleString()} - ${job.salaryMax.toLocaleString()} MXN
 															</span>
 														)}
 													</div>
 												</div>
-												<div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2 flex-shrink-0">
-													{job.postedDate && (
-														<p className="text-xs text-muted-foreground whitespace-nowrap">
-															Posted {new Date(job.postedDate).toLocaleDateString()}
-														</p>
-													)}
-													<div className="text-primary text-xs md:text-sm font-medium whitespace-nowrap">
-														View Details →
-													</div>
+
+												<div className="flex-shrink-0 sm:self-center">
+													<span className="inline-block px-4 py-2 bg-pink-600 text-white text-xs sm:text-sm font-semibold rounded-lg hover:bg-pink-700 transition-colors">
+														Ver Detalles
+													</span>
 												</div>
 											</div>
 										</Link>
+										</article>
 									))}
 								</div>
 							)}

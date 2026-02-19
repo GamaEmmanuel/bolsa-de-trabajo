@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { db, auth } from '../../../../lib/firebase'
 import { collection, addDoc, doc, getDoc } from 'firebase/firestore'
-import { JobTier, JobStatus, JobType, EmploymentType, ExperienceLevel, EducationLevel, JobCategory, JobLevel, StartDate, UrgencyLevel, ApplicationProcess, InterviewRounds, Company } from '../../../../../types'
+import { onAuthStateChanged } from 'firebase/auth'
+import { JobTier, JobStatus, JobType, EmploymentType, ExperienceLevel, EducationLevel, JobCategory, JobLevel, StartDate, UrgencyLevel, ApplicationProcess, InterviewRounds } from '../../../../../types'
 import {
 	JOB_TYPE_OPTIONS,
 	EMPLOYMENT_TYPE_OPTIONS,
@@ -20,7 +21,7 @@ import {
 } from '../../../../lib/constants'
 import LocationSelector from '../../../../components/ui/LocationSelector'
 import { formatNumberWithCommas, parseFormattedNumber } from '../../../../lib/utils'
-import { canCreateJobPosting } from '../../../../lib/subscriptionGuard'
+import { useStripeCheckout } from '../../../../lib/useStripeCheckout'
 import Link from 'next/link'
 
 const NewJobPostingPage = () => {
@@ -43,36 +44,36 @@ const NewJobPostingPage = () => {
 	const [customRequiredSkill, setCustomRequiredSkill] = useState('')
 	const [preferredSkills, setPreferredSkills] = useState<string[]>([])
 	const [customPreferredSkill, setCustomPreferredSkill] = useState('')
-	const [jobCategory, setJobCategory] = useState<JobCategory>('server')
+	const [jobCategory, setJobCategory] = useState<JobCategory>('other')
 	const [jobLevel, setJobLevel] = useState<JobLevel>('mid-level')
 
-	// Predefined hospitality skills
-	const HOSPITALITY_SKILLS = [
+	// Predefined professional skills
+	const PROFESSIONAL_SKILLS = [
 		'Atención al cliente',
-		'Servicio de mesas',
-		'Manejo de POS/TPV',
 		'Trabajo en equipo',
 		'Comunicación efectiva',
-		'Mixología',
-		'Preparación de alimentos',
-		'Cocina profesional',
-		'Conocimiento de vinos',
-		'Servicio de banquetes',
-		'Limpieza y sanitización',
-		'Manejo de efectivo',
+		'Liderazgo',
+		'Gestión de proyectos',
+		'Análisis de datos',
+		'Microsoft Office',
+		'Excel avanzado',
 		'Inglés conversacional',
-		'Gestión de reservaciones',
-		'Organización de eventos',
-		'Barista',
-		'Pastelería y repostería',
-		'Cocina internacional',
-		'Hostess/Host',
-		'Administración hotelera',
-		'Manejo de quejas',
-		'Cocina mexicana',
-		'Preparación de bebidas',
-		'Servicio a la habitación',
-		'Limpieza de habitaciones'
+		'Ventas y negociación',
+		'Marketing digital',
+		'Programación',
+		'Diseño gráfico',
+		'Contabilidad',
+		'Administración',
+		'Gestión de personal',
+		'Resolución de problemas',
+		'Planificación estratégica',
+		'Manejo de presupuestos',
+		'Servicio al cliente',
+		'Logística',
+		'Redes sociales',
+		'CRM / ERP',
+		'Presentaciones ejecutivas',
+		'Organización de eventos'
 	]
 
 	// Phase 3 Fields
@@ -88,22 +89,18 @@ const NewJobPostingPage = () => {
 	// Tier and Status
 	const [selectedTier, setSelectedTier] = useState<JobTier>('clasica')
 	const [loading, setLoading] = useState(false)
-	const [loadingSubscription, setLoadingSubscription] = useState(true)
-	const [company, setCompany] = useState<Company | null>(null)
-	const [subscriptionError, setSubscriptionError] = useState<string | null>(null)
+	const [companyName, setCompanyName] = useState('')
+	const [stripeCustomerId, setStripeCustomerId] = useState<string | undefined>()
 	const router = useRouter()
+	const { createCheckoutSession, loading: checkoutLoading } = useStripeCheckout()
 
-	// Check subscription status on mount
+	// Load company data on mount for Stripe checkout
 	useEffect(() => {
-		async function checkSubscription() {
-			if (!auth.currentUser) {
-				setLoadingSubscription(false)
-				return
-			}
+		const unsubscribeAuth = onAuthStateChanged(auth, async (currentUser) => {
+			if (!currentUser) return
 
 			try {
-				// Get user document to find companyId
-				const userRef = doc(db, 'users', auth.currentUser.uid)
+				const userRef = doc(db, 'users', currentUser.uid)
 				const userDoc = await getDoc(userRef)
 
 				if (userDoc.exists()) {
@@ -111,34 +108,22 @@ const NewJobPostingPage = () => {
 					const companyId = userData.companyId
 
 					if (companyId) {
-						// Get company document
 						const companyRef = doc(db, 'companies', companyId)
 						const companyDoc = await getDoc(companyRef)
 
 						if (companyDoc.exists()) {
-							const companyData = {
-								companyId,
-								...companyDoc.data()
-							} as Company
-							setCompany(companyData)
-
-							// Check if can create job posting
-							const canCreate = canCreateJobPosting(companyData)
-							if (!canCreate.allowed) {
-								setSubscriptionError(canCreate.reason || 'No autorizado')
-							}
+							const companyData = companyDoc.data()
+							setCompanyName(companyData.companyName || '')
+							setStripeCustomerId(companyData.stripeCustomerId)
 						}
 					}
 				}
 			} catch (error) {
-				console.error('Error checking subscription:', error)
-				setSubscriptionError('Error al verificar la suscripción')
-			} finally {
-				setLoadingSubscription(false)
+				console.error('Error loading company data:', error)
 			}
-		}
+		})
 
-		checkSubscription()
+		return () => unsubscribeAuth()
 	}, [])
 
 	const handleSave = async (status: JobStatus) => {
@@ -147,21 +132,12 @@ const NewJobPostingPage = () => {
 			return
 		}
 
-		// Check subscription before allowing save
-		if (company) {
-			const canCreate = canCreateJobPosting(company)
-			if (!canCreate.allowed) {
-				alert(canCreate.reason || 'No tienes permisos para crear publicaciones de empleo')
-				return
-			}
-		}
-
 		setLoading(true)
 
 		try {
 			const companyId = auth.currentUser.uid
 
-			// Prepare job posting data with all new fields
+			// Prepare job posting data
 			const jobData = {
 				jobTitle,
 				jobDescription,
@@ -177,78 +153,45 @@ const NewJobPostingPage = () => {
 				...(salaryMin && { salaryMin: parseInt(salaryMin) }),
 				...(salaryMax && { salaryMax: parseInt(salaryMax) }),
 				isSalaryHidden,
-				// Phase 3 Fields
 				...(applicationDeadline && { applicationDeadline }),
 				startDate,
 				urgencyLevel,
 				applicationProcess,
 				interviewRounds,
 				applicationQuestions: applicationQuestions.split('\n').filter(q => q.trim()),
-				requiredDocuments: requiredDocuments.split(',').map(doc => doc.trim()).filter(doc => doc),
+				requiredDocuments: requiredDocuments.split(',').map(d => d.trim()).filter(d => d),
 				...(internalNotes && { internalNotes }),
 				tier: selectedTier,
-				status,
+				status: 'draft' as JobStatus,
+				paymentStatus: 'pending',
 				createdByUserId: auth.currentUser.uid,
 				companyId: companyId,
 				postedDate: new Date().toISOString().split('T')[0],
 			}
 
-			await addDoc(collection(db, 'jobPostings'), jobData)
+			// Always save as draft first
+			const docRef = await addDoc(collection(db, 'jobPostings'), jobData)
 
-			// Redirect to job postings list after successful save
-			router.push('/company/job-postings')
+			if (status === 'published') {
+				// Redirect to Stripe checkout for payment
+				await createCheckoutSession({
+					companyId,
+					userId: auth.currentUser.uid,
+					email: auth.currentUser.email || '',
+					companyName: companyName || 'Empresa',
+					customerId: stripeCustomerId,
+					jobPostingId: docRef.id,
+				})
+				// User will be redirected to Stripe, then back to job-postings on success
+			} else {
+				// Just save as draft and redirect
+				router.push('/company/job-postings')
+			}
 		} catch (error) {
 			console.error('Error creating job posting:', error)
 			alert('Error al crear la publicación de empleo. Por favor, inténtalo de nuevo.')
 			setLoading(false)
 		}
-	}
-
-	// Show loading state while checking subscription
-	if (loadingSubscription) {
-		return (
-			<div className="min-h-screen bg-gray-50 p-8">
-				<div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
-					<div className="text-center py-12">
-						<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
-						<p className="mt-2 text-gray-600">Verificando suscripción...</p>
-					</div>
-				</div>
-			</div>
-		)
-	}
-
-	// Show subscription error if not subscribed
-	if (subscriptionError) {
-		return (
-			<div className="min-h-screen bg-gray-50 p-8">
-				<div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
-					<div className="text-center py-12">
-						<div className="mb-4">
-							<svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-							</svg>
-						</div>
-						<h2 className="text-2xl font-bold text-gray-900 mb-4">Suscripción Requerida</h2>
-						<p className="text-gray-600 mb-6">{subscriptionError}</p>
-						<div className="flex gap-4 justify-center">
-							<Link
-								href="/company/subscription/checkout?plan=startup"
-								className="px-6 py-3 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 transition-colors"
-							>
-								Suscribirse Ahora - $100 MXN/mes
-							</Link>
-							<Link
-								href="/company/job-postings"
-								className="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-colors"
-							>
-								Volver
-							</Link>
-						</div>
-					</div>
-				</div>
-			</div>
-		)
 	}
 
 	return (
@@ -272,7 +215,7 @@ const NewJobPostingPage = () => {
 							onChange={e => setJobTitle(e.target.value)}
 							required
 									className="w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-									placeholder="ej., Mesero/a, Chef de Cocina"
+									placeholder="ej., Gerente de Ventas, Desarrollador Web"
 						/>
 					</div>
 							<div>
@@ -559,7 +502,7 @@ const NewJobPostingPage = () => {
 								Habilidades Requeridas
 							</label>
 							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-3 sm:mb-4 max-h-80 overflow-y-auto border border-gray-200 rounded-lg p-4 bg-white">
-								{HOSPITALITY_SKILLS.map(skill => (
+								{PROFESSIONAL_SKILLS.map(skill => (
 									<label
 										key={skill}
 										className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-pink-50 cursor-pointer transition-colors group min-h-[44px]"
@@ -649,7 +592,7 @@ const NewJobPostingPage = () => {
 								Habilidades Preferidas (Opcional)
 							</label>
 							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-4 max-h-80 overflow-y-auto border border-gray-200 rounded-lg p-4 bg-white">
-								{HOSPITALITY_SKILLS.map(skill => (
+								{PROFESSIONAL_SKILLS.map(skill => (
 									<label
 										key={skill}
 										className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors group min-h-[44px]"
@@ -836,7 +779,7 @@ const NewJobPostingPage = () => {
 								onChange={e => setApplicationQuestions(e.target.value)}
 								rows={4}
 								className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-								placeholder="¿Por qué quieres trabajar en nuestro restaurante/hotel?&#10;¿Tienes experiencia previa en servicio al cliente?&#10;¿Puedes trabajar en horarios nocturnos y fines de semana?"
+								placeholder="¿Por qué quieres trabajar en nuestra empresa?&#10;¿Cuál es tu experiencia más relevante para este puesto?&#10;¿Cuál es tu disponibilidad para comenzar?"
 							/>
 							<p className="text-xs text-gray-500 mt-1">Una pregunta por línea</p>
 						</div>
@@ -878,18 +821,18 @@ const NewJobPostingPage = () => {
 						<button
 							type="button"
 							onClick={() => handleSave('draft')}
-							disabled={loading}
+							disabled={loading || checkoutLoading}
 							className="px-6 sm:px-8 py-3 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 disabled:bg-gray-400 font-semibold text-base sm:text-lg order-2 sm:order-1"
 						>
-							{loading ? 'Guardando...' : 'Guardar'}
+							{loading ? 'Guardando...' : 'Guardar Borrador'}
 						</button>
 						<button
 							type="button"
 							onClick={() => handleSave('published')}
-							disabled={loading}
+							disabled={loading || checkoutLoading}
 							className="px-6 sm:px-8 py-3 text-white bg-green-600 rounded-md hover:bg-green-700 disabled:bg-gray-400 font-semibold text-base sm:text-lg order-1 sm:order-2"
 						>
-							{loading ? 'Publicando...' : 'Publicar'}
+							{loading || checkoutLoading ? 'Procesando...' : 'Publicar - $10 MXN'}
 						</button>
 					</div>
 				</div>

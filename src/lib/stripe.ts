@@ -12,9 +12,8 @@ export const stripe = stripeSecretKey
 
 // Stripe configuration constants
 export const STRIPE_CONFIG = {
-  priceId: process.env.STRIPE_PRICE_ID || 'price_1SdPUcDVPaRrtbNxKl4JWg3w',
+  jobPriceId: process.env.STRIPE_PRICE_ID || '',
   webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || '',
-  creditsPerMonth: 1000, // AI credits awarded per successful payment
 }
 
 // Helper function to create a Stripe customer
@@ -29,7 +28,7 @@ export async function createStripeCustomer(email: string, name: string, companyI
   return customer
 }
 
-// Helper function to create a checkout session
+// Helper function to create a one-time payment checkout session for a job posting
 export async function createCheckoutSession(
   customerId: string,
   priceId: string,
@@ -39,7 +38,7 @@ export async function createCheckoutSession(
 ) {
   const session = await stripe.checkout.sessions.create({
     customer: customerId,
-    mode: 'subscription',
+    mode: 'payment',
     payment_method_types: ['card'],
     line_items: [
       {
@@ -50,30 +49,8 @@ export async function createCheckoutSession(
     success_url: successUrl,
     cancel_url: cancelUrl,
     metadata,
-    subscription_data: {
-      metadata,
-    },
   })
   return session
-}
-
-// Helper function to create a customer portal session
-export async function createPortalSession(customerId: string, returnUrl: string) {
-  const session = await stripe.billingPortal.sessions.create({
-    customer: customerId,
-    return_url: returnUrl,
-  })
-  return session
-}
-
-// Helper function to retrieve a subscription
-export async function getSubscription(subscriptionId: string) {
-  return await stripe.subscriptions.retrieve(subscriptionId)
-}
-
-// Helper function to cancel a subscription
-export async function cancelSubscription(subscriptionId: string) {
-  return await stripe.subscriptions.cancel(subscriptionId)
 }
 
 // Helper function to verify webhook signature
@@ -84,4 +61,3 @@ export function verifyWebhookSignature(
 ): Stripe.Event {
   return stripe.webhooks.constructEvent(payload, signature, webhookSecret)
 }
-

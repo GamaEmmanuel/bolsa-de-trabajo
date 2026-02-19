@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { auth, db } from '../lib/firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
@@ -62,10 +63,13 @@ const Header = () => {
 				<div className="flex justify-between items-center py-3 sm:py-4">
 					<div className="flex items-center">
 						<Link href="/" className="flex items-center">
-							<img
+							<Image
 								src="/logo.png"
-								alt="Meserea Logo"
+								alt="Trabajo Libre Logo"
+								width={144}
+								height={48}
 								className="h-10 sm:h-12 w-auto"
+								priority
 							/>
 						</Link>
 					</div>

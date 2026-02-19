@@ -3,11 +3,11 @@ import Link from 'next/link'
 import Header from '../../components/Header'
 
 export const metadata: Metadata = {
-  title: "Sobre Nosotros | Meserea - Conectando Talento con Oportunidades",
-  description: "Conoce la historia de Meserea, la plataforma líder en reclutamiento para restaurantes, hoteles y el sector de hospitalidad en Latinoamérica. Nuestra misión es facilitar la conexión entre empresas y profesionales.",
+  title: "Sobre Nosotros | Trabajo Libre - Conectando Talento con Oportunidades",
+  description: "Conoce la historia de Trabajo Libre, la plataforma líder en reclutamiento en Latinoamérica. Nuestra misión es facilitar la conexión entre empresas y profesionales de todas las industrias.",
   openGraph: {
-    title: "Sobre Meserea",
-    description: "La plataforma líder en reclutamiento para el sector de hospitalidad en Latinoamérica.",
+    title: "Sobre Trabajo Libre",
+    description: "La plataforma líder en reclutamiento en Latinoamérica para todas las industrias.",
     type: "website",
     locale: "es_MX",
     url: "https://meserea.com/about",
@@ -23,13 +23,13 @@ export default function AboutPage() {
       <Header />
 
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-pink-500 to-pink-600 text-white py-16">
+      <div className="bg-gradient-to-r from-pink-500 to-pink-600 text-white pt-28 sm:pt-32 pb-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            Sobre Meserea
+            Sobre Trabajo Libre
           </h1>
           <p className="text-xl md:text-2xl text-pink-50">
-            Conectando talento con oportunidades en el sector de hospitalidad
+            Conectando talento con oportunidades en todas las industrias
           </p>
         </div>
       </div>
@@ -39,10 +39,10 @@ export default function AboutPage() {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">Nuestra Misión</h2>
           <p className="text-lg text-gray-600 leading-relaxed mb-6">
-            En Meserea, nuestra misión es revolucionar la forma en que restaurantes, hoteles y negocios
-            de hospitalidad encuentran y contratan talento. Creemos que cada persona merece una
-            oportunidad de desarrollarse profesionalmente, y cada negocio merece acceso a los mejores
-            profesionales del sector.
+            En Trabajo Libre, nuestra misión es revolucionar la forma en que las empresas encuentran y
+            contratan talento. Creemos que cada persona merece una oportunidad de desarrollarse
+            profesionalmente, y cada negocio merece acceso a los mejores profesionales de su
+            industria.
           </p>
           <p className="text-lg text-gray-600 leading-relaxed">
             Facilitamos millones de conexiones cada mes entre empleadores y candidatos calificados,
@@ -51,16 +51,15 @@ export default function AboutPage() {
         </div>
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">¿Por Qué Meserea?</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">¿Por Qué Trabajo Libre?</h2>
           <div className="space-y-6">
             <div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                🎯 Especialización en Hospitalidad
+                🎯 Cobertura Multi-Industria
               </h3>
               <p className="text-gray-600 leading-relaxed">
-                A diferencia de otras plataformas genéricas, nos especializamos exclusivamente en
-                el sector de restaurantes, hoteles y hospitalidad. Entendemos las necesidades únicas
-                de este sector.
+                Cubrimos todas las industrias: tecnología, salud, finanzas, educación, retail,
+                construcción, hospitalidad y más. Entendemos las necesidades únicas de cada sector.
               </p>
             </div>
 
@@ -69,8 +68,8 @@ export default function AboutPage() {
                 ⚡ Contratación Rápida
               </h3>
               <p className="text-gray-600 leading-relaxed">
-                Sabemos que en el sector de hospitalidad, cada día sin personal adecuado impacta
-                directamente tu negocio. Por eso facilitamos contrataciones en horas, no en semanas.
+                Sabemos que cada día sin el personal adecuado impacta directamente tu negocio.
+                Por eso facilitamos contrataciones en horas, no en semanas.
               </p>
             </div>
 
@@ -129,7 +128,7 @@ export default function AboutPage() {
         <div className="bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg p-8 text-center text-white">
           <h2 className="text-3xl font-bold mb-4">¿Listo para Comenzar?</h2>
           <p className="text-xl text-pink-50 mb-6">
-            Únete a miles de empresas y profesionales que confían en Meserea
+            Únete a miles de empresas y profesionales que confían en Trabajo Libre
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link

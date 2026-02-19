@@ -119,124 +119,104 @@ const ResumePage = () => {
 
 	// Skills organized by categories
 	const skillCategories = {
-		'👨‍🍳 Chef y Cocina - Tipos de Cocina': [
-			'Cocina Mexicana', 'Cocina Italiana', 'Cocina Francesa', 'Cocina Española', 'Cocina Japonesa',
-			'Cocina China', 'Cocina Tailandesa', 'Cocina India', 'Cocina Peruana', 'Cocina Argentina',
-			'Cocina Mediterránea', 'Cocina Fusión', 'Cocina Molecular', 'Cocina Vegetariana', 'Cocina Vegana',
-			'Cocina Internacional', 'Cocina Regional', 'Cocina Contemporánea', 'Alta Cocina', 'Cocina de Autor'
+		'💻 Tecnología y Desarrollo': [
+			'JavaScript', 'TypeScript', 'Python', 'Java', 'C#', 'C++', 'PHP', 'Ruby', 'Go', 'Swift',
+			'React', 'Angular', 'Vue.js', 'Node.js', 'Next.js', 'Django', 'Flask', 'Spring Boot',
+			'HTML', 'CSS', 'SQL', 'NoSQL', 'MongoDB', 'PostgreSQL', 'MySQL', 'Firebase',
+			'AWS', 'Azure', 'Google Cloud', 'Docker', 'Kubernetes', 'Git', 'CI/CD',
+			'API REST', 'GraphQL', 'Microservicios', 'Arquitectura de Software'
 		],
-		'🔪 Chef y Cocina - Especialidades': [
-			'Parrillero', 'Asador', 'Saucier (Salsas)', 'Garde Manger (Entradas Frías)', 'Pastelero',
-			'Repostero', 'Panadero', 'Chocolatero', 'Pizzero', 'Sushiman',
-			'Carnicero', 'Pescadero', 'Sous Chef', 'Chef de Partie', 'Commis de Cocina',
-			'Chef Ejecutivo', 'Chef de Banquetes', 'Chef de Catering', 'Chef Privado'
+		'📊 Análisis de Datos y BI': [
+			'Excel Avanzado', 'Power BI', 'Tableau', 'Google Analytics', 'SQL',
+			'Python para Datos', 'R', 'Estadística', 'Machine Learning', 'Big Data',
+			'ETL', 'Data Warehouse', 'Visualización de Datos', 'KPIs',
+			'Análisis Predictivo', 'Modelos de Datos', 'Reportes Ejecutivos'
 		],
-		'🍳 Cocina - Técnicas y Habilidades': [
-			'Corte de Vegetales', 'Fileteado de Pescado', 'Deshuese de Carnes', 'Emplatado', 'Presentación de Platos',
-			'Cocción a la Parrilla', 'Cocción al Horno', 'Fritura', 'Cocción al Vapor', 'Sous Vide',
-			'Preparación de Salsas', 'Preparación de Caldos', 'Preparación de Masas', 'Fermentación',
-			'Manejo de Cuchillos', 'Control de Porciones', 'Control de Costos', 'HACCP', 'Manipulación de Alimentos',
-			'Seguridad e Higiene', 'Almacenamiento de Alimentos', 'Inventario de Cocina'
+		'📱 Marketing Digital': [
+			'SEO', 'SEM', 'Google Ads', 'Facebook Ads', 'Instagram Ads', 'LinkedIn Ads',
+			'Email Marketing', 'Content Marketing', 'Social Media', 'Community Management',
+			'Google Analytics', 'HubSpot', 'Mailchimp', 'Copywriting', 'Storytelling',
+			'Marketing de Contenidos', 'Inbound Marketing', 'Growth Hacking',
+			'Branding', 'Estrategia Digital', 'Automatización de Marketing'
 		],
-		'☕ Barista y Café': [
-			'Preparación de Espresso', 'Latte Art', 'Cappuccino', 'Americano', 'Macchiato',
-			'Café de Filtro', 'Prensa Francesa', 'Chemex', 'V60', 'Aeropress',
-			'Cold Brew', 'Café Helado', 'Métodos de Extracción', 'Calibración de Molienda',
-			'Máquina de Espresso', 'Molino de Café', 'Vaporización de Leche', 'Tostado de Café',
-			'Catación de Café', 'Café Specialty', 'Certificación Barista', 'SCA Certification'
+		'🎨 Diseño y Creatividad': [
+			'Photoshop', 'Illustrator', 'InDesign', 'Figma', 'Sketch', 'Adobe XD',
+			'After Effects', 'Premiere Pro', 'Canva', 'UI Design', 'UX Design',
+			'Diseño Gráfico', 'Diseño Web', 'Diseño de Producto', 'Prototipado',
+			'Wireframing', 'Design Thinking', 'Identidad Visual', 'Tipografía',
+			'Fotografía', 'Video', 'Animación', 'Motion Graphics', '3D Modeling'
 		],
-		'🍹 Bartender y Mixología': [
-			'Preparación de Cocteles', 'Mixología', 'Flair Bartending', 'Coctelería Clásica',
-			'Coctelería Molecular', 'Margarita', 'Mojito', 'Martini', 'Manhattan', 'Negroni',
-			'Old Fashioned', 'Caipirinha', 'Pisco Sour', 'Daiquiri', 'Cosmopolitan',
-			'Destilados', 'Vinos', 'Cervezas Artesanales', 'Licores', 'Vermut',
-			'Bar Setup', 'Inventario de Bar', 'Cost Control', 'Servicio de Vinos', 'Maridaje',
-			'Certificación TIPS', 'Certificación WSET', 'Sommelier'
+		'💰 Finanzas y Contabilidad': [
+			'Contabilidad General', 'Contabilidad Fiscal', 'Auditoría', 'Estados Financieros',
+			'Presupuestos', 'Control de Costos', 'Nómina', 'Facturación',
+			'SAP', 'CONTPAQi', 'Aspel', 'QuickBooks', 'Excel Financiero',
+			'Análisis Financiero', 'Tesorería', 'Cuentas por Pagar', 'Cuentas por Cobrar',
+			'Impuestos', 'CFDI', 'Declaraciones Fiscales', 'Flujo de Efectivo'
 		],
-		'🍽️ Mesero y Servicio de Restaurante': [
-			'Servicio a la Mesa', 'Toma de Órdenes', 'Servicio Emplatado', 'Servicio Francés',
-			'Servicio Inglés', 'Servicio Americano', 'Servicio de Buffet', 'Room Service',
-			'Manejo de Bandeja', 'Apertura de Vinos', 'Servicio de Vinos', 'Flambeo',
-			'Descripción de Menú', 'Sugerencias de Platillos', 'Upselling', 'Cross-selling',
-			'Manejo de Quejas', 'POS (Punto de Venta)', 'Facturación', 'Cobro',
-			'Atención al Cliente', 'Hospitalidad', 'Etiqueta de Servicio', 'Protocolo de Eventos'
+		'📈 Ventas y Negociación': [
+			'Ventas B2B', 'Ventas B2C', 'Prospección', 'Negociación', 'Cierre de Ventas',
+			'CRM (Salesforce)', 'CRM (HubSpot)', 'Pipeline de Ventas', 'KPIs de Ventas',
+			'Atención al Cliente', 'Postventa', 'Upselling', 'Cross-selling',
+			'Presentaciones de Ventas', 'Propuestas Comerciales', 'Cotizaciones',
+			'Telemarketing', 'Ventas por Teléfono', 'E-commerce', 'Marketplace'
 		],
-		'🏨 Hotel - Recepción y Front Desk': [
-			'Check-in', 'Check-out', 'Reservaciones', 'Sistema PMS', 'Opera PMS',
-			'Atención al Huésped', 'Resolución de Problemas', 'Facturación Hotelera',
-			'Manejo de Efectivo', 'Tarjetas de Crédito', 'Night Audit', 'Concierge',
-			'Información Turística', 'Reservas de Tours', 'Reservas de Restaurantes',
-			'Manejo de Equipaje', 'Valet Parking', 'Bell Boy', 'Portero'
+		'👥 Recursos Humanos': [
+			'Reclutamiento y Selección', 'Entrevistas', 'Onboarding', 'Capacitación',
+			'Desarrollo Organizacional', 'Evaluación de Desempeño', 'Clima Laboral',
+			'Nómina', 'Legislación Laboral', 'Relaciones Laborales', 'IMSS', 'INFONAVIT',
+			'Gestión de Talento', 'Employer Branding', 'Planes de Carrera',
+			'Compensaciones y Beneficios', 'Cultura Organizacional'
 		],
-		'🧹 Hotel - Housekeeping y Limpieza': [
-			'Limpieza de Habitaciones', 'Tendido de Camas', 'Cambio de Sábanas', 'Limpieza de Baños',
-			'Reabastecimiento de Amenidades', 'Room Attendant', 'Camarera de Piso', 'Supervisora de Pisos',
-			'Limpieza Profunda', 'Limpieza de Áreas Públicas', 'Lavandería', 'Planchado',
-			'Doblado de Toallas', 'Manejo de Químicos de Limpieza', 'Inventario de Amenidades',
-			'Estándares de Limpieza', 'Turn Down Service', 'Lost & Found'
+		'🏗️ Ingeniería': [
+			'AutoCAD', 'SolidWorks', 'CATIA', 'Revit', 'MATLAB',
+			'Ingeniería Civil', 'Ingeniería Industrial', 'Ingeniería Mecánica', 'Ingeniería Eléctrica',
+			'Control de Calidad', 'Six Sigma', 'Lean Manufacturing', 'Mejora Continua',
+			'Gestión de Proyectos', 'Seguridad Industrial', 'Normatividad', 'ISO 9001',
+			'Planeación de Producción', 'Mantenimiento Preventivo', 'Logística Industrial'
 		],
-		'🍴 Restaurante - Gestión y Administración': [
-			'Gestión de Restaurante', 'Gerencia de Alimentos y Bebidas', 'Control de Costos',
-			'Inventario de Alimentos', 'Compras', 'Negociación con Proveedores', 'Food Cost',
-			'Beverage Cost', 'Planificación de Menú', 'Ingeniería de Menú', 'Pricing',
-			'Supervisión de Personal', 'Capacitación de Staff', 'Horarios de Personal',
-			'Nómina', 'HACCP', 'Cumplimiento Sanitario', 'Permisos y Licencias'
+		'🏥 Salud': [
+			'Enfermería', 'Medicina General', 'Farmacología', 'Nutrición', 'Fisioterapia',
+			'Psicología', 'Primeros Auxilios', 'RCP', 'Salud Ocupacional',
+			'Expediente Clínico', 'NOM-035', 'Seguridad del Paciente',
+			'Laboratorio Clínico', 'Imagenología', 'Rehabilitación',
+			'Salud Mental', 'Prevención de Riesgos', 'Normatividad Sanitaria'
 		],
-		'🎉 Banquetes y Eventos': [
-			'Servicio de Banquetes', 'Montaje de Eventos', 'Catering', 'Buffet',
-			'Servicio de Bodas', 'Eventos Corporativos', 'Cocteles de Pie', 'Coffee Break',
-			'Coordinación de Eventos', 'Logística de Eventos', 'Capitán de Meseros',
-			'Servicio Francés (Banquetes)', 'Russian Service', 'Family Style Service'
+		'📚 Educación y Capacitación': [
+			'Docencia', 'Diseño Instruccional', 'E-learning', 'Facilitación',
+			'Desarrollo de Contenido', 'Evaluación Educativa', 'Pedagogía',
+			'Plataformas LMS', 'Moodle', 'Google Classroom', 'Zoom',
+			'Capacitación Corporativa', 'Coaching', 'Mentoring',
+			'Presentaciones', 'Oratoria', 'Comunicación Académica'
 		],
-		'🥐 Panadería y Repostería': [
-			'Panadería', 'Repostería', 'Pastelería', 'Panadería Artesanal', 'Masa Madre',
-			'Pan Francés', 'Pan Dulce Mexicano', 'Bollería', 'Croissants', 'Danishes',
-			'Pasteles', 'Tartas', 'Cupcakes', 'Macarons', 'Galletas', 'Brownies',
-			'Decoración de Pasteles', 'Fondant', 'Buttercream', 'Ganache', 'Royal Icing',
-			'Chocolatería', 'Bombones', 'Trufas', 'Temperado de Chocolate'
+		'⚖️ Legal': [
+			'Derecho Laboral', 'Derecho Mercantil', 'Derecho Fiscal', 'Derecho Civil',
+			'Contratos', 'Litigios', 'Propiedad Intelectual', 'Cumplimiento Regulatorio',
+			'Due Diligence', 'Gobierno Corporativo', 'Protección de Datos',
+			'LFPDPPP', 'Normatividad', 'Arbitraje', 'Mediación'
 		],
-		'☕ Cafetería y Coffee Shop': [
-			'Operación de Cafetería', 'Atención en Mostrador', 'Caja Registradora', 'POS',
-			'Preparación de Bebidas', 'Bebidas Calientes', 'Bebidas Frías', 'Smoothies',
-			'Frappes', 'Tés', 'Infusiones', 'Preparación de Alimentos Ligeros',
-			'Sandwiches', 'Ensaladas', 'Wraps', 'Bagels', 'Muffins', 'Scones',
-			'Display de Productos', 'Visual Merchandising', 'Inventario de Cafetería'
+		'📦 Logística y Operaciones': [
+			'Gestión de Almacén', 'Inventarios', 'Cadena de Suministro', 'Compras',
+			'Negociación con Proveedores', 'Importación', 'Exportación', 'Aduanas',
+			'Transporte', 'Distribución', 'Last Mile', 'WMS',
+			'SAP MM', 'Planeación de Demanda', 'Control de Calidad', 'KPIs Logísticos'
 		],
-		'🍕 Comida Rápida y Fast Food': [
-			'Preparación Rápida de Alimentos', 'Línea de Ensamblaje', 'Freidora',
-			'Parrilla', 'Plancha', 'Preparación de Hamburguesas', 'Pizzas', 'Hot Dogs',
-			'Tacos', 'Tortas', 'Alitas', 'Papas Fritas', 'Drive Thru', 'Toma de Órdenes',
-			'Empaque de Alimentos', 'Delivery', 'Apps de Delivery', 'Uber Eats', 'Rappi', 'DiDi Food'
-		],
-		'🏨 Hotel - Otros Departamentos': [
-			'Spa', 'Masajista', 'Terapias', 'Gimnasio', 'Instructor de Fitness',
-			'Animación Turística', 'Recreación', 'Kids Club', 'Actividades',
-			'Seguridad Hotelera', 'Mantenimiento Hotelero', 'Jardinería',
-			'Piscina', 'Salvavidas', 'Valet Parking', 'Room Service'
-		],
-		'📋 Certificaciones y Seguridad Alimentaria': [
-			'Manejo Higiénico de Alimentos', 'HACCP', 'Distintivo H', 'ServSafe',
-			'Food Handler Certificate', 'TIPS Certification', 'Alcohol Service',
-			'Primeros Auxilios', 'RCP', 'Prevención de Incendios',
-			'Seguridad en el Trabajo', 'Prevención de Riesgos Laborales'
-		],
-		'💻 Sistemas y Software para Hospitalidad': [
-			'POS (Punto de Venta)', 'Micros', 'Aloha', 'Toast', 'Square',
-			'Opera PMS', 'Sistemas de Reservaciones', 'OpenTable', 'Resy',
-			'Gestión de Inventarios', 'Control de Costos', 'Excel',
-			'Uber Eats Manager', 'Rappi Manager', 'DiDi Food Manager'
+		'🛠️ Herramientas de Oficina': [
+			'Microsoft Office', 'Excel', 'Word', 'PowerPoint', 'Outlook',
+			'Google Workspace', 'Google Sheets', 'Google Docs', 'Google Slides',
+			'Slack', 'Microsoft Teams', 'Zoom', 'Trello', 'Asana', 'Jira',
+			'Notion', 'Monday.com', 'SAP', 'ERP', 'CRM'
 		],
 		'🌍 Idiomas': [
 			'Español', 'Inglés', 'Francés', 'Alemán', 'Portugués', 'Italiano',
 			'Chino', 'Japonés', 'Coreano', 'Árabe', 'Ruso'
 		],
-		'✨ Habilidades Blandas para Hospitalidad': [
-			'Atención al Cliente', 'Servicio al Cliente', 'Hospitalidad', 'Trabajo en Equipo',
-			'Comunicación Efectiva', 'Resolución de Conflictos', 'Manejo de Quejas',
-			'Trabajo Bajo Presión', 'Multitasking', 'Organización', 'Puntualidad',
-			'Responsabilidad', 'Proactividad', 'Actitud Positiva', 'Empatía',
-			'Adaptabilidad', 'Flexibilidad de Horario', 'Disponibilidad Fines de Semana',
-			'Presentación Personal', 'Higiene Personal', 'Ética Profesional'
+		'✨ Habilidades Blandas': [
+			'Liderazgo', 'Trabajo en Equipo', 'Comunicación Efectiva', 'Pensamiento Crítico',
+			'Resolución de Problemas', 'Toma de Decisiones', 'Creatividad', 'Innovación',
+			'Adaptabilidad', 'Inteligencia Emocional', 'Negociación', 'Gestión del Tiempo',
+			'Organización', 'Proactividad', 'Orientación a Resultados', 'Empatía',
+			'Trabajo Bajo Presión', 'Atención al Detalle', 'Ética Profesional',
+			'Responsabilidad', 'Puntualidad', 'Presentación Ejecutiva'
 		]
 	}
 
@@ -689,7 +669,7 @@ const ResumePage = () => {
 										type="text"
 										value={exp.company}
 										onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
-										placeholder="Ej: Starbucks, Hotel Marriott, etc."
+										placeholder="Ej: Google, Empresa ABC, etc."
 										className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
 									/>
 								</div>
@@ -699,7 +679,7 @@ const ResumePage = () => {
 										type="text"
 										value={exp.position}
 										onChange={(e) => updateExperience(exp.id, 'position', e.target.value)}
-										placeholder="Ej: Mesero, Chef, Recepcionista, etc."
+										placeholder="Ej: Desarrollador, Contador, Diseñador, etc."
 										className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
 									/>
 								</div>

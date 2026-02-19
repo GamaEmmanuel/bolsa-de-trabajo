@@ -1,3 +1,9 @@
+// SEO Constants
+export const SITE_NAME = 'Trabajo Libre'
+export const BASE_URL = 'https://meserea.com'
+export const DEFAULT_DESCRIPTION = 'La plataforma #1 para encontrar empleo y contratar talento en Latinoamérica. Miles de vacantes en tecnología, ventas, marketing, finanzas, ingeniería y más sectores.'
+export const DEFAULT_OG_IMAGE = '/og-image.png'
+
 // Mexican Cities by Tier
 export const MEXICAN_CITIES = {
   'tier-1': [
@@ -175,25 +181,23 @@ export const EDUCATION_DEGREE_OPTIONS = [
 
 // Job Category Options
 export const JOB_CATEGORY_OPTIONS = [
-  { value: 'chef', label: 'Chef / Cocinero' },
-  { value: 'kitchen', label: 'Cocina / Ayudante de Cocina' },
-  { value: 'server', label: 'Mesero/a' },
-  { value: 'bartender', label: 'Barman / Cantinero' },
-  { value: 'hostess', label: 'Hostess / Anfitrión' },
-  { value: 'cleaning', label: 'Limpieza / Intendencia' },
-  { value: 'barista', label: 'Barista' },
-  { value: 'cashier', label: 'Cajero/a' },
-  { value: 'supervisor', label: 'Supervisor / Gerente de Area' },
-  { value: 'receptionist', label: 'Recepcionista' },
-  { value: 'housekeeper', label: 'Camarista / Housekeeping' },
-  { value: 'valet', label: 'Valet Parking' },
-  { value: 'dishwasher', label: 'Lavaplatos / Steward' },
-  { value: 'pastry', label: 'Pastelería / Repostería' },
-  { value: 'sommelier', label: 'Sommelier' },
-  { value: 'maintenance', label: 'Mantenimiento' },
-  { value: 'security', label: 'Seguridad' },
-  { value: 'delivery', label: 'Repartidor / Delivery' },
-  { value: 'banquets', label: 'Banquetes / Eventos' },
+  { value: 'technology', label: 'Tecnología / Sistemas' },
+  { value: 'healthcare', label: 'Salud / Medicina' },
+  { value: 'finance', label: 'Finanzas / Contabilidad' },
+  { value: 'education', label: 'Educación / Capacitación' },
+  { value: 'marketing', label: 'Marketing / Publicidad' },
+  { value: 'sales', label: 'Ventas / Comercial' },
+  { value: 'engineering', label: 'Ingeniería' },
+  { value: 'design', label: 'Diseño / Creatividad' },
+  { value: 'legal', label: 'Legal / Jurídico' },
+  { value: 'operations', label: 'Operaciones / Logística' },
+  { value: 'customer-service', label: 'Atención al Cliente' },
+  { value: 'logistics', label: 'Logística / Transporte' },
+  { value: 'construction', label: 'Construcción / Obra' },
+  { value: 'hospitality', label: 'Hospitalidad / Turismo' },
+  { value: 'retail', label: 'Retail / Comercio' },
+  { value: 'human-resources', label: 'Recursos Humanos' },
+  { value: 'media', label: 'Medios / Comunicación' },
   { value: 'administration', label: 'Administración' },
   { value: 'other', label: 'Otro' }
 ]
@@ -217,19 +221,20 @@ export const COMPANY_SIZE_OPTIONS = [
 ]
 
 export const INDUSTRY_OPTIONS = [
-  { value: 'restaurant', label: 'Restaurante' },
-  { value: 'hotel', label: 'Hotel' },
-  { value: 'bar', label: 'Bar / Cantina' },
-  { value: 'cafe', label: 'Café / Cafetería' },
-  { value: 'fast-food', label: 'Comida Rápida' },
-  { value: 'catering', label: 'Catering / Banquetes' },
-  { value: 'nightclub', label: 'Antro / Club Nocturno' },
-  { value: 'bakery', label: 'Panadería / Pastelería' },
-  { value: 'food-truck', label: 'Food Truck' },
-  { value: 'resort', label: 'Resort / Spa' },
-  { value: 'hostel', label: 'Hostal / Hostel' },
-  { value: 'event-venue', label: 'Salón de Eventos' },
-  { value: 'tourism', label: 'Turismo / Agencia de Viajes' },
+  { value: 'technology', label: 'Tecnología' },
+  { value: 'healthcare', label: 'Salud / Farmacéutica' },
+  { value: 'finance', label: 'Finanzas / Banca' },
+  { value: 'education', label: 'Educación' },
+  { value: 'retail', label: 'Retail / Comercio' },
+  { value: 'manufacturing', label: 'Manufactura / Industria' },
+  { value: 'consulting', label: 'Consultoría' },
+  { value: 'hospitality', label: 'Hospitalidad / Turismo' },
+  { value: 'construction', label: 'Construcción / Inmobiliaria' },
+  { value: 'real-estate', label: 'Bienes Raíces' },
+  { value: 'media', label: 'Medios / Entretenimiento' },
+  { value: 'non-profit', label: 'ONG / Sin Fines de Lucro' },
+  { value: 'government', label: 'Gobierno / Sector Público' },
+  { value: 'logistics', label: 'Logística / Transporte' },
   { value: 'other', label: 'Otro' }
 ]
 
